@@ -1,8 +1,23 @@
+#include "Ship.h"
+
+#include <iostream>
+
+using std::cout; using std::endl;
+
+// TODO check
+Ship::Ship(const std::string &name_, Point position_, double fuel_capacity_,
+        double maximum_speed_, double fuel_consumption_, int resistance_) :
+        Sim_object(name_), Track_base(position_),
+        fuel_consumption {fuel_consumption_},
+        fuel_capacity {fuel_capacity_}, maximum_speed {maximum_speed_},
+        resistance {resistance_} {
+    cout << "Ship " << get_name() << " constructed" << endl;
+}
 
 /*
 Define the destructor function even if it was declared as a pure virtual function.
 This seems odd, because pure virtual functions are usually not defined in the class
-that declares them. But this is often done as a way to make a class abstract, 
+that declares them. But this is often done as a way to make a class abstract,
 if there is no other virtual function that makes sense to mark as pure. Here we
 are defining it just to get the destructor message output.
 */
@@ -10,6 +25,94 @@ are defining it just to get the destructor message output.
 Ship::~Ship()
 {
 	cout << "Ship "  << get_name() << " destructed" << endl;
+}
+
+bool Ship::can_move() const {
+    return is_afloat() && ship_state != State::dead_in_the_water;
+}
+
+bool Ship::is_moving() const {
+    return ship_state == State::moving_to_position ||
+           ship_state == State::moving_to_island ||
+           ship_state == State::moving_on_course;
+}
+
+bool Ship::is_docked() const {
+    return ship_state == State::docked;
+}
+
+bool Ship::is_afloat() const {
+    return ship_state != State::sinking &&
+           ship_state != State::sunk &&
+           ship_state != State::on_the_bottom;
+}
+
+bool Ship::is_on_the_bottom() const {
+    return ship_state == State::on_the_bottom;
+}
+
+bool Ship::can_dock(Island *island_ptr) const {
+    if (ship_state != State::stopped)
+        return false;
+    // TODO test distance according to spec
+}
+
+void Ship::update() {
+    // TODO
+}
+
+void Ship::describe() const {
+    // TODO
+}
+
+void Ship::broadcast_current_state() const {
+    // TODO
+}
+
+void Ship::set_destination_position_and_speed(Point destination_position,
+        double speed) {
+    // TODO
+}
+
+void Ship::set_destination_island_and_speed(Island *destination_island,
+        double speed) {
+    // TODO
+}
+
+void Ship::set_course_and_speed(double course, double speed) {
+    // TODO
+}
+
+void Ship::stop() {
+    // TODO
+}
+
+void Ship::dock(Island *island_ptr) {
+    // TODO
+}
+
+void Ship::refuel() {
+    // TODO
+}
+
+void Ship::set_load_destination(Island *) {
+    // TODO
+}
+
+void Ship::set_unload_destination(Island *) {
+    // TODO
+}
+
+void Ship::attack(Ship *in_target_ptr) {
+    // TODO
+}
+
+void Ship::stop_attack() {
+    // TODO
+}
+
+void Ship::receive_hit(int hit_force, Ship *attacker_ptr) {
+    // TODO
 }
 
 /* Private Function Definitions */

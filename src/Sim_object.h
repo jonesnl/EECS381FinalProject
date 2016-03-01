@@ -22,10 +22,10 @@ public:
 	/* Interface for derived classes */
 	// *** declare the following as pure virtual functions 
 	// ask model to notify views of current state
-    void broadcast_current_state() const
-	Point get_location() const
-	void describe() const
-	void update()
+    virtual void broadcast_current_state() const = 0;
+	virtual Point get_location() const = 0;
+	virtual void describe() const = 0;
+	virtual void update() = 0;
 	
 	// Sim_objects must be unique, so disable copy/move construction, assignment
     // of base class; this will disable these operations for derived classes also.

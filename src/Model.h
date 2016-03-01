@@ -1,3 +1,5 @@
+#ifndef MODEL_H
+#define MODEL_H
 /*
 Model is part of a simplified Model-View-Controller pattern.
 Model keeps track of the Sim_objects in our little world. It is the only
@@ -22,6 +24,9 @@ You should delete this comment.
 // Declare the global model pointer
 class Model;
 extern Model* g_Model_ptr;
+
+class Ship;
+class View;
 
 class Model {
 public:
@@ -79,4 +84,4 @@ private:
 
 
 };
-
+#endif
