@@ -10,23 +10,11 @@ macro(add_gtest _name)
     endif()
 endmacro()
 
-set(HEADER_FILES
-        Collection.h
-        p3_globals.h
-        Record.h
-        Utility.h)
+set(HEADER_FILES Cruiser.h Geometry.h Navigation.h)
 
-set(SHARED_SOURCE_FILES
-        Utility.cpp
-        p3_globals.cpp
-        Collection.cpp
-        Record.cpp)
+set(SHARED_SOURCE_FILES Geometry.cpp Navigation.cpp)
 
-add_executable(p3_main ${SHARED_SOURCE_FILES} ${HEADER_FILES} p3_main.cpp)
-
-add_gtest(CollectionTest ${SHARED_SOURCE_FILES} tests/collection_test.cpp)
-
-add_gtest(RecordTest ${SHARED_SOURCE_FILES} tests/record_test.cpp)
+add_executable(p4_main ${SHARED_SOURCE_FILES} ${HEADER_FILES} p4_main.cpp)
 
 add_subdirectory(googletest)
 
