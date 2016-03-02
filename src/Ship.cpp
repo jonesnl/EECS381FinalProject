@@ -1,5 +1,9 @@
 #include "Ship.h"
 
+#include "Island.h"
+#include "Model.h"
+#include "Utility.h"
+
 #include <iostream>
 
 using std::cout; using std::endl;
@@ -51,68 +55,158 @@ bool Ship::is_on_the_bottom() const {
     return ship_state == State::on_the_bottom;
 }
 
-bool Ship::can_dock(Island *island_ptr) const {
-    if (ship_state != State::stopped)
+bool Ship::can_dock(Island *island_ptr) const { // TODO remove suppression below
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCSimplifyInspection"
+    if (ship_state != State::stopped ||
+            cartesian_distance(island_ptr->get_location(), get_location()) >= 0.1)
         return false;
-    // TODO test distance according to spec
+#pragma clang diagnostic pop
+    return true;
 }
 
 void Ship::update() {
-    // TODO
+    if (is_afloat() && resistance < 0.) {
+        ship_state = State::sinking;
+        set_speed(0.);
+        cout << get_name() << " sinking" << endl;
+    } else if (ship_state == State::sinking) {
+        ship_state = State::sunk;
+        cout << get_name() << " sunk" << endl;
+    } else if (ship_state == State::sunk) {
+        ship_state = State::on_the_bottom;
+        cout << get_name() << " on the bottom" << endl;
+    } else if (ship_state == State::on_the_bottom) {
+        cout << get_name() << " on the bottom" << endl;
+    } else if (is_moving()) {
+        calculate_movement();
+        cout << get_name() << " now at " << get_location() << endl;
+        g_Model_ptr->notify_location(get_name(), get_location());
+    } else if (ship_state == State::stopped) {
+        cout << get_name() << " stopped at " << get_location() << endl;
+    } else if (is_docked()) {
+        cout << get_name() << " docked at " << get_location() << endl;
+    } else if (ship_state == State::dead_in_the_water) {
+        cout << get_name() << " dead in the water at " << get_location() << endl;
+    }
 }
 
 void Ship::describe() const {
-    // TODO
+    cout << get_name() << " at " << get_location();
+    if (ship_state == State::sinking)
+        cout << " sinking";
+    else if (ship_state == State::sunk)
+        cout << " sunk";
+    else if (ship_state == State::on_the_bottom)
+        cout << " on the bottom";
+    else {
+        cout << ", fuel: " << fuel << " tons, resistance: " << resistance << endl;
+        if (ship_state == State::moving_to_position)
+            cout << "Moving to " << destination_point <<
+                    " on " << get_course_speed() << endl;
+        else if (ship_state == State::moving_to_island)
+            cout << "Moving to " << destination_Island->get_name() <<
+                    " on " << get_course_speed() << endl;
+        else if (ship_state == State::moving_on_course)
+            cout << "Moving on " << get_course_speed() << endl;
+        else if (ship_state == State::docked)
+            cout << "Docked at " << docked_Island->get_name() << endl;
+        else if (ship_state == State::stopped)
+            cout << "Stopped" << endl;
+        else if (ship_state == State::dead_in_the_water)
+            cout << "Dead in the water" << endl;
+    }
 }
 
 void Ship::broadcast_current_state() const {
-    // TODO
+    g_Model_ptr->notify_location(get_name(), get_location());
 }
 
 void Ship::set_destination_position_and_speed(Point destination_position,
         double speed) {
-    // TODO
+    if (speed > get_maximum_speed())
+        throw Error("Ship cannot go that fast!");
+    if (!can_move())
+        throw Error("Ship cannot move!");
+    Compass_vector vect {get_location(), destination_position};
+    set_course_speed({vect.direction, speed});
+    ship_state = State::moving_to_position;
+    cout << get_name() << " will sail on " << get_course_speed() <<
+            " to " << destination_position << endl;
 }
 
 void Ship::set_destination_island_and_speed(Island *destination_island,
         double speed) {
-    // TODO
+    if (speed > get_maximum_speed())
+        throw Error("Ship cannot go that fast!");
+    if (!can_move())
+        throw Error("Ship cannot move!");
+    Compass_vector vect {get_location(), destination_island->get_location()};
+    set_course_speed({vect.direction, speed});
+    ship_state = State::moving_to_island;
+    cout << get_name() << " will sail on " << get_course_speed() <<
+            " to " << destination_island->get_name() << endl;
 }
 
 void Ship::set_course_and_speed(double course, double speed) {
-    // TODO
+    if (speed > get_maximum_speed())
+        throw Error("Ship cannot go that fast!");
+    if (!can_move())
+        throw Error("Ship cannot move!");
+    set_course_speed({course, speed});
+    ship_state = State::moving_on_course;
+    cout << get_name() << " will sail on " << get_course_speed() << endl;
 }
 
 void Ship::stop() {
-    // TODO
+    if (!can_move())
+        throw Error("Ship cannot move!");
+    set_speed(0.);
+    ship_state = State::stopped;
+    cout << get_name() << " stopping at " << get_location() << endl;
 }
 
 void Ship::dock(Island *island_ptr) {
-    // TODO
+    if (!can_dock(island_ptr))
+        throw Error("Can't dock!");
+    set_position(island_ptr->get_location());
+    docked_Island = island_ptr;
+    g_Model_ptr->notify_location(get_name(), get_location());
+    cout << "Docked at " << island_ptr->get_name() << endl;
 }
 
 void Ship::refuel() {
-    // TODO
+    if (!is_docked())
+        throw Error("Must be docked!");
+    double needed_fuel = fuel_capacity - fuel;
+    if (needed_fuel < 0.005) {
+        fuel = fuel_capacity;
+        return;
+    }
+    fuel += get_docked_Island()->provide_fuel(needed_fuel);
+    cout << get_name() << " now has " << fuel << " tons of fuel" << endl;
 }
 
 void Ship::set_load_destination(Island *) {
-    // TODO
+    throw Error("Cannot load at a destination!");
 }
 
 void Ship::set_unload_destination(Island *) {
-    // TODO
+    throw Error("Cannot unload at a destination!");
 }
 
-void Ship::attack(Ship *in_target_ptr) {
-    // TODO
+void Ship::attack(Ship *) {
+    throw Error("Cannot attack!");
 }
 
 void Ship::stop_attack() {
-    // TODO
+    throw Error("Cannot attack!");
 }
 
 void Ship::receive_hit(int hit_force, Ship *attacker_ptr) {
-    // TODO
+    resistance -= hit_force;
+    cout << get_name() << " hit with " << hit_force << ", resistance now " <<
+            resistance << endl;
 }
 
 /* Private Function Definitions */
@@ -132,7 +226,7 @@ time less than 1.0.
 For clarity in specifying the computation, this code assumes the specified private variable names, 
 but you may change the variable names or enum class names, or state names if you wish (e.g. movement_state).
 */
-void Ship:: calculate_movement()
+void Ship::calculate_movement()
 {
 	// Compute values for how much we need to move, and how much we can, and how long we can,
 	// given the fuel state, then decide what to do.

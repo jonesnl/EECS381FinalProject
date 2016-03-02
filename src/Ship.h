@@ -153,7 +153,8 @@ private:
     double maximum_speed;
     double resistance;
 
-	// Updates position, fuel, and movement_state, assuming 1 time unit (1 hr)
+
+    // Updates position, fuel, and movement_state, assuming 1 time unit (1 hr)
 	void calculate_movement();
 
 };

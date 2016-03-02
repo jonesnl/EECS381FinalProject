@@ -10,6 +10,7 @@ set(HEADER_FILES Cruiser.h
         Navigation.h
         Sim_object.h
         Ship.h
+        Utility.h
         Track_base.h)
 
 set(SHARED_SOURCE_FILES
