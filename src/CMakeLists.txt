@@ -11,7 +11,8 @@ set(HEADER_FILES Cruiser.h
         Sim_object.h
         Ship.h
         Utility.h
-        Track_base.h)
+        Track_base.h
+        Cruiser.h)
 
 set(SHARED_SOURCE_FILES
         Geometry.cpp
@@ -20,7 +21,8 @@ set(SHARED_SOURCE_FILES
         Sim_object.cpp
         Island.cpp
         Ship.cpp
-        Track_base.cpp)
+        Track_base.cpp
+        Cruiser.cpp)
 
 macro(add_gtest _name)
     add_executable(${ARGV})
@@ -36,6 +38,16 @@ add_gtest(Island_test
         Sim_object.cpp
         Geometry.cpp
         test/Island_test.cpp)
+
+add_gtest(Ship_test
+        Ship.cpp
+        Sim_object.cpp
+        Geometry.cpp
+        Track_base.cpp
+        Island.cpp
+        Navigation.cpp
+        test/Ship_test.cpp
+        test/test_utility.cpp)
 
 add_subdirectory(googletest)
 

@@ -16,7 +16,7 @@ If any protected or private members are shown here, then your class must also ha
 You should delete this comment.
 */
 
-class Island : private Sim_object {
+class Island : public Sim_object {
 public:
     // initialize then output constructor message
     Island(const std::string &name_, Point position_, double fuel_ = 0.,
