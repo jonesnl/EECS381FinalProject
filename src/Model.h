@@ -1,5 +1,10 @@
 #ifndef MODEL_H
 #define MODEL_H
+
+#include "Geometry.h"
+#include <string>
+#include <map>
+
 /*
 Model is part of a simplified Model-View-Controller pattern.
 Model keeps track of the Sim_objects in our little world. It is the only
@@ -27,6 +32,8 @@ extern Model* g_Model_ptr;
 
 class Ship;
 class View;
+class Island;
+class Sim_object;
 
 class Model {
 public:
@@ -51,7 +58,7 @@ public:
 	// is there such an ship?
 	bool is_ship_present(const std::string& name) const;
 	// add a new ship to the list, and update the view
-	void add_ship(Ship*);
+	void add_ship(Ship *ship);
 	// will throw Error("Ship not found!") if no ship of that name
 	Ship* get_ship_ptr(const std::string& name) const;
 	
@@ -67,10 +74,10 @@ public:
 	/* View services */
 	// Attaching a View adds it to the container and causes it to be updated
     // with all current objects'location (or other state information.
-	void attach(View*);
+	void attach(View *view);
 	// Detach the View by discarding the supplied pointer from the container of Views
     // - no updates sent to it thereafter.
-	void detach(View*);
+	void detach(View *view);
 	
     // notify the views about an object's location
 	void notify_location(const std::string& name, Point location);
@@ -80,8 +87,14 @@ public:
 	// disallow copy/move construction or assignment
 
 private:
-	int time;		// the simulated time
+	int time = 0;		// the simulated time
+    using ObjectMap_t = std::map<std::string, Sim_object*>;
+    using ShipMap_t = std::map<std::string, Ship*>;
+    using IslandMap_t = std::map<std::string, Island*>;
+    ObjectMap_t object_map;
+    ShipMap_t ship_map;
+    IslandMap_t island_map;
 
-
+    void add_island(Island *island);
 };
 #endif

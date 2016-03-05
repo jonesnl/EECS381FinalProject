@@ -1,8 +1,9 @@
 #ifndef SHIP_FACTORY_H
 #define SHIP_FACTORY_H
 
+#include "Geometry.h"
+
 #include <string>
-struct Point;
 
 class Ship;
 /* This is a very simple form of factory, a function; you supply the information, it creates
