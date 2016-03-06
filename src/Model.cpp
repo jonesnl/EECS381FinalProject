@@ -26,12 +26,21 @@ Model::Model() {
 
 Model::~Model() {
     for_each(object_map.begin(), object_map.end(),
-            bind(default_delete{}));
+            bind(default_delete{},
+                    bind(&ObjectMap_t::value_type::second, _1)));
     cout << "Model destructed" << endl;
 }
 
 bool Model::is_name_in_use(const std::string& name) const {
-    return object_map.find(name) != object_map.end();
+    if (name.length() < 2)
+        return true;
+    string abrv_name = name.substr(0, 2);
+    auto itt = object_map.lower_bound(abrv_name);
+    if (itt != object_map.end() &&
+            itt->second->get_name().substr(0, 2) == abrv_name)
+        return true;
+    else
+        return false;
 }
 
 bool Model::is_island_present(const std::string& name) const {
@@ -63,12 +72,14 @@ Ship *Model::get_ship_ptr(const std::string& name) const {
 
 void Model::describe() const {
     for_each(object_map.begin(), object_map.end(),
-            bind(default_delete{}, bind(&ObjectMap_t::value_type::second, _1)));
+            bind(&Sim_object::describe,
+                    bind(&ObjectMap_t::value_type::second, _1)));
 }
 
 void Model::update() {
     for_each(object_map.begin(), object_map.end(),
-            bind(&Sim_object::update, bind(&ObjectMap_t::value_type::second, _1)));
+            bind(&Sim_object::update,
+                    bind(&ObjectMap_t::value_type::second, _1)));
 }
 
 void Model::attach(View *) {
@@ -90,5 +101,6 @@ void Model::notify_gone(const std::string& name) {
 /* Private member functions */
 
 void Model::add_island(Island *island) {
+
     island_map.insert({island->get_name(), island});
 }

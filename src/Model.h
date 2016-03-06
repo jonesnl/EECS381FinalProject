@@ -55,7 +55,7 @@ public:
 	// will throw Error("Island not found!") if no island of that name
 	Island* get_island_ptr(const std::string& name) const;
 
-	// is there such an ship?
+	// is there such a ship?
 	bool is_ship_present(const std::string& name) const;
 	// add a new ship to the list, and update the view
 	void add_ship(Ship *ship);
