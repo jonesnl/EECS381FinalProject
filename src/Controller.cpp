@@ -71,3 +71,75 @@ void Controller::run() {
         }
     }
 }
+
+void Controller::view_default_cmd() {
+
+}
+
+void Controller::view_size_cmd() {
+
+}
+
+void Controller::view_zoom_cmd() {
+
+}
+
+void Controller::view_pan_cmd() {
+
+}
+
+void Controller::view_show_cmd() {
+
+}
+
+void Controller::model_status_cmd() {
+
+}
+
+void Controller::model_go_cmd() {
+
+}
+
+void Controller::model_create_cmd() {
+
+}
+
+void Controller::ship_course_cmd(Ship* ship) {
+
+}
+
+void Controller::ship_position_cmd(Ship* ship) {
+
+}
+
+void Controller::ship_dest_cmd(Ship* ship) {
+
+}
+
+void Controller::ship_load_cmd(Ship* ship) {
+
+}
+
+void Controller::ship_unload_cmd(Ship* ship) {
+
+}
+
+void Controller::ship_dock_cmd(Ship* ship) {
+
+}
+
+void Controller::ship_attack_cmd(Ship* ship) {
+
+}
+
+void Controller::ship_refuel_cmd(Ship* ship) {
+
+}
+
+void Controller::ship_stop_cmd(Ship* ship) {
+
+}
+
+void Controller::ship_stop_attack_cmd(Ship* ship) {
+
+}
