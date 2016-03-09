@@ -43,7 +43,7 @@ public:
 
     // made pure virtual to mark this class as abstract, but defined anyway
     // to output destructor message
-    virtual ~Ship(); // TODO make virtual
+    virtual ~Ship() = 0; // TODO make virtual
 
     /*** Readers ***/
     // return the current position

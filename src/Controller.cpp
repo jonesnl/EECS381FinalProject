@@ -2,6 +2,7 @@
 
 #include "Model.h"
 #include "Utility.h"
+#include "View.h"
 
 #include <iostream>
 #include <string>
@@ -73,31 +74,40 @@ void Controller::run() {
 }
 
 void Controller::view_default_cmd() {
-
+    view_ptr->set_defaults();
 }
 
 void Controller::view_size_cmd() {
-
+    int size;
+    if (!(cin >> size))
+        throw Error("Expected an integer!");
+    view_ptr->set_size(size);
 }
 
 void Controller::view_zoom_cmd() {
-
+    double scale;
+    if (!(cin >> scale))
+        throw Error("Expected a double!");
+    view_ptr->set_scale(scale);
 }
 
 void Controller::view_pan_cmd() {
-
+    double x, y;
+    if (!(cin >> x >> y))
+        throw Error("Expected a double!");
+    view_ptr->set_origin({x, y});
 }
 
 void Controller::view_show_cmd() {
-
+    view_ptr->draw();
 }
 
 void Controller::model_status_cmd() {
-
+    g_Model_ptr->describe();
 }
 
 void Controller::model_go_cmd() {
-
+    g_Model_ptr->update();
 }
 
 void Controller::model_create_cmd() {
