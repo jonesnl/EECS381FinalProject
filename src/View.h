@@ -73,7 +73,7 @@ private:
 	Point origin;		// coordinates of the lower-left-hand corner
 
 	// specified helper function				
-	bool get_subscripts(int &ix, int &iy, Point location); 
+	bool get_subscripts(int &ix, int &iy, Point location) const;
 
 };
 
