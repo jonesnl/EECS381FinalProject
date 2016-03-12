@@ -12,6 +12,8 @@
 using namespace std;
 using namespace placeholders;
 
+Model* g_Model_ptr;
+
 Model::Model() {
     add_island(new Island("Exxon", Point(10, 10), 1000, 200));
     add_island(new Island("Shell", Point(0, 30), 1000, 200));
@@ -26,8 +28,9 @@ Model::Model() {
 
 Model::~Model() {
     for_each(object_map.begin(), object_map.end(),
-            bind(default_delete{},
-                    bind(&ObjectMap_t::value_type::second, _1)));
+            [](ObjectMap_t::value_type& pair) {
+                delete pair.second;
+            });
     cout << "Model destructed" << endl;
 }
 
@@ -82,7 +85,7 @@ void Model::update() {
                     bind(&ObjectMap_t::value_type::second, _1)));
 }
 
-void Model::attach(View *) {
+void Model::attach(View *view) {
     // TODO
 }
 

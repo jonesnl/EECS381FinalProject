@@ -26,36 +26,37 @@ void Controller::run() {
     using ShipCmdMap_t = std::map<std::string, void (Controller::*) (Ship*)>;
     using GenericCmdMap_t = std::map<std::string, void (Controller::*) ()>;
     static ShipCmdMap_t ship_cmd_map = {
-            {"course", ship_course_cmd},
-            {"position", ship_position_cmd},
-            {"destination", ship_dest_cmd},
-            {"load_at", ship_load_cmd},
-            {"unload_at", ship_unload_cmd},
-            {"dock_at", ship_dock_cmd},
-            {"attack", ship_attack_cmd},
-            {"refuel", ship_refuel_cmd},
-            {"stop", ship_stop_cmd},
-            {"stop_attack", ship_stop_attack_cmd}
+            {"course", &Controller::ship_course_cmd},
+            {"position", &Controller::ship_position_cmd},
+            {"destination", &Controller::ship_dest_cmd},
+            {"load_at", &Controller::ship_load_cmd},
+            {"unload_at", &Controller::ship_unload_cmd},
+            {"dock_at", &Controller::ship_dock_cmd},
+            {"attack", &Controller::ship_attack_cmd},
+            {"refuel", &Controller::ship_refuel_cmd},
+            {"stop", &Controller::ship_stop_cmd},
+            {"stop_attack", &Controller::ship_stop_attack_cmd}
     };
     static GenericCmdMap_t generic_cmd_map = {
-            {"default", view_default_cmd},
-            {"size", view_size_cmd},
-            {"zoom", view_zoom_cmd},
-            {"pan", view_pan_cmd},
-            {"show", view_show_cmd},
+            {"default", &Controller::view_default_cmd},
+            {"size", &Controller::view_size_cmd},
+            {"zoom", &Controller::view_zoom_cmd},
+            {"pan", &Controller::view_pan_cmd},
+            {"show", &Controller::view_show_cmd},
 
-            {"status", model_status_cmd},
-            {"go", model_go_cmd},
-            {"create", model_create_cmd}
+            {"status", &Controller::model_status_cmd},
+            {"go", &Controller::model_go_cmd},
+            {"create", &Controller::model_create_cmd}
     };
 
-    // TODO create and attach view
+    view_ptr = new View();
 
     while (true) {
         string first_word;
         cin >> first_word;
         if (first_word == "quit") {
-            // TODO detach view
+            if (view_ptr)
+                delete view_ptr;
             cout << "Done" << endl;
             return;
         } else if (g_Model_ptr->is_ship_present(first_word)) {
@@ -66,9 +67,9 @@ void Controller::run() {
             if (itt == ship_cmd_map.end())
                 throw Error("Unrecognized command!");
             Ship *ship_ptr = g_Model_ptr->get_ship_ptr(first_word);
-            itt->second(ship_ptr);
+            (this->*itt->second)(ship_ptr); // TODO reformat?
         } else {
-            // OTHER COMMANDS
+            // TODO OTHER COMMANDS
 
         }
     }

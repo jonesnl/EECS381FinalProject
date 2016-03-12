@@ -36,6 +36,7 @@ You should delete this comment.
 #include "Geometry.h"
 
 #include <string>
+#include <map>
 
 class View {
 public:
@@ -71,6 +72,8 @@ private:
 	int size;			// current size of the display
 	double scale;		// distance per cell of the display
 	Point origin;		// coordinates of the lower-left-hand corner
+
+    std::map<std::string, Point> location_map;
 
 	// specified helper function				
 	bool get_subscripts(int &ix, int &iy, Point location) const;
