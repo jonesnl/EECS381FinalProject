@@ -50,27 +50,39 @@ void Controller::run() {
     };
 
     view_ptr = new View();
+    g_Model_ptr->attach(view_ptr);
 
     while (true) {
-        string first_word;
-        cin >> first_word;
-        if (first_word == "quit") {
-            if (view_ptr)
-                delete view_ptr;
-            cout << "Done" << endl;
+        try {
+            cout << "\nTime " << g_Model_ptr->get_time() << ": Enter command: ";
+            string first_word;
+            cin >> first_word;
+            if (first_word == "quit") {
+                quit_helper();
+                return;
+            } else if (g_Model_ptr->is_ship_present(first_word)) {
+                string &ship_name = first_word;
+                string ship_cmd;
+                cin >> ship_cmd;
+                auto itt = ship_cmd_map.find(ship_cmd);
+                if (itt == ship_cmd_map.end())
+                    throw Error("Unrecognized command!");
+                Ship *ship_ptr = g_Model_ptr->get_ship_ptr(ship_name);
+                (this->*itt->second)(ship_ptr); // TODO reformat?
+            } else {
+                auto itt = generic_cmd_map.find(first_word);
+                if (itt == generic_cmd_map.end())
+                    throw Error("Unrecognized command!");
+                (this->*itt->second)();
+            }
+        } catch (Error& e) {
+            cout << e.what() << endl;
+            while (cin.peek() != '\n')
+                cin.get();
+        } catch (exception& e) {
+            cout << e.what() << endl;
+            quit_helper();
             return;
-        } else if (g_Model_ptr->is_ship_present(first_word)) {
-            string& ship_name = first_word;
-            string ship_cmd;
-            cin >> ship_cmd;
-            auto itt = ship_cmd_map.find(ship_cmd);
-            if (itt == ship_cmd_map.end())
-                throw Error("Unrecognized command!");
-            Ship *ship_ptr = g_Model_ptr->get_ship_ptr(first_word);
-            (this->*itt->second)(ship_ptr); // TODO reformat?
-        } else {
-            // TODO OTHER COMMANDS
-
         }
     }
 }
@@ -208,4 +220,10 @@ void Controller::ship_stop_cmd(Ship* ship) {
 
 void Controller::ship_stop_attack_cmd(Ship* ship) {
     ship->stop_attack();
+}
+
+void Controller::quit_helper() {
+    g_Model_ptr->detach(view_ptr);
+    delete view_ptr;
+    cout << "Done" << endl;
 }

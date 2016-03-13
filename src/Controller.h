@@ -18,19 +18,19 @@ class Ship;
 
 class Controller {
 public:
-	// output constructor message
-	Controller();
+    // output constructor message
+    Controller();
 
-	// output destructor message
-	~Controller();
+    // output destructor message
+    ~Controller();
 
-	// create View object, run the program by acccepting user commands, then destroy View object
-	void run();
+    // create View object, run the program by acccepting user commands, then destroy View object
+    void run();
 
 private:
-	// Controller keeps its own pointer to the View because it has to manage the View.
-	// Future versions will need to manage more than one view.
-	View *view_ptr;
+    // Controller keeps its own pointer to the View because it has to manage the View.
+    // Future versions will need to manage more than one view.
+    View *view_ptr;
 
     void view_default_cmd();
     void view_size_cmd();
@@ -42,16 +42,18 @@ private:
     void model_go_cmd();
     void model_create_cmd();
 
-    void ship_course_cmd(Ship* ship);
-    void ship_position_cmd(Ship* ship);
-    void ship_dest_cmd(Ship* ship);
-    void ship_load_cmd(Ship* ship);
-    void ship_unload_cmd(Ship* ship);
-    void ship_dock_cmd(Ship* ship);
-    void ship_attack_cmd(Ship* ship);
-    void ship_refuel_cmd(Ship* ship);
-    void ship_stop_cmd(Ship* ship);
-    void ship_stop_attack_cmd(Ship* ship);
+    void ship_course_cmd(Ship *ship);
+    void ship_position_cmd(Ship *ship);
+    void ship_dest_cmd(Ship *ship);
+    void ship_load_cmd(Ship *ship);
+    void ship_unload_cmd(Ship *ship);
+    void ship_dock_cmd(Ship *ship);
+    void ship_attack_cmd(Ship *ship);
+    void ship_refuel_cmd(Ship *ship);
+    void ship_stop_cmd(Ship *ship);
+    void ship_stop_attack_cmd(Ship *ship);
+
+    void quit_helper();
 };
 
 #endif

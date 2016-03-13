@@ -4,6 +4,7 @@
 #include "Geometry.h"
 #include <string>
 #include <map>
+#include <set>
 
 /*
 Model is part of a simplified Model-View-Controller pattern.
@@ -28,73 +29,82 @@ You should delete this comment.
 
 // Declare the global model pointer
 class Model;
-extern Model* g_Model_ptr;
-
 class Ship;
 class View;
 class Island;
 class Sim_object;
 
+extern Model *g_Model_ptr;
+
 class Model {
 public:
-	// create the initial objects, output constructor message
-	Model();
-	
-	// destroy all objects, output destructor message
-	~Model();
+    // create the initial objects, output constructor message
+    Model();
 
-	// return the current time
-	int get_time() {return time;}
+    // destroy all objects, output destructor message
+    ~Model();
 
-	// is name already in use for either ship or island?
+    // return the current time
+    int get_time() { return time; }
+
+    // is name already in use for either ship or island?
     // either the identical name, or identical in first two characters counts as in-use
-	bool is_name_in_use(const std::string& name) const;
+    bool is_name_in_use(const std::string &name) const;
 
-	// is there such an island?
-	bool is_island_present(const std::string& name) const;
-	// will throw Error("Island not found!") if no island of that name
-	Island* get_island_ptr(const std::string& name) const;
+    // is there such an island?
+    bool is_island_present(const std::string &name) const;
 
-	// is there such a ship?
-	bool is_ship_present(const std::string& name) const;
-	// add a new ship to the list, and update the view
-	void add_ship(Ship *ship);
-	// will throw Error("Ship not found!") if no ship of that name
-	Ship* get_ship_ptr(const std::string& name) const;
-	
-	// tell all objects to describe themselves
-	void describe() const;
-	// increment the time, and tell all objects to update themselves
-	void update();	
-	
+    // will throw Error("Island not found!") if no island of that name
+    Island *get_island_ptr(const std::string &name) const;
+
+    // is there such a ship?
+    bool is_ship_present(const std::string &name) const;
+
+    // add a new ship to the list, and update the view
+    void add_ship(Ship *ship);
+
+    // will throw Error("Ship not found!") if no ship of that name
+    Ship *get_ship_ptr(const std::string &name) const;
+
+    // tell all objects to describe themselves
+    void describe() const;
+
+    // increment the time, and tell all objects to update themselves
+    void update();
+
     /* Note: In Project 4 there is only one View. There will be multiple View objects
     later. So implement the View services so that multiple Views are possible by
     using a container of View pointers.  You should delete this comment. */
-    
-	/* View services */
-	// Attaching a View adds it to the container and causes it to be updated
-    // with all current objects'location (or other state information.
-	void attach(View *view);
-	// Detach the View by discarding the supplied pointer from the container of Views
-    // - no updates sent to it thereafter.
-	void detach(View *view);
-	
-    // notify the views about an object's location
-	void notify_location(const std::string& name, Point location);
-	// notify the views that an object is now gone
-	void notify_gone(const std::string& name);
 
-	// disallow copy/move construction or assignment
+    /* View services */
+    // Attaching a View adds it to the container and causes it to be updated
+    // with all current objects'location (or other state information.
+    void attach(View *view);
+
+    // Detach the View by discarding the supplied pointer from the container of Views
+    // - no updates sent to it thereafter.
+    void detach(View *view);
+
+    // notify the views about an object's location
+    void notify_location(const std::string &name, Point location);
+
+    // notify the views that an object is now gone
+    void notify_gone(const std::string &name);
+
+    // disallow copy/move construction or assignment
 
 private:
-	int time = 0;		// the simulated time
-    using ObjectMap_t = std::map<std::string, Sim_object*>;
-    using ShipMap_t = std::map<std::string, Ship*>;
-    using IslandMap_t = std::map<std::string, Island*>;
+    int time = 0;        // the simulated time
+    using ObjectMap_t = std::map<std::string, Sim_object *>;
+    using ShipMap_t = std::map<std::string, Ship *>;
+    using IslandMap_t = std::map<std::string, Island *>;
+    using ViewSet_t = std::set<View *>;
     ObjectMap_t object_map;
     ShipMap_t ship_map;
     IslandMap_t island_map;
+    ViewSet_t view_set;
 
     void add_island(Island *island);
 };
+
 #endif

@@ -82,7 +82,7 @@ void Ship::update() {
     } else if (is_moving()) {
         calculate_movement();
         cout << get_name() << " now at " << get_location() << endl;
-        // TODO g_Model_ptr->notify_location(get_name(), get_location());
+        g_Model_ptr->notify_location(get_name(), get_location());
     } else if (ship_state == State::stopped) {
         cout << get_name() << " stopped at " << get_location() << endl;
     } else if (is_docked()) {
@@ -120,7 +120,7 @@ void Ship::describe() const {
 }
 
 void Ship::broadcast_current_state() const {
-    // TODO g_Model_ptr->notify_location(get_name(), get_location());
+    g_Model_ptr->notify_location(get_name(), get_location());
 }
 
 void Ship::set_destination_position_and_speed(Point destination_position,
@@ -132,7 +132,8 @@ void Ship::set_destination_position_and_speed(Point destination_position,
     reset_destinations_and_dock();
     Compass_vector vect {get_location(), destination_position};
     set_course_speed({vect.direction, speed});
-    ship_state = State::moving_to_position;
+    ship_state = State::moving_to_position;\
+    destination_point = destination_position;
     cout << get_name() << " will sail on " << get_course_speed() <<
             " to " << destination_position << endl;
 }
@@ -148,6 +149,8 @@ void Ship::set_destination_island_and_speed(Island *destination_island,
     Compass_vector vect {get_location(), destination_island->get_location()};
     set_course_speed({vect.direction, speed});
     ship_state = State::moving_to_island;
+    destination_Island = destination_island;
+    destination_point = destination_Island->get_location();
     cout << get_name() << " will sail on " << get_course_speed() <<
             " to " << destination_island->get_name() << endl;
 }
@@ -178,7 +181,7 @@ void Ship::dock(Island *island_ptr) {
         throw Error("Can't dock!");
     set_position(island_ptr->get_location());
     docked_Island = island_ptr;
-    // TODO g_Model_ptr->notify_location(get_name(), get_location());
+    g_Model_ptr->notify_location(get_name(), get_location());
     cout << "Docked at " << island_ptr->get_name() << endl;
 }
 

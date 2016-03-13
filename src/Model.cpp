@@ -4,6 +4,7 @@
 #include "Island.h"
 #include "Ship_factory.h"
 #include "Utility.h"
+#include "View.h"
 
 #include <iostream>
 #include <algorithm>
@@ -21,7 +22,7 @@ Model::Model() {
 
     add_ship(create_ship("Ajax", "Cruiser", Point(15, 15)));
     add_ship(create_ship("Xerxes", "Cruiser", Point(25, 25)));
-    add_ship(create_ship("Valdez", "Tanker", Point(30, 30)));
+    // TODO add_ship(create_ship("Valdez", "Tanker", Point(30, 30)));
 
     cout << "Model constructed" << endl;
 }
@@ -62,8 +63,9 @@ bool Model::is_ship_present(const std::string& name) const {
 }
 
 void Model::add_ship(Ship *ship) {
-    // TODO view stuff
     ship_map.insert({ship->get_name(), ship});
+    object_map.insert({ship->get_name(), ship});
+    notify_location(ship->get_name(), ship->get_location());
 }
 
 Ship *Model::get_ship_ptr(const std::string& name) const {
@@ -83,27 +85,33 @@ void Model::update() {
     for_each(object_map.begin(), object_map.end(),
             bind(&Sim_object::update,
                     bind(&ObjectMap_t::value_type::second, _1)));
+    time += 1;
 }
 
 void Model::attach(View *view) {
-    // TODO
+    view_set.insert(view);
 }
 
 void Model::detach(View *view) {
-    // TODO
+    view_set.erase(view);
 }
 
 void Model::notify_location(const std::string& name, Point location) {
-    // TODO
+    for_each(view_set.begin(), view_set.end(),
+            bind(&View::update_location, _1, name, location));
 }
 
 void Model::notify_gone(const std::string& name) {
-    // TODO
+    for_each(view_set.begin(), view_set.end(),
+            bind(&View::update_remove, _1, name));
+    for (View *v : view_set) {
+        v->update_remove(name);
+    }
 }
 
 /* Private member functions */
 
 void Model::add_island(Island *island) {
-
     island_map.insert({island->get_name(), island});
+    object_map.insert({island->get_name(), island});
 }
