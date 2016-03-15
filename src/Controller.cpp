@@ -159,9 +159,9 @@ void Controller::model_create_cmd() {
     string ship_name, ship_type;
     cin >> ship_name;
     if (ship_name.length() < 2) // TODO magic number
-        Error("Name is too short!");
+        throw Error("Name is too short!");
     if (g_Model_ptr->is_name_in_use(ship_name))
-        Error("Name is invalid!");
+        throw Error("Name is invalid!");
     cin >> ship_type;
     Point point = get_point_from_cin();
 
