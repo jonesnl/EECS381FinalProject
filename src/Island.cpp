@@ -19,7 +19,8 @@ Island::~Island() {
 
 void Island::update() {
     // Production rate is assumed to be on a per hour basis
-    accept_fuel(production_rate);
+    if (production_rate > 0.)
+        accept_fuel(production_rate);
 }
 
 void Island::describe() const {
@@ -28,7 +29,7 @@ void Island::describe() const {
 }
 
 void Island::broadcast_current_state() const {
-    //g_Model_ptr->notify_location(get_name(), position);
+    g_Model_ptr->notify_location(get_name(), position);
 }
 
 double Island::provide_fuel(double request) {

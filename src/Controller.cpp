@@ -77,6 +77,7 @@ void Controller::run() {
             }
         } catch (Error& e) {
             cout << e.what() << endl;
+            cin.clear();
             while (cin.peek() != '\n')
                 cin.get();
         } catch (exception& e) {

@@ -39,16 +39,22 @@ void Tanker::set_course_and_speed(double course, double speed) {
 
 void Tanker::set_load_destination(Island *island) {
     no_cargo_dest_or_error();
+    if (island == unloading_island)
+        throw Error("Load and unload cargo destinations are the same!");
+
     loading_island = island;
-    cout << get_name() << " will load at " << island->get_name();
+    cout << get_name() << " will load at " << island->get_name() << endl;
     start_tanker_cycle_if_possible();
 
 }
 
 void Tanker::set_unload_destination(Island *island) {
     no_cargo_dest_or_error();
+    if (island == loading_island)
+        throw Error("Load and unload cargo destinations are the same!");
+
     unloading_island = island;
-    cout << get_name() << " will unload at " << island->get_name();
+    cout << get_name() << " will unload at " << island->get_name() << endl;
     start_tanker_cycle_if_possible();
 }
 
@@ -89,7 +95,7 @@ void Tanker::update() {
             tanker_state = TankerState_t::moving_to_unloading;
         } else {
             cargo += loading_island->provide_fuel(fuel_needed_to_fill_cargo);
-            cout << " now has " << cargo << " of cargo" << endl;
+            cout << get_name() << " now has " << cargo << " of cargo" << endl;
         }
         break;
     case TankerState_t::unloading:
@@ -120,13 +126,10 @@ void Tanker::describe() const {
 
 void Tanker::no_cargo_dest_or_error() {
     if (tanker_state != TankerState_t::no_cargo_dest)
-        Error("Tanker has cargo destinations!");
+        throw Error("Tanker has cargo destinations!");
 }
 
 void Tanker::start_tanker_cycle_if_possible() {
-    assert(loading_island);
-    assert(unloading_island);
-
     if (!(loading_island && unloading_island))
         return;
 
@@ -165,7 +168,9 @@ void Tanker::start_tanker_cycle_if_possible() {
 }
 
 void Tanker::stop_cargo_loop() {
-    loading_island = unloading_island = nullptr;
-    tanker_state = TankerState_t::no_cargo_dest;
-    cout << " now has no cargo destinations" << endl;
+    if (tanker_state != TankerState_t::no_cargo_dest) {
+        loading_island = unloading_island = nullptr;
+        tanker_state = TankerState_t::no_cargo_dest;
+        cout << get_name() << " now has no cargo destinations" << endl;
+    }
 }

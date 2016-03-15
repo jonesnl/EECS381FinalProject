@@ -41,17 +41,26 @@ void View::draw() const {
         Point location = p.second;
 
         if (get_subscripts(x, y, location)) {
-            array[x][y] = name.substr(0, 2); // TODO magic number
+            if (array[x][y] != empty_cell_c)
+                array[x][y] = "* ";
+            else
+                array[x][y] = name.substr(0, 2); // TODO magic number
         }
     }
 
     // TODO formatting stuff
-    for (auto& int_vect : array) {
-        for (auto& str : int_vect) {
-            cout << str;
+    for (int j = size - 1; j >= 0; --j) {
+        if (j % 3 == 0) {
+            cout << "    "; // TODO axis
+        } else {
+            cout << "    ";
+        }
+        for (int i = 0; i < size; ++i) {
+            cout << array[i][j];
         }
         cout << endl;
     }
+    // TODO axis
 
     // Restore formatting settings
     cout.flags(old_settings);

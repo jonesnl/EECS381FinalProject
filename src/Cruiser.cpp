@@ -19,7 +19,7 @@ void Cruiser::update() {
     Ship::update();
     if (!attacking)
         return;
-    if (!is_afloat()) {
+    if (!is_afloat() || !target->is_afloat()) {
         stop_attack();
         return;
     }
@@ -36,11 +36,16 @@ void Cruiser::update() {
 }
 
 void Cruiser::describe() const {
+    cout << "\nCruiser ";
     Ship::describe();
+    if (attacking)
+        cout << "Attacking " << target->get_name() << endl;
 }
 
 void Cruiser::receive_hit(int hit_force, Ship *attacker_ptr) {
     Ship::receive_hit(hit_force, attacker_ptr);
+    if (!attacking)
+        attack(attacker_ptr);
 }
 
 void Cruiser::attack(Ship *target_ptr_) {
@@ -61,4 +66,5 @@ void Cruiser::stop_attack() {
         throw Error("Was not attacking!");
     attacking = false;
     target = nullptr;
+    cout << get_name() << " stopping attack" << endl;
 }

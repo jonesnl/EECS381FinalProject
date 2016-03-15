@@ -86,7 +86,8 @@ void Ship::update() {
     } else if (ship_state == State::stopped) {
         cout << get_name() << " stopped at " << get_location() << endl;
     } else if (is_docked()) {
-        cout << get_name() << " docked at " << get_location() << endl;
+        cout << get_name() << " docked at " <<
+                get_docked_Island()->get_name() << endl;
     } else if (ship_state == State::dead_in_the_water) {
         cout << get_name() << " dead in the water at " << get_location() << endl;
     }
@@ -181,8 +182,9 @@ void Ship::dock(Island *island_ptr) {
         throw Error("Can't dock!");
     set_position(island_ptr->get_location());
     docked_Island = island_ptr;
+    ship_state = State::docked;
     g_Model_ptr->notify_location(get_name(), get_location());
-    cout << "Docked at " << island_ptr->get_name() << endl;
+    cout << get_name() << " docked at " << island_ptr->get_name() << endl;
 }
 
 void Ship::refuel() {

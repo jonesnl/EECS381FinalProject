@@ -85,11 +85,25 @@ void Model::update() {
     for_each(object_map.begin(), object_map.end(),
             bind(&Sim_object::update,
                     bind(&ObjectMap_t::value_type::second, _1)));
+
+    for (auto itt = ship_map.begin(); itt != ship_map.end(); ) {
+        if (itt->second->is_on_the_bottom()) {
+            Ship *ptr = itt->second;
+            itt = ship_map.erase(itt);
+            object_map.erase(ptr->get_name());
+            delete ptr;
+        } else {
+            ++itt;
+        }
+    }
     time += 1;
 }
 
 void Model::attach(View *view) {
     view_set.insert(view);
+    for_each(object_map.begin(), object_map.end(),
+            bind(&Sim_object::broadcast_current_state,
+                    bind(&ObjectMap_t::value_type::second, _1)));
 }
 
 void Model::detach(View *view) {
