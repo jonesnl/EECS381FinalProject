@@ -1,10 +1,13 @@
 #include "View.h"
+#include "Geometry.h"
 #include "Utility.h"
 
 #include <cmath>
 #include <string>
 #include <vector>
 #include <iostream>
+#include <iomanip>
+#include <list>
 
 using namespace std;
 
@@ -32,9 +35,11 @@ void View::draw() const {
     // Save formatting settings
     auto old_settings = cout.flags();
     auto original_precision = cout.precision();
+    cout << "Display size: " << size << ", scale: " <<
+    scale << ", origin: " << origin << endl;
 
     vector<vector<string>> array(30, vector<string>(30, empty_cell_c));
-
+    list<string> objects_outside_map;
     int x, y;
     for (auto& p : location_map) {
         const string& name = p.first;
@@ -45,38 +50,54 @@ void View::draw() const {
                 array[x][y] = "* ";
             else
                 array[x][y] = name.substr(0, 2); // TODO magic number
+        } else
+            objects_outside_map.push_back(name);
+    }
+
+    if (objects_outside_map.size() > 0) {
+        for (auto& s : objects_outside_map) {
+            if (s != objects_outside_map.back())
+                cout << s << ", ";
+            else
+                cout << s << " outside the map" << endl;
         }
     }
 
-    // TODO formatting stuff
+    cout.precision(0);
     for (int j = size - 1; j >= 0; --j) {
         if (j % 3 == 0) {
-            cout << "    "; // TODO axis
+            double y_val = origin.y + (j * scale);
+            cout << setw(4) << y_val << " "; // TODO axis
         } else {
-            cout << "    ";
+            cout << "     ";
         }
         for (int i = 0; i < size; ++i) {
             cout << array[i][j];
         }
         cout << endl;
     }
-    // TODO axis
+    for (int i = 0; i < size; i += 3) {
+        cout << setw(6) << origin.x + (i * scale);
+    }
+    cout << endl;
 
     // Restore formatting settings
     cout.flags(old_settings);
     cout.precision(original_precision);
 }
 
-void View::set_size(int size) {
-    if (size <= 6)
+void View::set_size(int size_) {
+    if (size_ <= 6)
         throw Error("New map size is too small!");
-    else if (size > 30)
+    else if (size_ > 30)
         throw Error("New map size is too big!");
+    size = size_;
 }
 
 void View::set_scale(double scale_) {
     if (scale_ <= 0.)
         throw Error("New map scale must be positive!");
+    scale = scale_;
 }
 
 void View::set_origin(Point origin_) {

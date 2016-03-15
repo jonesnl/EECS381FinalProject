@@ -73,6 +73,7 @@ void Ship::update() {
         cout << get_name() << " sinking" << endl;
     } else if (ship_state == State::sinking) {
         ship_state = State::sunk;
+        g_Model_ptr->notify_gone(get_name());
         cout << get_name() << " sunk" << endl;
     } else if (ship_state == State::sunk) {
         ship_state = State::on_the_bottom;
