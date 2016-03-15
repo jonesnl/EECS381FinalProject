@@ -30,7 +30,7 @@ set(SHARED_SOURCE_FILES
         Ship_factory.cpp
         Controller.cpp
         View.cpp
-        Tanker.cpp)
+        Tanker.cpp Utility.cpp)
 
 macro(add_gtest _name)
     add_executable(${ARGV})
