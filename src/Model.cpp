@@ -22,7 +22,7 @@ Model::Model() {
 
     add_ship(create_ship("Ajax", "Cruiser", Point(15, 15)));
     add_ship(create_ship("Xerxes", "Cruiser", Point(25, 25)));
-    // TODO add_ship(create_ship("Valdez", "Tanker", Point(30, 30)));
+    add_ship(create_ship("Valdez", "Tanker", Point(30, 30)));
 
     cout << "Model constructed" << endl;
 }
