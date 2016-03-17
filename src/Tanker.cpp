@@ -45,7 +45,6 @@ void Tanker::set_load_destination(Island *island) {
 
     cout << get_name() << " will load at " << island->get_name() << endl;
     start_tanker_cycle_if_possible();
-
 }
 
 void Tanker::set_unload_destination(Island *island) {
@@ -168,9 +167,7 @@ void Tanker::start_tanker_cycle_if_possible() {
 }
 
 void Tanker::stop_cargo_loop() {
-    if (tanker_state != TankerState_t::no_cargo_dest) {
-        loading_island = unloading_island = nullptr;
-        tanker_state = TankerState_t::no_cargo_dest;
-        cout << get_name() << " now has no cargo destinations" << endl;
-    }
+    loading_island = unloading_island = nullptr;
+    tanker_state = TankerState_t::no_cargo_dest;
+    cout << get_name() << " now has no cargo destinations" << endl;
 }
