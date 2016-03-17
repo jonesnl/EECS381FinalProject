@@ -12,5 +12,6 @@ private:
 };
 
 /* add any of your own declarations here */
+extern const double double_full_gap_c;
 
 #endif

@@ -57,5 +57,11 @@ add_gtest(Ship_test
         test/Ship_test.cpp
         test/test_utility.cpp)
 
+add_gtest(Cruiser_test
+        ${SHARED_SOURCE_FILES}
+        test/Cruiser_test.cpp
+        test/test_utility.cpp
+        )
+
 add_subdirectory(googletest)
 

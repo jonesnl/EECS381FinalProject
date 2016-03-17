@@ -8,11 +8,6 @@ with the user.
 #include <map>
 #include <string>
 
-/* 
-*** This skeleton file shows the required public and protected interface for the class, which you may not modify. 
-If any protected or private members are shown here, then your class must also have them and use them as intended.
-You should delete this comment.
-*/
 class View;
 class Ship;
 

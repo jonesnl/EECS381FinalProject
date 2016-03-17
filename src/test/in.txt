@@ -1,0 +1,18 @@
+status
+Valdez load_at Exxon
+Valdez unload_at Bermuda
+status
+go
+status
+Ajax attack Valdez
+go
+Ajax stop_attack
+Valdez load_at Exxon
+Valdez unload_at Bermuda
+status
+Valdez stop
+status
+go
+status
+Valdez stop
+quit

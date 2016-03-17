@@ -36,8 +36,6 @@ Model::~Model() {
 }
 
 bool Model::is_name_in_use(const std::string& name) const {
-    if (name.length() < 2)
-        return true;
     string abrv_name = name.substr(0, 2);
     auto itt = object_map.lower_bound(abrv_name);
     if (itt != object_map.end() &&
@@ -118,9 +116,6 @@ void Model::notify_location(const std::string& name, Point location) {
 void Model::notify_gone(const std::string& name) {
     for_each(view_set.begin(), view_set.end(),
             bind(&View::update_remove, _1, name));
-    for (View *v : view_set) {
-        v->update_remove(name);
-    }
 }
 
 /* Private member functions */

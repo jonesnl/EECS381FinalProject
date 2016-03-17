@@ -12,13 +12,6 @@ fuel capacity and initial amount: 1000, maximum speed 20., fuel consumption 10.t
 resistance 6, firepower 3, maximum attacking range 15
 */
 
-/* 
-This skeleton file shows the required public and protected interface for the class, which you may not modify. 
-If no protected members are shown, there must be none in your version. 
-If any protected or private members are shown here, then your class must also have them and use them as intended.
-You should delete this comment.
-*/
-
 #include "Ship.h"
 
 class Cruiser : public Ship {
@@ -44,7 +37,6 @@ public:
 private:
     int firepower = 3;
     double attack_range = 15.;
-    bool attacking = false;
     Ship *target = nullptr;
 };
 

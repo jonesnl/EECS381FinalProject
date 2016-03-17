@@ -67,7 +67,7 @@ void View::draw() const {
     for (int j = size - 1; j >= 0; --j) {
         if (j % 3 == 0) {
             double y_val = origin.y + (j * scale);
-            cout << setw(4) << y_val << " "; // TODO axis
+            cout << setw(4) << y_val << " ";
         } else {
             cout << "     ";
         }

@@ -60,7 +60,7 @@ void Tanker::set_unload_destination(Island *island) {
 
 void Tanker::stop() {
     Ship::stop();
-    stop_cargo_loop();
+    stop_cargo_loop(); // TODO order? Might be better to go above stop()
 }
 
 void Tanker::update() {
@@ -69,26 +69,26 @@ void Tanker::update() {
         stop_cargo_loop();
         return;
     }
-    double fuel_needed_to_fill_cargo; // TODO
+    double fuel_needed_to_fill_cargo; // TODO refactor?
     switch (tanker_state) {
     case TankerState_t::no_cargo_dest:
         break;
     case TankerState_t::moving_to_loading:
-        if (!is_moving() && can_dock(loading_island)) {
+        if (can_dock(loading_island)) {
             dock(loading_island);
             tanker_state = TankerState_t::loading;
         }
         break;
     case TankerState_t::moving_to_unloading:
-        if (!is_moving() && can_dock(unloading_island)) {
+        if (can_dock(unloading_island)) {
             dock(unloading_island);
             tanker_state = TankerState_t::unloading;
         }
         break;
     case TankerState_t::loading:
-        Ship::refuel();
+        refuel();
         fuel_needed_to_fill_cargo = cargo_capacity - cargo;
-        if (fuel_needed_to_fill_cargo < 0.005) { // TODO magic number
+        if (fuel_needed_to_fill_cargo < double_full_gap_c) {
             cargo = cargo_capacity;
             Ship::set_destination_island_and_speed(unloading_island,
                     get_maximum_speed());
@@ -149,7 +149,7 @@ void Tanker::start_tanker_cycle_if_possible() {
             tanker_state = TankerState_t::loading;
             return;
         }
-        if (cargo != 0. && can_dock(unloading_island)) {
+        if (cargo > 0. && can_dock(unloading_island)) {
             dock(unloading_island);
             tanker_state = TankerState_t::unloading;
             return;

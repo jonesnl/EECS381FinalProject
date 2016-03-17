@@ -134,7 +134,7 @@ void Ship::set_destination_position_and_speed(Point destination_position,
     reset_destinations_and_dock();
     Compass_vector vect {get_location(), destination_position};
     set_course_speed({vect.direction, speed});
-    ship_state = State::moving_to_position;\
+    ship_state = State::moving_to_position;
     destination_point = destination_position;
     cout << get_name() << " will sail on " << get_course_speed() <<
             " to " << destination_position << endl;
@@ -192,7 +192,7 @@ void Ship::refuel() {
     if (!is_docked())
         throw Error("Must be docked!");
     double needed_fuel = fuel_capacity - fuel;
-    if (needed_fuel < 0.005) {
+    if (needed_fuel < double_full_gap_c) {
         fuel = fuel_capacity;
         return;
     }
@@ -287,7 +287,6 @@ void Ship::calculate_movement()
 		}
 }
 
-// TODO remove
 void Ship::reset_destinations_and_dock() {
     destination_point = {0., 0.};
     docked_Island = nullptr;

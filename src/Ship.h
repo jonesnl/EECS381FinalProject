@@ -25,15 +25,6 @@ functions are implemented in this class to throw an Error exception.
 
 class Island;
 
-/* 
-This skeleton file shows the required public and protected interface for the class, which you may not modify. 
-If no protected members are shown, there must be none in your version. 
-If any protected or private members are shown here, then your class must also have them and use them as intended.
-You may define simple reader functions in the class declaration if you wish 
-by changing the prototype to the definition. Your .h file for a component will always
-be kept together with your .cpp file for the component.
-You should delete this comment.
-*/
 class Ship : public Sim_object, public Track_base {
 
 public:
