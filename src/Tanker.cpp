@@ -39,10 +39,10 @@ void Tanker::set_course_and_speed(double course, double speed) {
 
 void Tanker::set_load_destination(Island *island) {
     no_cargo_dest_or_error();
+    loading_island = island;
     if (island == unloading_island)
         throw Error("Load and unload cargo destinations are the same!");
 
-    loading_island = island;
     cout << get_name() << " will load at " << island->get_name() << endl;
     start_tanker_cycle_if_possible();
 
@@ -50,10 +50,10 @@ void Tanker::set_load_destination(Island *island) {
 
 void Tanker::set_unload_destination(Island *island) {
     no_cargo_dest_or_error();
+    unloading_island = island;
     if (island == loading_island)
         throw Error("Load and unload cargo destinations are the same!");
 
-    unloading_island = island;
     cout << get_name() << " will unload at " << island->get_name() << endl;
     start_tanker_cycle_if_possible();
 }

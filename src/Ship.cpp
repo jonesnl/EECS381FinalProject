@@ -287,6 +287,7 @@ void Ship::calculate_movement()
 		}
 }
 
+// TODO remove
 void Ship::reset_destinations_and_dock() {
     destination_point = {0., 0.};
     docked_Island = nullptr;

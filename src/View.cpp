@@ -77,7 +77,7 @@ void View::draw() const {
         cout << endl;
     }
     for (int i = 0; i < size; i += 3) {
-        cout << setw(6) << origin.x + (i * scale);
+        cout << "  " << setw(4) << origin.x + (i * scale);
     }
     cout << endl;
 
