@@ -35,9 +35,10 @@ public:
 
     void stop_attack() override;
 private:
-    int firepower = 3;
-    double attack_range = 15.;
-    Ship *target = nullptr;
+    int firepower = 3; // Firepower of the curiser
+    double attack_range = 15.; // Attack range of the cruiser
+    Ship *target = nullptr;    // Target to attack (also controls whether we're
+                               // attacking or not
 };
 
 #endif

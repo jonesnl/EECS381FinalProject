@@ -10,8 +10,8 @@
 #include <algorithm>
 #include <memory>
 
-using namespace std;
-using namespace placeholders;
+using std::cout; using std::endl; using std::string;
+using namespace std::placeholders;
 
 Model* g_Model_ptr;
 

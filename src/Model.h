@@ -20,20 +20,13 @@ when asked to do so by an object, tells all the Views whenever anything changes 
 Model also provides facilities for looking up objects given their name.
 */
 
-/* 
-This skeleton file shows the required public and protected interface for the class, which you may not modify. 
-If no protected members are shown, there must be none in your version. 
-If any protected or private members are shown here, then your class must also have them and use them as intended.
-You should delete this comment.
-*/
-
-// Declare the global model pointer
 class Model;
 class Ship;
 class View;
 class Island;
 class Sim_object;
 
+// Declare the global model pointer
 extern Model *g_Model_ptr;
 
 class Model {
@@ -99,12 +92,13 @@ private:
     using ShipMap_t = std::map<std::string, Ship *>;
     using IslandMap_t = std::map<std::string, Island *>;
     using ViewSet_t = std::set<View *>;
-    ObjectMap_t object_map;
-    ShipMap_t ship_map;
-    IslandMap_t island_map;
-    ViewSet_t view_set;
+    ObjectMap_t object_map; // List of all objects
+    ShipMap_t ship_map; // List of ships
+    IslandMap_t island_map; // List of islands
+    ViewSet_t view_set; // List of views
 
-    void add_island(Island *island);
+    void add_island(Island *island); // Helper function for adding islands to
+                                     // required objects
 };
 
 #endif

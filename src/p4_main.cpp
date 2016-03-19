@@ -8,7 +8,7 @@ Main module. Your project must use this file as-is
 
 #include <iostream>
 
-using namespace std;
+using std::cout; using std::ios;
 
 // The main function creates the Model and Controller objects, 
 // then tells the Controller to run. The Controller creates the first

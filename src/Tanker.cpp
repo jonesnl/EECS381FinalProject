@@ -7,7 +7,7 @@
 #include <map>
 #include <cassert>
 
-using namespace std;
+using std::cout; using std::string; using std::endl; using std::map;
 
 Tanker::Tanker(const string &name_, Point position_) :
         Ship(name_, position_, 100, 10, 2., 0),

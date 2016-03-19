@@ -4,7 +4,7 @@
 #include "Tanker.h"
 #include "Utility.h"
 
-using namespace std;
+using std::string;
 
 Ship * create_ship(const string& name,
         const string& type, Point initial_position) {

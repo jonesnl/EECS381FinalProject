@@ -11,7 +11,7 @@
 #include <string>
 #include <map>
 
-using namespace std;
+using std::cout; using std::endl; using std::cin; using std::string;
 
 Controller::Controller() {
     cout << "Controller constructed" << endl;
@@ -80,7 +80,7 @@ void Controller::run() {
             cin.clear();
             while (cin.peek() != '\n')
                 cin.get();
-        } catch (exception& e) {
+        } catch (std::exception& e) {
             cout << e.what() << endl;
             quit_helper();
             return;

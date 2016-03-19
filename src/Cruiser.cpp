@@ -4,9 +4,9 @@
 #include <iostream>
 #include <cassert>
 
-using namespace std;
+using std::string; using std::cout; using std::endl;
 
-Cruiser::Cruiser(const std::string &name_, Point position_) :
+Cruiser::Cruiser(const string &name_, Point position_) :
         Ship(name_, position_, 1000., 20., 10., 6) {
     cout << "Cruiser " << get_name() << " constructed" << endl;
 }

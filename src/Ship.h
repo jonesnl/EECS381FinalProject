@@ -17,11 +17,8 @@ The is a "fat interface" for the capabilities of derived types of Ships. These
 functions are implemented in this class to throw an Error exception.
 */
 
-#include "Geometry.h"
 #include "Track_base.h"
 #include "Sim_object.h"
-
-#include <string>
 
 class Island;
 
@@ -129,22 +126,22 @@ protected:
 
 private:
     double fuel;                        // Current amount of fuel
-    double fuel_capacity;
-    double fuel_consumption;            // tons/nm required
+    double fuel_capacity;               // Amount of fuel ship can hold
+    double fuel_consumption;            // tons/nm required per cycle
     Point destination_point = {0., 0.};  // Current destination position
-    Island *docked_Island = nullptr;
+    Island *docked_Island = nullptr;    // Island we're docked at
     Island *destination_Island = nullptr; // Current destination Island, if any
     enum class State {
         docked, stopped, moving_on_course, dead_in_the_water,
         moving_to_position, moving_to_island, sinking, sunk, on_the_bottom
-    } ship_state = State::stopped;
-    double maximum_speed;
-    int resistance;
+    } ship_state = State::stopped;      // State of the ship
+    double maximum_speed;               // Maximum speed the ship supports
+    int resistance;                     // Resistance to damage for the ship
 
 
     // Updates position, fuel, and movement_state, assuming 1 time unit (1 hr)
     void calculate_movement();
-    void reset_destinations_and_dock();
+    void reset_destinations_and_dock(); // Reset destinations and dock at locatoin
 };
 
 #endif

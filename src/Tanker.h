@@ -12,7 +12,6 @@ Initial values:
 fuel capacity and initial amount 100 tons, maximum speed 10., fuel consumption 2.tons/nm, 
 resistance 0, cargo capacity 1000 tons, initial cargo is 0 tons.
 */
-#include "Geometry.h"
 #include "Ship.h"
 
 class Island;

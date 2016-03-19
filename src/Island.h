@@ -9,13 +9,6 @@ accordingly.
 #include "Sim_object.h"
 #include "Geometry.h"
 
-/* 
-This skeleton file shows the required public and protected interface for the class, which you may not modify. 
-If no protected members are shown, there must be none in your version. 
-If any protected or private members are shown here, then your class must also have them and use them as intended.
-You should delete this comment.
-*/
-
 class Island : public Sim_object {
 public:
     // initialize then output constructor message
@@ -44,8 +37,8 @@ public:
     void accept_fuel(double amount);
 
 private:
-    Point position;                // Location of this island
-    double fuel;
-    double production_rate;
+    Point position;             // Location of this island
+    double fuel;                // Fuel stored at island
+    double production_rate;     // Fuel generated per cycle
 };
 #endif

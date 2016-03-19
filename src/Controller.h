@@ -27,6 +27,7 @@ private:
     // Future versions will need to manage more than one view.
     View *view_ptr;
 
+    // Helper commands called in run()
     void view_default_cmd();
     void view_size_cmd();
     void view_zoom_cmd();

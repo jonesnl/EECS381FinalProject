@@ -9,11 +9,11 @@
 #include <iomanip>
 #include <list>
 
-using namespace std;
+using std::vector; using std::cout; using std::string; using std::endl;
+using std::list; using std::setw;
 
 const string empty_cell_c = ". ";
 
-/* *** Use this function to calculate the subscripts for the cell. */
 View::View () {
     cout << "View constructed" << endl;
 	set_defaults();
