@@ -22,20 +22,16 @@ functions are implemented in this class to throw an Error exception.
 
 class Island;
 
-class Ship : public Sim_object, public Track_base {
+class Ship : public Sim_object {
 
 public:
-    // initialize, then output constructor message
-    Ship(const std::string &name_, Point position_, double fuel_capacity_,
-            double maximum_speed_, double fuel_consumption_, int resistance_);
-
     // made pure virtual to mark this class as abstract, but defined anyway
     // to output destructor message
-    virtual ~Ship() = 0;
+    virtual ~Ship();
 
     /*** Readers ***/
     // return the current position
-    Point get_location() const override { return Track_base::get_position(); }
+    Point get_location() const override { return track_base.get_position(); }
 
     // Return true if ship can move (it is not dead in the water or in the process or sinking);
     bool can_move() const;
@@ -114,7 +110,11 @@ public:
     virtual void receive_hit(int hit_force, Ship *attacker_ptr);
 
 protected:
-    // future projects may need additional protected member functions
+    // initialize, then output constructor message
+    // Protected to prevent initialization of plain ship objects
+    Ship(const std::string &name_, Point position_, double fuel_capacity_,
+            double maximum_speed_, double fuel_consumption_, int resistance_);
+
 
     double get_maximum_speed() const { return maximum_speed; }
 
@@ -137,6 +137,7 @@ private:
     } ship_state = State::stopped;      // State of the ship
     double maximum_speed;               // Maximum speed the ship supports
     int resistance;                     // Resistance to damage for the ship
+    Track_base track_base;              // Location tracking and navigation
 
 
     // Updates position, fuel, and movement_state, assuming 1 time unit (1 hr)

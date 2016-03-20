@@ -39,7 +39,7 @@ macro(add_gtest _name)
     endif()
 endmacro()
 
-add_executable(p4_main ${SHARED_SOURCE_FILES} ${HEADER_FILES} p4_main.cpp)
+add_executable(p4_main ${SHARED_SOURCE_FILES} ${HEADER_FILES} p5_main.cpp)
 
 add_gtest(Island_test
         Island.cpp
