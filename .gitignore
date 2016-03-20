@@ -107,3 +107,4 @@ Session.vim
 
 /build
 /deb_build
+/src/debug
