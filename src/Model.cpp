@@ -10,15 +10,15 @@
 #include <algorithm>
 #include <memory>
 
-using std::cout; using std::endl; using std::string;
+using namespace std;
 using namespace std::placeholders;
 
 Model* g_Model_ptr;
 
 Model::Model() {
-    add_island(new Island("Exxon", Point(10, 10), 1000, 200));
-    add_island(new Island("Shell", Point(0, 30), 1000, 200));
-    add_island(new Island("Bermuda", Point(20, 20)));
+    add_island(make_shared<Island>("Exxon", Point(10, 10), 1000, 200));
+    add_island(make_shared<Island>("Shell", Point(0, 30), 1000, 200));
+    add_island(make_shared<Island>("Bermuda", Point(20, 20)));
 
     add_ship(create_ship("Ajax", "Cruiser", Point(15, 15)));
     add_ship(create_ship("Xerxes", "Cruiser", Point(25, 25)));
@@ -28,10 +28,6 @@ Model::Model() {
 }
 
 Model::~Model() {
-    for_each(object_map.begin(), object_map.end(),
-            [](ObjectMap_t::value_type& pair) {
-                delete pair.second;
-            });
     cout << "Model destructed" << endl;
 }
 
@@ -49,7 +45,7 @@ bool Model::is_island_present(const std::string& name) const {
     return island_map.find(name) != island_map.end();
 }
 
-Island *Model::get_island_ptr(const std::string& name) const {
+shared_ptr<Island> Model::get_island_ptr(const std::string& name) const {
     auto itt = island_map.find(name);
     if (itt == island_map.end())
         throw Error("Island not found!");
@@ -60,13 +56,19 @@ bool Model::is_ship_present(const std::string& name) const {
     return ship_map.find(name) != ship_map.end();
 }
 
-void Model::add_ship(Ship *ship) {
-    ship_map.insert({ship->get_name(), ship});
-    object_map.insert({ship->get_name(), ship});
-    notify_location(ship->get_name(), ship->get_location());
+void Model::add_ship(std::shared_ptr<Ship> ship_ptr) {
+    ship_map.insert({ship_ptr->get_name(), ship_ptr});
+    object_map.insert({ship_ptr->get_name(), ship_ptr});
+    notify_location(ship_ptr->get_name(), ship_ptr->get_location());
 }
 
-Ship *Model::get_ship_ptr(const std::string& name) const {
+void Model::remove_ship(shared_ptr<Ship> ship_ptr) {
+    const string& ship_name = ship_ptr->get_name();
+    ship_map.erase(ship_name);
+    object_map.erase(ship_name);
+}
+
+shared_ptr<Ship> Model::get_ship_ptr(const std::string& name) const {
     auto itt = ship_map.find(name);
     if (itt == ship_map.end())
         throw Error("Ship not found!");
@@ -83,28 +85,17 @@ void Model::update() {
     for_each(object_map.begin(), object_map.end(),
             bind(&Sim_object::update,
                     bind(&ObjectMap_t::value_type::second, _1)));
-
-    for (auto itt = ship_map.begin(); itt != ship_map.end(); ) {
-        if (itt->second->is_on_the_bottom()) {
-            Ship *ptr = itt->second;
-            itt = ship_map.erase(itt);
-            object_map.erase(ptr->get_name());
-            delete ptr;
-        } else {
-            ++itt;
-        }
-    }
     time += 1;
 }
 
-void Model::attach(View *view) {
+void Model::attach(shared_ptr<View> view) {
     view_set.insert(view);
     for_each(object_map.begin(), object_map.end(),
             bind(&Sim_object::broadcast_current_state,
                     bind(&ObjectMap_t::value_type::second, _1)));
 }
 
-void Model::detach(View *view) {
+void Model::detach(shared_ptr<View> view) {
     view_set.erase(view);
 }
 
@@ -120,7 +111,7 @@ void Model::notify_gone(const std::string& name) {
 
 /* Private member functions */
 
-void Model::add_island(Island *island) {
+void Model::add_island(shared_ptr<Island> island) {
     island_map.insert({island->get_name(), island});
     object_map.insert({island->get_name(), island});
 }

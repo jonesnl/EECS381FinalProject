@@ -17,12 +17,13 @@ The is a "fat interface" for the capabilities of derived types of Ships. These
 functions are implemented in this class to throw an Error exception.
 */
 
+#include <memory>
 #include "Track_base.h"
 #include "Sim_object.h"
 
 class Island;
 
-class Ship : public Sim_object {
+class Ship : public Sim_object, public std::enable_shared_from_this<Ship> {
 
 public:
     // made pure virtual to mark this class as abstract, but defined anyway
@@ -45,12 +46,9 @@ public:
     // Return true if ship is afloat (not in process of sinking), false if not
     bool is_afloat() const;
 
-    // Return true if ship is on the bottom
-    bool is_on_the_bottom() const;
-
     // Return true if the ship is Stopped and the distance to the supplied island
     // is less than or equal to 0.1 nm
-    bool can_dock(Island *island_ptr) const;
+    bool can_dock(std::shared_ptr<Island> island_ptr) const;
 
     /*** Interface to derived classes ***/
     // Update the state of the Ship
@@ -71,7 +69,7 @@ public:
     // Start moving to a destination Island at a speed
     // may throw Error("Ship cannot move!")
     // may throw Error("Ship cannot go that fast!")
-    virtual void set_destination_island_and_speed(Island *destination_island,
+    virtual void set_destination_island_and_speed(std::shared_ptr<Island> destination_island,
             double speed);
 
     // Start moving on a course and speed
@@ -85,7 +83,7 @@ public:
 
     // dock at an Island - set our position = Island's position, go into Docked state
     // may throw Error("Can't dock!");
-    virtual void dock(Island *island_ptr);
+    virtual void dock(std::shared_ptr<Island> island_ptr);
 
     // Refuel - must already be docked at an island; fill takes as much as possible
     // may throw Error("Must be docked!");
@@ -94,20 +92,20 @@ public:
     /*** Fat interface command functions ***/
     // These functions throw an Error exception for this class
     // will always throw Error("Cannot load at a destination!");
-    virtual void set_load_destination(Island *);
+    virtual void set_load_destination(std::shared_ptr<Island>);
 
     // will always throw Error("Cannot unload at a destination!");
-    virtual void set_unload_destination(Island *);
+    virtual void set_unload_destination(std::shared_ptr<Island>);
 
     // will always throw Error("Cannot attack!");
-    virtual void attack(Ship *in_target_ptr);
+    virtual void attack(std::shared_ptr<Ship> in_target_ptr);
 
     // will always throw Error("Cannot attack!");
     virtual void stop_attack();
 
     // interactions with other objects
     // receive a hit from an attacker
-    virtual void receive_hit(int hit_force, Ship *attacker_ptr);
+    virtual void receive_hit(int hit_force, std::shared_ptr<Ship> attacker_ptr);
 
 protected:
     // initialize, then output constructor message
@@ -119,21 +117,23 @@ protected:
     double get_maximum_speed() const { return maximum_speed; }
 
     // return pointer to the Island currently docked at, or nullptr if not docked
-    Island *get_docked_Island() const { return docked_Island; }
+    std::shared_ptr<Island> get_docked_Island() const
+        { return docked_Island; }
 
     // return pointer to current destination Island, nullptr if not set
-    Island *get_destination_Island() const { return destination_Island; }
+    std::shared_ptr<Island> get_destination_Island() const
+        { return destination_Island; }
 
 private:
     double fuel;                        // Current amount of fuel
     double fuel_capacity;               // Amount of fuel ship can hold
     double fuel_consumption;            // tons/nm required per cycle
     Point destination_point = {0., 0.};  // Current destination position
-    Island *docked_Island = nullptr;    // Island we're docked at
-    Island *destination_Island = nullptr; // Current destination Island, if any
+    std::shared_ptr<Island> docked_Island;    // Island we're docked at
+    std::shared_ptr<Island> destination_Island; // Current destination Island, if any
     enum class State {
         docked, stopped, moving_on_course, dead_in_the_water,
-        moving_to_position, moving_to_island, sinking, sunk, on_the_bottom
+        moving_to_position, moving_to_island, sunk
     } ship_state = State::stopped;      // State of the ship
     double maximum_speed;               // Maximum speed the ship supports
     int resistance;                     // Resistance to damage for the ship

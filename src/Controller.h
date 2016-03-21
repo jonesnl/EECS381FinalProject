@@ -7,6 +7,7 @@ with the user.
 
 #include <map>
 #include <string>
+#include <memory>
 
 class View;
 class Ship;
@@ -25,7 +26,7 @@ public:
 private:
     // Controller keeps its own pointer to the View because it has to manage the View.
     // Future versions will need to manage more than one view.
-    View *view_ptr;
+    std::shared_ptr<View> view_ptr;
 
     // Helper commands called in run()
     void view_default_cmd();
@@ -38,16 +39,16 @@ private:
     void model_go_cmd();
     void model_create_cmd();
 
-    void ship_course_cmd(Ship *ship);
-    void ship_position_cmd(Ship *ship);
-    void ship_dest_cmd(Ship *ship);
-    void ship_load_cmd(Ship *ship);
-    void ship_unload_cmd(Ship *ship);
-    void ship_dock_cmd(Ship *ship);
-    void ship_attack_cmd(Ship *ship);
-    void ship_refuel_cmd(Ship *ship);
-    void ship_stop_cmd(Ship *ship);
-    void ship_stop_attack_cmd(Ship *ship);
+    void ship_course_cmd(std::shared_ptr<Ship> ship);
+    void ship_position_cmd(std::shared_ptr<Ship> ship);
+    void ship_dest_cmd(std::shared_ptr<Ship> ship);
+    void ship_load_cmd(std::shared_ptr<Ship> ship);
+    void ship_unload_cmd(std::shared_ptr<Ship> ship);
+    void ship_dock_cmd(std::shared_ptr<Ship> ship);
+    void ship_attack_cmd(std::shared_ptr<Ship> ship);
+    void ship_refuel_cmd(std::shared_ptr<Ship> ship);
+    void ship_stop_cmd(std::shared_ptr<Ship> ship);
+    void ship_stop_attack_cmd(std::shared_ptr<Ship> ship);
 
     void quit_helper();
 };

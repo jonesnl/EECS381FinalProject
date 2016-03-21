@@ -2,17 +2,15 @@
 #include "Utility.h"
 #include "Island.h"
 
-#include <string>
 #include <iostream>
 #include <map>
-#include <cassert>
 
-using std::cout; using std::string; using std::endl; using std::map;
+using namespace std;
 
 Tanker::Tanker(const string &name_, Point position_) :
         Ship(name_, position_, 100, 10, 2., 0),
         tanker_state(TankerState_t::no_cargo_dest), cargo(0.),
-        cargo_capacity(1000.), loading_island(nullptr), unloading_island(nullptr) {
+        cargo_capacity(1000.) {
     cout << "Tanker " << get_name() << " constructed" << endl;
 }
 
@@ -26,7 +24,7 @@ void Tanker::set_destination_position_and_speed(Point destination_point,
     Ship::set_destination_position_and_speed(destination_point, speed);
 }
 
-void Tanker::set_destination_island_and_speed(Island *destination_island,
+void Tanker::set_destination_island_and_speed(shared_ptr<Island> destination_island,
         double speed) {
     no_cargo_dest_or_error();
     Ship::set_destination_island_and_speed(destination_island, speed);
@@ -37,20 +35,20 @@ void Tanker::set_course_and_speed(double course, double speed) {
     Ship::set_course_and_speed(course, speed);
 }
 
-void Tanker::set_load_destination(Island *island) {
+void Tanker::set_load_destination(shared_ptr<Island> island) {
     no_cargo_dest_or_error();
     loading_island = island;
-    if (island == unloading_island)
+    if (island == unloading_island.lock())
         throw Error("Load and unload cargo destinations are the same!");
 
     cout << get_name() << " will load at " << island->get_name() << endl;
     start_tanker_cycle_if_possible();
 }
 
-void Tanker::set_unload_destination(Island *island) {
+void Tanker::set_unload_destination(shared_ptr<Island> island) {
     no_cargo_dest_or_error();
     unloading_island = island;
-    if (island == loading_island)
+    if (island == loading_island.lock())
         throw Error("Load and unload cargo destinations are the same!");
 
     cout << get_name() << " will unload at " << island->get_name() << endl;
@@ -59,7 +57,7 @@ void Tanker::set_unload_destination(Island *island) {
 
 void Tanker::stop() {
     Ship::stop();
-    stop_cargo_loop(); // TODO order? Might be better to go above stop()
+    stop_cargo_loop();
 }
 
 void Tanker::update() {
@@ -69,18 +67,20 @@ void Tanker::update() {
         return;
     }
     double fuel_needed_to_fill_cargo; // TODO refactor?
+    shared_ptr<Island> locked_loading_island = loading_island.lock();
+    shared_ptr<Island> locked_unloading_island = unloading_island.lock();
     switch (tanker_state) {
     case TankerState_t::no_cargo_dest:
         break;
     case TankerState_t::moving_to_loading:
-        if (can_dock(loading_island)) {
-            dock(loading_island);
+        if (can_dock(locked_loading_island)) {
+            dock(locked_loading_island);
             tanker_state = TankerState_t::loading;
         }
         break;
     case TankerState_t::moving_to_unloading:
-        if (can_dock(unloading_island)) {
-            dock(unloading_island);
+        if (can_dock(locked_unloading_island)) {
+            dock(locked_unloading_island);
             tanker_state = TankerState_t::unloading;
         }
         break;
@@ -89,21 +89,21 @@ void Tanker::update() {
         fuel_needed_to_fill_cargo = cargo_capacity - cargo;
         if (fuel_needed_to_fill_cargo < double_full_gap_c) {
             cargo = cargo_capacity;
-            Ship::set_destination_island_and_speed(unloading_island,
+            Ship::set_destination_island_and_speed(locked_unloading_island,
                     get_maximum_speed());
             tanker_state = TankerState_t::moving_to_unloading;
         } else {
-            cargo += loading_island->provide_fuel(fuel_needed_to_fill_cargo);
+            cargo += locked_loading_island->provide_fuel(fuel_needed_to_fill_cargo);
             cout << get_name() << " now has " << cargo << " of cargo" << endl;
         }
         break;
     case TankerState_t::unloading:
         if (cargo == 0.) {
-            Ship::set_destination_island_and_speed(loading_island,
+            Ship::set_destination_island_and_speed(locked_loading_island,
                     get_maximum_speed());
             tanker_state = TankerState_t::moving_to_loading;
         } else {
-            unloading_island->accept_fuel(cargo);
+            locked_unloading_island->accept_fuel(cargo);
             cargo = 0.;
         }
         break;
@@ -129,45 +129,47 @@ void Tanker::no_cargo_dest_or_error() {
 }
 
 void Tanker::start_tanker_cycle_if_possible() {
-    if (!(loading_island && unloading_island))
+    if (loading_island.expired() || unloading_island.expired())
         return;
-
+    shared_ptr<Island> locked_loading_island = loading_island.lock();
+    shared_ptr<Island> locked_unloading_island = unloading_island.lock();
     if (is_docked()) {
-        if (get_docked_Island() == loading_island) {
+        if (get_docked_Island() == loading_island.lock()) {
             tanker_state = TankerState_t::loading;
             return;
         }
-        if (get_docked_Island() == unloading_island) {
+        if (get_docked_Island() == unloading_island.lock()) {
             tanker_state = TankerState_t::unloading;
             return;
         }
     }
     if (!is_moving()) {
-        if (cargo == 0. && can_dock(loading_island)) {
-            dock(loading_island);
+        if (cargo == 0. && can_dock(locked_loading_island)) {
+            dock(locked_loading_island);
             tanker_state = TankerState_t::loading;
             return;
         }
-        if (cargo > 0. && can_dock(unloading_island)) {
-            dock(unloading_island);
+        if (cargo > 0. && can_dock(locked_unloading_island)) {
+            dock(locked_unloading_island);
             tanker_state = TankerState_t::unloading;
             return;
         }
     }
     if (cargo == 0.) {
-        Ship::set_destination_island_and_speed(loading_island, get_maximum_speed());
+        Ship::set_destination_island_and_speed(locked_loading_island, get_maximum_speed());
         tanker_state = TankerState_t::moving_to_loading;
         return;
     }
     if (cargo > 0.) {
-        Ship::set_destination_island_and_speed(unloading_island, get_maximum_speed());
+        Ship::set_destination_island_and_speed(locked_unloading_island, get_maximum_speed());
         tanker_state = TankerState_t::moving_to_unloading;
         return;
     }
 }
 
 void Tanker::stop_cargo_loop() {
-    loading_island = unloading_island = nullptr;
+    loading_island.reset();
+    unloading_island.reset();
     tanker_state = TankerState_t::no_cargo_dest;
     cout << get_name() << " now has no cargo destinations" << endl;
 }

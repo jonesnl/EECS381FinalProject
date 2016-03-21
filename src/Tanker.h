@@ -29,7 +29,7 @@ public:
 	void set_destination_position_and_speed(Point destination_point,
 			double speed) override;
 
-	void set_destination_island_and_speed(Island *destination_island,
+	void set_destination_island_and_speed(std::shared_ptr<Island> destination_island,
 			double speed) override;
 
 	void set_course_and_speed(double course, double speed) override;
@@ -38,9 +38,9 @@ public:
 	// if both cargo destination are already set, throw Error("Tanker has cargo destinations!").
 	// if they are the same, leave at the set values, and throw Error("Load and unload cargo destinations are the same!")
 	// if both destinations are now set, start the cargo cycle
-	void set_load_destination(Island *) override;
+	void set_load_destination(std::shared_ptr<Island>) override;
 
-	void set_unload_destination(Island *) override;
+	void set_unload_destination(std::shared_ptr<Island>) override;
 
 	// when told to stop, clear the cargo destinations and stop
 	void stop() override;
@@ -56,8 +56,8 @@ private:
     } tanker_state;
     double cargo;
     double cargo_capacity;
-    Island *loading_island;
-    Island *unloading_island;
+    std::weak_ptr<Island> loading_island;
+    std::weak_ptr<Island> unloading_island;
 
     void no_cargo_dest_or_error();
     void start_tanker_cycle_if_possible();

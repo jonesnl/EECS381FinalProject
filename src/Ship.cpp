@@ -7,7 +7,7 @@
 #include <iostream>
 #include <cassert>
 
-using std::cout; using std::endl;
+using namespace std;
 
 // TODO check
 Ship::Ship(const std::string &name_, Point position_, double fuel_capacity_,
@@ -48,16 +48,10 @@ bool Ship::is_docked() const {
 }
 
 bool Ship::is_afloat() const {
-    return ship_state != State::sinking &&
-           ship_state != State::sunk &&
-           ship_state != State::on_the_bottom;
+    return ship_state != State::sunk;
 }
 
-bool Ship::is_on_the_bottom() const {
-    return ship_state == State::on_the_bottom;
-}
-
-bool Ship::can_dock(Island *island_ptr) const { // TODO remove magic numbers
+bool Ship::can_dock(std::shared_ptr<Island> island_ptr) const { // TODO remove magic numbers
     assert(island_ptr);
     double dist_to_island =
             cartesian_distance(island_ptr->get_location(), get_location());
@@ -67,19 +61,8 @@ bool Ship::can_dock(Island *island_ptr) const { // TODO remove magic numbers
 }
 
 void Ship::update() {
-    if (is_afloat() && resistance < 0.) {
-        ship_state = State::sinking;
-        track_base.set_speed(0.);
-        cout << get_name() << " sinking" << endl;
-    } else if (ship_state == State::sinking) {
-        ship_state = State::sunk;
-        g_Model_ptr->notify_gone(get_name());
+    if (ship_state == State::sunk) {
         cout << get_name() << " sunk" << endl;
-    } else if (ship_state == State::sunk) {
-        ship_state = State::on_the_bottom;
-        cout << get_name() << " on the bottom" << endl;
-    } else if (ship_state == State::on_the_bottom) {
-        cout << get_name() << " on the bottom" << endl;
     } else if (is_moving()) {
         calculate_movement();
         cout << get_name() << " now at " << get_location() << endl;
@@ -96,24 +79,20 @@ void Ship::update() {
 
 void Ship::describe() const {
     cout << get_name() << " at " << get_location();
-    if (ship_state == State::sinking)
-        cout << " sinking" << endl;
-    else if (ship_state == State::sunk)
+    if (ship_state == State::sunk)
         cout << " sunk" << endl;
-    else if (ship_state == State::on_the_bottom)
-        cout << " on the bottom" << endl;
     else {
         cout << ", fuel: " << fuel << " tons, resistance: " << resistance << endl;
         if (ship_state == State::moving_to_position)
             cout << "Moving to " << destination_point <<
                     " on " << track_base.get_course_speed() << endl;
         else if (ship_state == State::moving_to_island)
-            cout << "Moving to " << destination_Island->get_name() <<
+            cout << "Moving to " << get_destination_Island()->get_name() <<
                     " on " << track_base.get_course_speed() << endl;
         else if (ship_state == State::moving_on_course)
             cout << "Moving on " << track_base.get_course_speed() << endl;
         else if (ship_state == State::docked)
-            cout << "Docked at " << docked_Island->get_name() << endl;
+            cout << "Docked at " << get_docked_Island()->get_name() << endl;
         else if (ship_state == State::stopped)
             cout << "Stopped" << endl;
         else if (ship_state == State::dead_in_the_water)
@@ -140,7 +119,7 @@ void Ship::set_destination_position_and_speed(Point destination_position,
             " to " << destination_position << endl;
 }
 
-void Ship::set_destination_island_and_speed(Island *destination_island,
+void Ship::set_destination_island_and_speed(shared_ptr<Island> destination_island,
         double speed) {
     assert(destination_island);
     if (speed > get_maximum_speed())
@@ -152,7 +131,7 @@ void Ship::set_destination_island_and_speed(Island *destination_island,
     track_base.set_course_speed({vect.direction, speed});
     ship_state = State::moving_to_island;
     destination_Island = destination_island;
-    destination_point = destination_Island->get_location();
+    destination_point = destination_island->get_location();
     cout << get_name() << " will sail on " << track_base.get_course_speed() <<
             " to " << destination_island->get_name() << endl;
 }
@@ -177,7 +156,7 @@ void Ship::stop() {
     cout << get_name() << " stopping at " << get_location() << endl;
 }
 
-void Ship::dock(Island *island_ptr) {
+void Ship::dock(shared_ptr<Island> island_ptr) {
     assert(island_ptr);
     if (!can_dock(island_ptr))
         throw Error("Can't dock!");
@@ -200,15 +179,15 @@ void Ship::refuel() {
     cout << get_name() << " now has " << fuel << " tons of fuel" << endl;
 }
 
-void Ship::set_load_destination(Island *) {
+void Ship::set_load_destination(shared_ptr<Island>) {
     throw Error("Cannot load at a destination!");
 }
 
-void Ship::set_unload_destination(Island *) {
+void Ship::set_unload_destination(shared_ptr<Island>) {
     throw Error("Cannot unload at a destination!");
 }
 
-void Ship::attack(Ship *) {
+void Ship::attack(shared_ptr<Ship>) {
     throw Error("Cannot attack!");
 }
 
@@ -216,10 +195,17 @@ void Ship::stop_attack() {
     throw Error("Cannot attack!");
 }
 
-void Ship::receive_hit(int hit_force, Ship *) {
+void Ship::receive_hit(int hit_force, shared_ptr<Ship>) {
     resistance -= hit_force;
     cout << get_name() << " hit with " << hit_force << ", resistance now " <<
-            resistance << endl;
+    resistance << endl;
+    if (is_afloat() && resistance < 0.) {
+        ship_state = State::sunk;
+        track_base.set_speed(0.);
+        cout << get_name() << " sunk" << endl;
+        g_Model_ptr->notify_gone(get_name());
+        g_Model_ptr->remove_ship(shared_from_this());
+    }
 }
 
 /* Private Function Definitions */

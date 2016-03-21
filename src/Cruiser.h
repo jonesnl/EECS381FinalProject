@@ -28,16 +28,17 @@ public:
     void describe() const override;
 
     // respond to an attack
-    void receive_hit(int hit_force, Ship *attacker_ptr) override;
+    void receive_hit(int hit_force, std::shared_ptr<Ship> attacker_ptr) override;
 
     // start an attack on a target ship
-    void attack(Ship *target_ptr_) override;
+    void attack(std::shared_ptr<Ship> target_ptr_) override;
 
     void stop_attack() override;
 private:
     int firepower = 3; // Firepower of the curiser
     double attack_range = 15.; // Attack range of the cruiser
-    Ship *target = nullptr;    // Target to attack (also controls whether we're
+    bool attacking = false;
+    std::weak_ptr<Ship> target;    // Target to attack (also controls whether we're
                                // attacking or not
 };
 

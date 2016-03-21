@@ -3,15 +3,13 @@
 #include "Model.h"
 #include "Utility.h"
 #include "View.h"
-#include "Geometry.h"
 #include "Ship_factory.h"
 #include "Ship.h"
 
 #include <iostream>
-#include <string>
-#include <map>
+#include <memory>
 
-using std::cout; using std::endl; using std::cin; using std::string;
+using namespace std;
 
 Controller::Controller() {
     cout << "Controller constructed" << endl;
@@ -23,7 +21,7 @@ Controller::~Controller() {
 
 void Controller::run() {
     // Initialize command maps
-    using ShipCmdMap_t = std::map<std::string, void (Controller::*) (Ship*)>;
+    using ShipCmdMap_t = std::map<std::string, void (Controller::*) (shared_ptr<Ship>)>;
     using GenericCmdMap_t = std::map<std::string, void (Controller::*) ()>;
     static ShipCmdMap_t ship_cmd_map = {
             {"course", &Controller::ship_course_cmd},
@@ -49,7 +47,7 @@ void Controller::run() {
             {"create", &Controller::model_create_cmd}
     };
 
-    view_ptr = new View();
+    view_ptr = make_shared<View>();
     g_Model_ptr->attach(view_ptr);
 
     while (true) {
@@ -67,7 +65,7 @@ void Controller::run() {
                 auto itt = ship_cmd_map.find(ship_cmd);
                 if (itt == ship_cmd_map.end())
                     throw Error("Unrecognized command!");
-                Ship *ship_ptr = g_Model_ptr->get_ship_ptr(ship_name);
+                shared_ptr<Ship> ship_ptr = g_Model_ptr->get_ship_ptr(ship_name);
                 (this->*itt->second)(ship_ptr); // TODO reformat?
             } else {
                 auto itt = generic_cmd_map.find(first_word);
@@ -117,7 +115,7 @@ static double get_speed_from_cin() {
     return speed;
 }
 
-static Island *get_island_ptr_from_cin() {
+static shared_ptr<Island> get_island_ptr_from_cin() {
     string island_name;
     cin >> island_name;
     return g_Model_ptr->get_island_ptr(island_name);
@@ -165,11 +163,11 @@ void Controller::model_create_cmd() {
     cin >> ship_type;
     Point point = get_point_from_cin();
 
-    Ship *ship = create_ship(ship_name, ship_type, point);
+    shared_ptr<Ship> ship = create_ship(ship_name, ship_type, point);
     g_Model_ptr->add_ship(ship);
 }
 
-void Controller::ship_course_cmd(Ship* ship) {
+void Controller::ship_course_cmd(shared_ptr<Ship> ship) {
     double heading = get_double_from_cin();
     if (heading < 0. || heading >= 360.)
         throw Error("Invalid heading entered!");
@@ -177,54 +175,53 @@ void Controller::ship_course_cmd(Ship* ship) {
     ship->set_course_and_speed(heading, speed);
 }
 
-void Controller::ship_position_cmd(Ship* ship) {
+void Controller::ship_position_cmd(shared_ptr<Ship> ship) {
     Point position = get_point_from_cin();
     double speed = get_speed_from_cin();
     ship->set_destination_position_and_speed(position, speed);
 }
 
-void Controller::ship_dest_cmd(Ship* ship) {
-    Island *island = get_island_ptr_from_cin();
+void Controller::ship_dest_cmd(shared_ptr<Ship> ship) {
+    shared_ptr<Island> island = get_island_ptr_from_cin();
     double speed = get_speed_from_cin();
     ship->set_destination_island_and_speed(island, speed);
 }
 
-void Controller::ship_load_cmd(Ship* ship) {
-    Island *island = get_island_ptr_from_cin();
+void Controller::ship_load_cmd(shared_ptr<Ship> ship) {
+    shared_ptr<Island> island = get_island_ptr_from_cin();
     ship->set_load_destination(island);
 }
 
-void Controller::ship_unload_cmd(Ship* ship) {
-    Island *island = get_island_ptr_from_cin();
+void Controller::ship_unload_cmd(shared_ptr<Ship> ship) {
+    shared_ptr<Island> island = get_island_ptr_from_cin();
     ship->set_unload_destination(island);
 }
 
-void Controller::ship_dock_cmd(Ship* ship) {
-    Island *island = get_island_ptr_from_cin();
+void Controller::ship_dock_cmd(shared_ptr<Ship> ship) {
+    shared_ptr<Island> island = get_island_ptr_from_cin();
     ship->dock(island);
 }
 
-void Controller::ship_attack_cmd(Ship* ship) {
+void Controller::ship_attack_cmd(shared_ptr<Ship> ship) {
     string ship_name;
     cin >> ship_name;
-    Ship *ship_to_attack = g_Model_ptr->get_ship_ptr(ship_name);
+    shared_ptr<Ship> ship_to_attack = g_Model_ptr->get_ship_ptr(ship_name);
     ship->attack(ship_to_attack);
 }
 
-void Controller::ship_refuel_cmd(Ship* ship) {
+void Controller::ship_refuel_cmd(shared_ptr<Ship> ship) {
     ship->refuel();
 }
 
-void Controller::ship_stop_cmd(Ship* ship) {
+void Controller::ship_stop_cmd(shared_ptr<Ship> ship) {
     ship->stop();
 }
 
-void Controller::ship_stop_attack_cmd(Ship* ship) {
+void Controller::ship_stop_attack_cmd(shared_ptr<Ship> ship) {
     ship->stop_attack();
 }
 
 void Controller::quit_helper() {
     g_Model_ptr->detach(view_ptr);
-    delete view_ptr;
     cout << "Done" << endl;
 }
