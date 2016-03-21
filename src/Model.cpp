@@ -13,12 +13,13 @@
 using namespace std;
 using namespace std::placeholders;
 
-Model* g_Model_ptr;
+Model *Model::singleton_ptr = nullptr;
 
 Model::Model() {
     add_island(make_shared<Island>("Exxon", Point(10, 10), 1000, 200));
     add_island(make_shared<Island>("Shell", Point(0, 30), 1000, 200));
     add_island(make_shared<Island>("Bermuda", Point(20, 20)));
+    add_island(make_shared<Island>("Treasure_Island", Point(50, 5), 100, 5));
 
     add_ship(create_ship("Ajax", "Cruiser", Point(15, 15)));
     add_ship(create_ship("Xerxes", "Cruiser", Point(25, 25)));
@@ -107,6 +108,12 @@ void Model::notify_location(const std::string& name, Point location) {
 void Model::notify_gone(const std::string& name) {
     for_each(view_set.begin(), view_set.end(),
             bind(&View::update_remove, _1, name));
+}
+
+Model *Model::get_Instance() {
+    if (!singleton_ptr)
+        singleton_ptr = new Model();
+    return singleton_ptr;
 }
 
 /* Private member functions */

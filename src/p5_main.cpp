@@ -16,11 +16,9 @@ int main ()
 //	cout << fixed << setprecision(2) << endl;
 	cout.setf(ios::fixed, ios::floatfield);
 	cout.precision(2);
-	g_Model_ptr = new Model; // TODO remove
 	// create the Controller and go
 	Controller controller;
 
 	controller.run();
-	delete g_Model_ptr; // TODO remove
 }
 

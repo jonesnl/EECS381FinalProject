@@ -29,7 +29,7 @@ void Island::describe() const {
 }
 
 void Island::broadcast_current_state() const {
-    g_Model_ptr->notify_location(get_name(), position);
+    Model::get_Instance()->notify_location(get_name(), position);
 }
 
 double Island::provide_fuel(double request) {

@@ -66,7 +66,7 @@ void Ship::update() {
     } else if (is_moving()) {
         calculate_movement();
         cout << get_name() << " now at " << get_location() << endl;
-        g_Model_ptr->notify_location(get_name(), get_location());
+        Model::get_Instance()->notify_location(get_name(), get_location());
     } else if (ship_state == State::stopped) {
         cout << get_name() << " stopped at " << get_location() << endl;
     } else if (is_docked()) {
@@ -101,7 +101,7 @@ void Ship::describe() const {
 }
 
 void Ship::broadcast_current_state() const {
-    g_Model_ptr->notify_location(get_name(), get_location());
+    Model::get_Instance()->notify_location(get_name(), get_location());
 }
 
 void Ship::set_destination_position_and_speed(Point destination_position,
@@ -163,7 +163,7 @@ void Ship::dock(shared_ptr<Island> island_ptr) {
     track_base.set_position(island_ptr->get_location());
     docked_Island = island_ptr;
     ship_state = State::docked;
-    g_Model_ptr->notify_location(get_name(), get_location());
+    Model::get_Instance()->notify_location(get_name(), get_location());
     cout << get_name() << " docked at " << island_ptr->get_name() << endl;
 }
 
@@ -200,11 +200,12 @@ void Ship::receive_hit(int hit_force, shared_ptr<Ship>) {
     cout << get_name() << " hit with " << hit_force << ", resistance now " <<
     resistance << endl;
     if (is_afloat() && resistance < 0.) {
+        Model *model_ptr = Model::get_Instance();
         ship_state = State::sunk;
         track_base.set_speed(0.);
         cout << get_name() << " sunk" << endl;
-        g_Model_ptr->notify_gone(get_name());
-        g_Model_ptr->remove_ship(shared_from_this());
+        model_ptr->notify_gone(get_name());
+        model_ptr->remove_ship(shared_from_this());
     }
 }
 

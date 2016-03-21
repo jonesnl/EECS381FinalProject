@@ -27,17 +27,8 @@ class View;
 class Island;
 class Sim_object;
 
-// Declare the global model pointer
-extern Model *g_Model_ptr;
-
 class Model {
 public:
-    // create the initial objects, output constructor message
-    Model();
-
-    // destroy all objects, output destructor message
-    ~Model();
-
     // return the current time
     int get_time() { return time; }
 
@@ -84,9 +75,18 @@ public:
     // notify the views that an object is now gone
     void notify_gone(const std::string &name);
 
-    // disallow copy/move construction or assignment
+    static Model *get_Instance();
 
+    // disallow copy/move construction or assignment
+    Model(const Model&) = delete;
+    Model(const Model&&) = delete;
+    Model& operator= (const Model&) = delete;
+    Model& operator= (const Model&&) = delete;
 private:
+    Model();
+    ~Model();
+    static Model *singleton_ptr;
+
     int time = 0;        // the simulated time
     using ObjectMap_t = std::map<std::string, std::shared_ptr<Sim_object>>;
     using ShipMap_t = std::map<std::string, std::shared_ptr<Ship>>;

@@ -7,7 +7,6 @@
 #include "Ship.h"
 
 #include <iostream>
-#include <memory>
 
 using namespace std;
 
@@ -48,24 +47,25 @@ void Controller::run() {
     };
 
     view_ptr = make_shared<View>();
-    g_Model_ptr->attach(view_ptr);
+    Model *model_ptr = Model::get_Instance();
+    model_ptr->attach(view_ptr);
 
     while (true) {
         try {
-            cout << "\nTime " << g_Model_ptr->get_time() << ": Enter command: ";
+            cout << "\nTime " << model_ptr->get_time() << ": Enter command: ";
             string first_word;
             cin >> first_word;
             if (first_word == "quit") {
                 quit_helper();
                 return;
-            } else if (g_Model_ptr->is_ship_present(first_word)) {
+            } else if (model_ptr->is_ship_present(first_word)) {
                 string &ship_name = first_word;
                 string ship_cmd;
                 cin >> ship_cmd;
                 auto itt = ship_cmd_map.find(ship_cmd);
                 if (itt == ship_cmd_map.end())
                     throw Error("Unrecognized command!");
-                shared_ptr<Ship> ship_ptr = g_Model_ptr->get_ship_ptr(ship_name);
+                shared_ptr<Ship> ship_ptr = model_ptr->get_ship_ptr(ship_name);
                 (this->*itt->second)(ship_ptr); // TODO reformat?
             } else {
                 auto itt = generic_cmd_map.find(first_word);
@@ -118,7 +118,7 @@ static double get_speed_from_cin() {
 static shared_ptr<Island> get_island_ptr_from_cin() {
     string island_name;
     cin >> island_name;
-    return g_Model_ptr->get_island_ptr(island_name);
+    return Model::get_Instance()->get_island_ptr(island_name);
 }
 
 void Controller::view_default_cmd() {
@@ -146,11 +146,11 @@ void Controller::view_show_cmd() {
 }
 
 void Controller::model_status_cmd() {
-    g_Model_ptr->describe();
+    Model::get_Instance()->describe();
 }
 
 void Controller::model_go_cmd() {
-    g_Model_ptr->update();
+    Model::get_Instance()->update();
 }
 
 void Controller::model_create_cmd() {
@@ -158,13 +158,15 @@ void Controller::model_create_cmd() {
     cin >> ship_name;
     if (ship_name.length() < 2) // TODO magic number
         throw Error("Name is too short!");
-    if (g_Model_ptr->is_name_in_use(ship_name))
+
+    Model *model_ptr = Model::get_Instance();
+    if (model_ptr->is_name_in_use(ship_name))
         throw Error("Name is invalid!");
     cin >> ship_type;
     Point point = get_point_from_cin();
 
     shared_ptr<Ship> ship = create_ship(ship_name, ship_type, point);
-    g_Model_ptr->add_ship(ship);
+    model_ptr->add_ship(ship);
 }
 
 void Controller::ship_course_cmd(shared_ptr<Ship> ship) {
@@ -205,7 +207,8 @@ void Controller::ship_dock_cmd(shared_ptr<Ship> ship) {
 void Controller::ship_attack_cmd(shared_ptr<Ship> ship) {
     string ship_name;
     cin >> ship_name;
-    shared_ptr<Ship> ship_to_attack = g_Model_ptr->get_ship_ptr(ship_name);
+    shared_ptr<Ship> ship_to_attack =
+            Model::get_Instance()->get_ship_ptr(ship_name);
     ship->attack(ship_to_attack);
 }
 
@@ -222,6 +225,6 @@ void Controller::ship_stop_attack_cmd(shared_ptr<Ship> ship) {
 }
 
 void Controller::quit_helper() {
-    g_Model_ptr->detach(view_ptr);
+    Model::get_Instance()->detach(view_ptr);
     cout << "Done" << endl;
 }
