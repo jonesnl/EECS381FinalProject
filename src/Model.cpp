@@ -53,6 +53,14 @@ shared_ptr<Island> Model::get_island_ptr(const std::string& name) const {
     return itt->second;
 }
 
+Model::IslandSet_t Model::get_set_of_islands() const {
+    IslandSet_t island_set;
+    transform(island_map.begin(), island_map.end(),
+            inserter(island_set, island_set.begin()),
+            mem_fn(&IslandMap_t::value_type::second));
+    return island_set;
+}
+
 bool Model::is_ship_present(const std::string& name) const {
     return ship_map.find(name) != ship_map.end();
 }

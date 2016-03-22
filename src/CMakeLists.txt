@@ -16,7 +16,8 @@ set(HEADER_FILES Cruiser.h
         Ship_factory.h
         Controller.h
         View.h
-        Tanker.h)
+        Tanker.h
+        Cruise_ship.h)
 
 set(SHARED_SOURCE_FILES
         Geometry.cpp
@@ -30,7 +31,9 @@ set(SHARED_SOURCE_FILES
         Ship_factory.cpp
         Controller.cpp
         View.cpp
-        Tanker.cpp Utility.cpp)
+        Tanker.cpp
+        Utility.cpp
+        Cruise_ship.cpp)
 
 macro(add_gtest _name)
     add_executable(${ARGV})

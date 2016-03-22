@@ -42,6 +42,10 @@ public:
     // will throw Error("Island not found!") if no island of that name
     std::shared_ptr<Island> get_island_ptr(const std::string &name) const;
 
+    using IslandSet_t = std::set<std::shared_ptr<Island>>;
+
+    IslandSet_t get_set_of_islands() const;
+
     // is there such a ship?
     bool is_ship_present(const std::string &name) const;
 
@@ -75,6 +79,7 @@ public:
     // notify the views that an object is now gone
     void notify_gone(const std::string &name);
 
+    // get model pointer
     static Model *get_Instance();
 
     // disallow copy/move construction or assignment

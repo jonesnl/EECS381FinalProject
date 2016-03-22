@@ -1,0 +1,148 @@
+#include "Cruise_ship.h"
+#include "Model.h"
+#include "Island.h"
+
+#include <limits>
+#include <algorithm>
+#include <iostream>
+#include <cassert>
+
+using namespace std;
+
+Cruise_ship::Cruise_ship(const std::string &name_, Point position_) :
+        Ship(name_, position_, 500, 15, 2, 0) {
+    cout << "Cruise_ship " << get_name() << " constructed" << endl;
+}
+
+Cruise_ship::~Cruise_ship() {
+    cout << "Cruise_ship " << get_name() << " destructed" << endl;
+}
+
+void Cruise_ship::update() {
+    Ship::update();
+    if (!can_move())
+        cancel_cruise();
+
+    switch(cruise_state) {
+    case CruiseState_t::not_cruising:
+        break;
+    case CruiseState_t::cruising:
+        if (can_dock(cruise_destination)) {
+            dock(cruise_destination);
+            if (cruise_destination == origin_island && islands_to_visit.empty()) {
+                cout << get_name() << " cruise is over at " <<
+                        origin_island->get_name() << endl;
+                clear_cruise_data();
+            } else
+                cruise_state = CruiseState_t::arriving;
+        }
+        break;
+    case CruiseState_t::arriving:
+        refuel();
+        cruise_state = CruiseState_t::loading_unloading;
+        break;
+    case CruiseState_t::loading_unloading:
+        cruise_state = CruiseState_t::departing;
+        break;
+    case CruiseState_t::departing:
+        cruise_to(next_island_to_visit(), get_maximum_speed());
+        break;
+    }
+
+}
+
+void Cruise_ship::describe() const {
+    cout << "\nCruise_ship ";
+    Ship::describe();
+    switch (cruise_state) {
+    case CruiseState_t::not_cruising:
+        break;
+    case CruiseState_t::cruising:
+        cout << "On cruise to " << get_destination_Island()->get_name() << endl;
+        break;
+    case CruiseState_t::arriving:
+    case CruiseState_t::loading_unloading:
+    case CruiseState_t::departing:
+        cout << "Waiting during cruise at " <<
+                get_docked_Island()->get_name() << endl;
+        break;
+    }
+}
+
+void Cruise_ship::stop() {
+    cancel_cruise();
+    Ship::stop();
+}
+
+void Cruise_ship::set_destination_position_and_speed(Point destination_position,
+        double speed) {
+    cancel_cruise();
+    Ship::set_destination_position_and_speed(destination_position, speed);
+}
+
+void Cruise_ship::set_destination_island_and_speed(
+        std::shared_ptr<Island> destination_island, double speed) {
+    cancel_cruise();
+    new_cruise(destination_island, speed);
+}
+
+void Cruise_ship::set_course_and_speed(double course, double speed) {
+    cancel_cruise();
+    Ship::set_course_and_speed(course, speed);
+}
+
+/* Private helper functions */
+
+static double island_distance(shared_ptr<Island> island1, shared_ptr<Island> island2) {
+    return cartesian_distance(island1->get_location(), island2->get_location());
+}
+
+class IslandDistComp {
+    shared_ptr<Island> common_island;
+public:
+    IslandDistComp(shared_ptr<Island> island) : common_island(island) {}
+    bool operator() (shared_ptr<Island> i1, shared_ptr<Island> i2) {
+        return island_distance(i1, common_island) < island_distance(i2, common_island);
+    }
+};
+
+void Cruise_ship::new_cruise(std::shared_ptr<Island> island_ptr, double speed) {
+    cruise_to(island_ptr, speed);
+    origin_island = island_ptr;
+    islands_to_visit = Model::get_Instance()->get_set_of_islands();
+    islands_to_visit.erase(origin_island);
+    cout << get_name() << " cruise will start and end at " <<
+            island_ptr->get_name() << endl;
+}
+
+void Cruise_ship::cruise_to(shared_ptr<Island> island, double speed) {
+    Ship::set_destination_island_and_speed(island, speed);
+    cout << get_name() << " will visit " << island->get_name() << endl;
+    cruise_destination = island;
+    cruise_state = CruiseState_t::cruising;
+}
+
+shared_ptr<Island> Cruise_ship::next_island_to_visit() {
+    assert(is_docked());
+    if (islands_to_visit.empty())
+        return origin_island;
+
+    auto next_island_itt = min_element(islands_to_visit.cbegin(),
+            islands_to_visit.cend(), IslandDistComp{get_docked_Island()});
+    shared_ptr<Island> next_island_ptr = *next_island_itt;
+    islands_to_visit.erase(next_island_itt);
+    return next_island_ptr;
+}
+
+void Cruise_ship::cancel_cruise() {
+    if (cruise_state == CruiseState_t::not_cruising)
+        return;
+    clear_cruise_data();
+    cout << get_name() << " canceling current cruise" << endl;
+}
+
+void Cruise_ship::clear_cruise_data() {
+    cruise_state = CruiseState_t::not_cruising;
+    origin_island = nullptr;
+    islands_to_visit.clear();
+}
