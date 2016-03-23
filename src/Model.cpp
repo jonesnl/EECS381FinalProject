@@ -8,12 +8,13 @@
 
 #include <iostream>
 #include <algorithm>
-#include <memory>
 
 using namespace std;
 using namespace std::placeholders;
 
 Model *Model::singleton_ptr = nullptr;
+
+Model_destroyer model_destroyer;
 
 Model::Model() {
     add_island(make_shared<Island>("Exxon", Point(10, 10), 1000, 200));
@@ -129,4 +130,9 @@ Model *Model::get_Instance() {
 void Model::add_island(shared_ptr<Island> island) {
     island_map.insert({island->get_name(), island});
     object_map.insert({island->get_name(), island});
+}
+
+Model_destroyer::~Model_destroyer() {
+    if (Model::singleton_ptr)
+        delete Model::singleton_ptr;
 }

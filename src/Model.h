@@ -87,6 +87,8 @@ public:
     Model(const Model&&) = delete;
     Model& operator= (const Model&) = delete;
     Model& operator= (const Model&&) = delete;
+
+    friend class Model_destroyer;
 private:
     Model();
     ~Model();
@@ -104,6 +106,11 @@ private:
 
     void add_island(std::shared_ptr<Island> island); // Helper function for adding islands to
                                      // required objects
+};
+
+class Model_destroyer {
+public:
+    ~Model_destroyer();
 };
 
 #endif
