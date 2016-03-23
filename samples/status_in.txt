@@ -26,7 +26,6 @@ Ajax course 315 5
 go
 status
 Xerxes destination Bermuda 10
-Xerxes attack Ajax
 Ajax attack Xerxes
 go
 Xerxes stop_attack
@@ -36,9 +35,8 @@ status
 go
 status
 Xerxes attack Ajax
-Ajax stop_attack
-Ajax attack Xerxes
 go
+Ajax attack Xerxes
 status
 go
 status
@@ -54,11 +52,5 @@ go
 status
 Ajax dock_at Bermuda
 Ajax refuel
-Ajax position 28.5 25.8 13.5
-go
-status
-go
-status
-go
 status
 quit
