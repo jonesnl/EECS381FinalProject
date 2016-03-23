@@ -8,6 +8,7 @@ with the user.
 #include <map>
 #include <string>
 #include <memory>
+#include <list>
 
 class View;
 class Ship;
@@ -26,9 +27,13 @@ public:
 private:
     // Controller keeps its own pointer to the View because it has to manage the View.
     // Future versions will need to manage more than one view.
-    std::shared_ptr<View> view_ptr;
+    std::shared_ptr<View> map_view;
+
+    std::list<std::shared_ptr<View>> all_views;
 
     // Helper commands called in run()
+    void open_map_view();
+    void close_map_view();
     void view_default_cmd();
     void view_size_cmd();
     void view_zoom_cmd();
@@ -51,6 +56,8 @@ private:
     void ship_stop_attack_cmd(std::shared_ptr<Ship> ship);
 
     void quit_helper();
+
+    void if_map_view_closed_error() const;
 };
 
 #endif

@@ -7,8 +7,11 @@
 #include "Ship.h"
 
 #include <iostream>
+#include <algorithm>
+#include <functional>
 
 using namespace std;
+using namespace placeholders;
 
 Controller::Controller() {
     cout << "Controller constructed" << endl;
@@ -35,6 +38,8 @@ void Controller::run() {
             {"stop_attack", &Controller::ship_stop_attack_cmd}
     };
     static GenericCmdMap_t generic_cmd_map = {
+            {"open_map_view", &Controller::open_map_view},
+            {"close_map_view", &Controller::close_map_view},
             {"default", &Controller::view_default_cmd},
             {"size", &Controller::view_size_cmd},
             {"zoom", &Controller::view_zoom_cmd},
@@ -46,9 +51,7 @@ void Controller::run() {
             {"create", &Controller::model_create_cmd}
     };
 
-    view_ptr = make_shared<View>();
     Model *model_ptr = Model::get_Instance();
-    model_ptr->attach(view_ptr);
 
     while (true) {
         try {
@@ -121,28 +124,49 @@ static shared_ptr<Island> get_island_ptr_from_cin() {
     return Model::get_Instance()->get_island_ptr(island_name);
 }
 
+void Controller::open_map_view() {
+    if (map_view)
+        throw Error("Map view is already open!");
+    map_view = make_shared<View>();
+    all_views.push_back(map_view);
+    Model::get_Instance()->attach(map_view);
+}
+
+void Controller::close_map_view() {
+    if_map_view_closed_error();
+    Model::get_Instance()->detach(map_view);
+    all_views.erase(remove(all_views.begin(), all_views.end(), map_view),
+            all_views.end());
+    map_view = nullptr;
+}
+
 void Controller::view_default_cmd() {
-    view_ptr->set_defaults();
+    if_map_view_closed_error();
+    map_view->set_defaults();
 }
 
 void Controller::view_size_cmd() {
+    if_map_view_closed_error();
     int size = get_int_from_cin();
-    view_ptr->set_size(size);
+    map_view->set_size(size);
 }
 
 void Controller::view_zoom_cmd() {
+    if_map_view_closed_error();
     double scale = get_double_from_cin();
-    view_ptr->set_scale(scale);
+    map_view->set_scale(scale);
 }
 
 void Controller::view_pan_cmd() {
+    if_map_view_closed_error();
     double x = get_double_from_cin();
     double y = get_double_from_cin();
-    view_ptr->set_origin({x, y});
+    map_view->set_origin({x, y});
 }
 
 void Controller::view_show_cmd() {
-    view_ptr->draw();
+    for_each(all_views.begin(), all_views.end(),
+            bind(&View::draw, _1));
 }
 
 void Controller::model_status_cmd() {
@@ -225,6 +249,10 @@ void Controller::ship_stop_attack_cmd(shared_ptr<Ship> ship) {
 }
 
 void Controller::quit_helper() {
-    Model::get_Instance()->detach(view_ptr);
     cout << "Done" << endl;
+}
+
+void Controller::if_map_view_closed_error() const {
+    if (!map_view)
+        throw Error("Map view is not open!");
 }
