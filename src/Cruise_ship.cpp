@@ -27,9 +27,9 @@ void Cruise_ship::update() {
     case CruiseState_t::not_cruising:
         break;
     case CruiseState_t::cruising:
-        if (can_dock(cruise_destination)) {
-            dock(cruise_destination);
-            if (cruise_destination == origin_island && islands_to_visit.empty()) {
+        if (can_dock(cruise_next_destination)) {
+            dock(cruise_next_destination);
+            if (cruise_next_destination == origin_island && islands_to_visit.empty()) {
                 cout << get_name() << " cruise is over at " <<
                         origin_island->get_name() << endl;
                 clear_cruise_data();
@@ -45,7 +45,7 @@ void Cruise_ship::update() {
         cruise_state = CruiseState_t::departing;
         break;
     case CruiseState_t::departing:
-        cruise_to(next_island_to_visit(), get_maximum_speed());
+        cruise_to(next_island_to_visit());
         break;
     }
 
@@ -83,7 +83,13 @@ void Cruise_ship::set_destination_position_and_speed(Point destination_position,
 void Cruise_ship::set_destination_island_and_speed(
         std::shared_ptr<Island> destination_island, double speed) {
     cancel_cruise();
-    new_cruise(destination_island, speed);
+    origin_island = destination_island;
+    cruise_speed = speed;
+    cruise_to(destination_island);
+    islands_to_visit = Model::get_Instance()->get_set_of_islands();
+    islands_to_visit.erase(origin_island);
+    cout << get_name() << " cruise will start and end at " <<
+            destination_island->get_name() << endl;
 }
 
 void Cruise_ship::set_course_and_speed(double course, double speed) {
@@ -106,19 +112,10 @@ public:
     }
 };
 
-void Cruise_ship::new_cruise(std::shared_ptr<Island> island_ptr, double speed) {
-    cruise_to(island_ptr, speed);
-    origin_island = island_ptr;
-    islands_to_visit = Model::get_Instance()->get_set_of_islands();
-    islands_to_visit.erase(origin_island);
-    cout << get_name() << " cruise will start and end at " <<
-            island_ptr->get_name() << endl;
-}
-
-void Cruise_ship::cruise_to(shared_ptr<Island> island, double speed) {
-    Ship::set_destination_island_and_speed(island, speed);
+void Cruise_ship::cruise_to(shared_ptr<Island> island) {
+    Ship::set_destination_island_and_speed(island, cruise_speed);
     cout << get_name() << " will visit " << island->get_name() << endl;
-    cruise_destination = island;
+    cruise_next_destination = island;
     cruise_state = CruiseState_t::cruising;
 }
 
@@ -144,5 +141,6 @@ void Cruise_ship::cancel_cruise() {
 void Cruise_ship::clear_cruise_data() {
     cruise_state = CruiseState_t::not_cruising;
     origin_island = nullptr;
+    cruise_speed = 0.0;
     islands_to_visit.clear();
 }

@@ -46,11 +46,11 @@ private:
         departing
     } cruise_state;
     std::shared_ptr<Island> origin_island;
-    std::shared_ptr<Island> cruise_destination;
+    double cruise_speed = 0.0;
+    std::shared_ptr<Island> cruise_next_destination;
     std::set<std::shared_ptr<Island>> islands_to_visit;
 
-    void new_cruise(std::shared_ptr<Island> origin_island, double speed);
-    void cruise_to(std::shared_ptr<Island> destination_island, double speed);
+    void cruise_to(std::shared_ptr<Island> destination_island);
     std::shared_ptr<Island> next_island_to_visit();
     void cancel_cruise();
     void clear_cruise_data();
