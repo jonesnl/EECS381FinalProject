@@ -17,14 +17,14 @@ Model *Model::singleton_ptr = nullptr;
 Model_destroyer model_destroyer;
 
 Model::Model() {
-    add_island(make_shared<Island>("Exxon", Point(10, 10), 1000, 200));
-    add_island(make_shared<Island>("Shell", Point(0, 30), 1000, 200));
-    add_island(make_shared<Island>("Bermuda", Point(20, 20)));
-    add_island(make_shared<Island>("Treasure_Island", Point(50, 5), 100, 5));
+    insert_island(make_shared<Island>("Exxon", Point(10, 10), 1000, 200));
+    insert_island(make_shared<Island>("Shell", Point(0, 30), 1000, 200));
+    insert_island(make_shared<Island>("Bermuda", Point(20, 20)));
+    insert_island(make_shared<Island>("Treasure_Island", Point(50, 5), 100, 5));
 
-    add_ship(create_ship("Ajax", "Cruiser", Point(15, 15)));
-    add_ship(create_ship("Xerxes", "Cruiser", Point(25, 25)));
-    add_ship(create_ship("Valdez", "Tanker", Point(30, 30)));
+    insert_ship(create_ship("Ajax", "Cruiser", Point(15, 15)));
+    insert_ship(create_ship("Xerxes", "Cruiser", Point(25, 25)));
+    insert_ship(create_ship("Valdez", "Tanker", Point(30, 30)));
 
     cout << "Model constructed" << endl;
 }
@@ -67,9 +67,8 @@ bool Model::is_ship_present(const std::string& name) const {
 }
 
 void Model::add_ship(std::shared_ptr<Ship> ship_ptr) {
-    ship_map.insert({ship_ptr->get_name(), ship_ptr});
-    object_map.insert({ship_ptr->get_name(), ship_ptr});
-    notify_location(ship_ptr->get_name(), ship_ptr->get_location());
+    insert_ship(ship_ptr);
+    ship_ptr->broadcast_current_state();
 }
 
 void Model::remove_ship(shared_ptr<Ship> ship_ptr) {
@@ -114,6 +113,16 @@ void Model::notify_location(const std::string& name, Point location) {
             bind(&View::update_location, _1, name, location));
 }
 
+void Model::notify_course_speed(const std::string& name, Course_speed cs) {
+    for_each(view_set.begin(), view_set.end(),
+            bind(&View::update_course_speed, _1, name, cs));
+}
+
+void Model::notify_fuel(const std::string& name, double fuel) {
+    for_each(view_set.begin(), view_set.end(),
+            bind(&View::update_fuel, _1, name, fuel));
+}
+
 void Model::notify_gone(const std::string& name) {
     for_each(view_set.begin(), view_set.end(),
             bind(&View::update_remove, _1, name));
@@ -127,9 +136,14 @@ Model *Model::get_Instance() {
 
 /* Private member functions */
 
-void Model::add_island(shared_ptr<Island> island) {
+void Model::insert_island(shared_ptr<Island> island) {
     island_map.insert({island->get_name(), island});
     object_map.insert({island->get_name(), island});
+}
+
+void Model::insert_ship(shared_ptr<Ship> ship_ptr) {
+    ship_map.insert({ship_ptr->get_name(), ship_ptr});
+    object_map.insert({ship_ptr->get_name(), ship_ptr});
 }
 
 Model_destroyer::~Model_destroyer() {

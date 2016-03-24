@@ -17,58 +17,25 @@ no longer be plotted. This must be done *after* any call to update_location that
 has the same object name since update_location will add any object name supplied.
 
 3. Call the draw function to print out the map.
-
-4. As needed, change the origin, scale, or displayed size of the map
-with the appropriate functions. Since the view "remembers" the previously updated
-information, the draw function will print out a map showing the previous objects
-using the new settings.
 */
 
 #include "Geometry.h"
-
-#include <string>
-#include <map>
+#include "Navigation.h"
 
 class View {
 public:
-	// default constructor sets the default size, scale, and origin, outputs constructor message
-	View(); 
-	~View();	// outputs destructor message
-	
-	// Save the supplied name and location for future use in a draw() call
-	// If the name is already present,the new location replaces the previous one.
-	void update_location(const std::string& name, Point location);
-	
+    // Update hooks for derived view classes TODO make better comments
+	virtual void update_location(const std::string& name, Point location);
+
+    virtual void update_course_speed(const std::string& name, Course_speed course_speed);
+
+    virtual void update_fuel(const std::string& name, double fuel);
+
 	// Remove the name and its location; no error if the name is not present.
-	void update_remove(const std::string& name);
+	virtual void update_remove(const std::string& name);
 	
 	// prints out the current map
-	void draw() const;
-
-	// modify the display parameters
-	// if the size is out of bounds will throw Error("New map size is too big!")
-	// or Error("New map size is too small!")
-	void set_size(int size_);
-	
-	// If scale is not postive, will throw Error("New map scale must be positive!");
-	void set_scale(double scale_);
-	
-	// any values are legal for the origin
-	void set_origin(Point origin_);
-	
-	// set the parameters to the default values
-	void set_defaults();
-				
-private:
-	int size;			// current size of the display
-	double scale;		// distance per cell of the display
-	Point origin;		// coordinates of the lower-left-hand corner
-
-    std::map<std::string, Point> location_map;	// Locations of ships and islands
-
-	// specified helper function				
-	bool get_subscripts(int &ix, int &iy, Point location) const;
-
+	virtual void draw() const = 0;
 };
 
 #endif

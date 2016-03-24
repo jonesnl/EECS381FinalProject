@@ -9,7 +9,6 @@
 
 using namespace std;
 
-// TODO check
 Ship::Ship(const std::string &name_, Point position_, double fuel_capacity_,
         double maximum_speed_, double fuel_consumption_, int resistance_) :
         Sim_object(name_),
@@ -101,7 +100,10 @@ void Ship::describe() const {
 }
 
 void Ship::broadcast_current_state() const {
-    Model::get_Instance()->notify_location(get_name(), get_location());
+    Model* model_inst = Model::get_Instance();
+    model_inst->notify_location(get_name(), get_location());
+    model_inst->notify_fuel(get_name(), fuel);
+    model_inst->notify_course_speed(get_name(), track_base.get_course_speed());
 }
 
 void Ship::set_destination_position_and_speed(Point destination_position,
@@ -115,6 +117,8 @@ void Ship::set_destination_position_and_speed(Point destination_position,
     track_base.set_course_speed({vect.direction, speed});
     ship_state = State::moving_to_position;
     destination_point = destination_position;
+    Model::get_Instance()->notify_course_speed(get_name(),
+            track_base.get_course_speed());
     cout << get_name() << " will sail on " << track_base.get_course_speed() <<
             " to " << destination_position << endl;
 }
@@ -132,6 +136,8 @@ void Ship::set_destination_island_and_speed(shared_ptr<Island> destination_islan
     ship_state = State::moving_to_island;
     destination_Island = destination_island;
     destination_point = destination_island->get_location();
+    Model::get_Instance()->notify_course_speed(get_name(),
+            track_base.get_course_speed());
     cout << get_name() << " will sail on " << track_base.get_course_speed() <<
             " to " << destination_island->get_name() << endl;
 }
@@ -144,6 +150,8 @@ void Ship::set_course_and_speed(double course, double speed) {
     reset_destinations_and_dock();
     track_base.set_course_speed({course, speed});
     ship_state = State::moving_on_course;
+    Model::get_Instance()->notify_course_speed(get_name(),
+            track_base.get_course_speed());
     cout << get_name() << " will sail on " << track_base.get_course_speed() << endl;
 }
 
@@ -163,6 +171,7 @@ void Ship::dock(shared_ptr<Island> island_ptr) {
     track_base.set_position(island_ptr->get_location());
     docked_Island = island_ptr;
     ship_state = State::docked;
+    track_base.set_speed(0.);
     Model::get_Instance()->notify_location(get_name(), get_location());
     cout << get_name() << " docked at " << island_ptr->get_name() << endl;
 }
@@ -176,6 +185,7 @@ void Ship::refuel() {
         return;
     }
     fuel += get_docked_Island()->provide_fuel(needed_fuel);
+    Model::get_Instance()->notify_fuel(get_name(), fuel);
     cout << get_name() << " now has " << fuel << " tons of fuel" << endl;
 }
 
@@ -247,7 +257,7 @@ void Ship::calculate_movement()
 		distance_possible = fuel / fuel_consumption;	// nm = tons / tons/nm
 		time_possible = (distance_possible / full_distance) * time;
 		}
-	
+
 	// are we are moving to a destination, and is the destination within the distance possible?
 	if((ship_state == State::moving_to_position || ship_state== State::moving_to_island) && destination_distance <= distance_possible) {
 		// yes, make our new position the destination
@@ -272,6 +282,11 @@ void Ship::calculate_movement()
 			fuel -= full_fuel_required;
 			}
 		}
+
+    // Update the state of this ship as it moves TODO check location
+    Model* model_ptr = Model::get_Instance();
+    model_ptr->notify_course_speed(get_name(), track_base.get_course_speed());
+    model_ptr->notify_fuel(get_name(), fuel);
 }
 
 void Ship::reset_destinations_and_dock() {

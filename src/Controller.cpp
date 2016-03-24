@@ -2,7 +2,7 @@
 
 #include "Model.h"
 #include "Utility.h"
-#include "View.h"
+#include "Views.h"
 #include "Ship_factory.h"
 #include "Ship.h"
 
@@ -39,7 +39,9 @@ void Controller::run() {
     };
     static GenericCmdMap_t generic_cmd_map = {
             {"open_map_view", &Controller::open_map_view},
+            {"open_sailing_view", &Controller::open_sailing_view},
             {"close_map_view", &Controller::close_map_view},
+            {"close_sailing_view", &Controller::close_sailing_view},
             {"default", &Controller::view_default_cmd},
             {"size", &Controller::view_size_cmd},
             {"zoom", &Controller::view_zoom_cmd},
@@ -127,17 +129,28 @@ static shared_ptr<Island> get_island_ptr_from_cin() {
 void Controller::open_map_view() {
     if (map_view)
         throw Error("Map view is already open!");
-    map_view = make_shared<View>();
-    all_views.push_back(map_view);
-    Model::get_Instance()->attach(map_view);
+    map_view = make_shared<MapView>();
+    open_view_helper(map_view);
+}
+
+void Controller::open_sailing_view() {
+    if (sailing_view)
+        throw Error("Sailing data view is already open!");
+    sailing_view = make_shared<SailingView>();
+    open_view_helper(sailing_view);
 }
 
 void Controller::close_map_view() {
     if_map_view_closed_error();
-    Model::get_Instance()->detach(map_view);
-    all_views.erase(remove(all_views.begin(), all_views.end(), map_view),
-            all_views.end());
     map_view = nullptr;
+    close_view_helper(map_view);
+}
+
+void Controller::close_sailing_view() {
+    if (!sailing_view)
+        throw Error("Sailing data view is not open!");
+    sailing_view = nullptr;
+    close_view_helper(sailing_view);
 }
 
 void Controller::view_default_cmd() {
@@ -255,4 +268,15 @@ void Controller::quit_helper() {
 void Controller::if_map_view_closed_error() const {
     if (!map_view)
         throw Error("Map view is not open!");
+}
+
+void Controller::open_view_helper(std::shared_ptr<View> view) {
+    all_views.push_back(view);
+    Model::get_Instance()->attach(view);
+}
+
+void Controller::close_view_helper(std::shared_ptr<View> view) {
+    Model::get_Instance()->detach(view);
+    all_views.erase(remove(all_views.begin(), all_views.end(), view),
+            all_views.end());
 }

@@ -2,6 +2,7 @@
 #define MODEL_H
 
 #include "Geometry.h"
+#include "Navigation.h"
 #include <string>
 #include <map>
 #include <set>
@@ -76,6 +77,10 @@ public:
     // notify the views about an object's location
     void notify_location(const std::string &name, Point location);
 
+    void notify_course_speed(const std::string& name, Course_speed cs);
+
+    void notify_fuel(const std::string& name, double fuel);
+
     // notify the views that an object is now gone
     void notify_gone(const std::string &name);
 
@@ -104,8 +109,8 @@ private:
     IslandMap_t island_map; // List of islands
     ViewSet_t view_set; // List of views
 
-    void add_island(std::shared_ptr<Island> island); // Helper function for adding islands to
-                                     // required objects
+    void insert_island(std::shared_ptr<Island> island);
+    void insert_ship(std::shared_ptr<Ship> ship);
 };
 
 class Model_destroyer {
