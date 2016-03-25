@@ -23,8 +23,8 @@ Controller::~Controller() {
 
 void Controller::run() {
     // Initialize command maps
-    using ShipCmdMap_t = std::map<std::string, void (Controller::*) (shared_ptr<Ship>)>;
-    using GenericCmdMap_t = std::map<std::string, void (Controller::*) ()>;
+    using ShipCmdMap_t = map<string, void (Controller::*) (shared_ptr<Ship>)>;
+    using GenericCmdMap_t = map<string, void (Controller::*) ()>;
     static ShipCmdMap_t ship_cmd_map = {
             {"course", &Controller::ship_course_cmd},
             {"position", &Controller::ship_position_cmd},
@@ -40,8 +40,10 @@ void Controller::run() {
     static GenericCmdMap_t generic_cmd_map = {
             {"open_map_view", &Controller::open_map_view},
             {"open_sailing_view", &Controller::open_sailing_view},
+            {"open_bridge_view", &Controller::open_bridge_view},
             {"close_map_view", &Controller::close_map_view},
             {"close_sailing_view", &Controller::close_sailing_view},
+            {"close_bridge_view", &Controller::close_bridge_view},
             {"default", &Controller::view_default_cmd},
             {"size", &Controller::view_size_cmd},
             {"zoom", &Controller::view_zoom_cmd},
@@ -140,6 +142,16 @@ void Controller::open_sailing_view() {
     open_view_helper(sailing_view);
 }
 
+void Controller::open_bridge_view() {
+    string ship_name;
+    cin >> ship_name;
+    auto bridge_view_ptr = make_shared<BridgeView>(ship_name);
+    bool success = bridge_view_map.emplace(ship_name, bridge_view_ptr).second;
+    if (!success)
+        throw Error("Bridge view is already open for that ship!");
+    open_view_helper(bridge_view_ptr);
+}
+
 void Controller::close_map_view() {
     if_map_view_closed_error();
     map_view = nullptr;
@@ -151,6 +163,17 @@ void Controller::close_sailing_view() {
         throw Error("Sailing data view is not open!");
     sailing_view = nullptr;
     close_view_helper(sailing_view);
+}
+
+void Controller::close_bridge_view() {
+    string ship_name;
+    cin >> ship_name;
+    auto bridge_view_itt = bridge_view_map.find(ship_name);
+    if (bridge_view_itt == bridge_view_map.end())
+        throw Error("Bridge view for that ship is not open!");
+    auto bridge_view_ptr = bridge_view_itt->second;
+    bridge_view_map.erase(bridge_view_itt);
+    close_view_helper(bridge_view_ptr);
 }
 
 void Controller::view_default_cmd() {

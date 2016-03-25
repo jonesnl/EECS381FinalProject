@@ -113,9 +113,14 @@ void Model::notify_location(const std::string& name, Point location) {
             bind(&View::update_location, _1, name, location));
 }
 
-void Model::notify_course_speed(const std::string& name, Course_speed cs) {
+void Model::notify_course(const std::string& name, double course) {
     for_each(view_set.begin(), view_set.end(),
-            bind(&View::update_course_speed, _1, name, cs));
+            bind(&View::update_course, _1, name, course));
+}
+
+void Model::notify_speed(const std::string& name, double speed) {
+    for_each(view_set.begin(), view_set.end(),
+            bind(&View::update_speed, _1, name, speed));
 }
 
 void Model::notify_fuel(const std::string& name, double fuel) {

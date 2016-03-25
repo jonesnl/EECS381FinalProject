@@ -143,6 +143,11 @@ private:
     // Updates position, fuel, and movement_state, assuming 1 time unit (1 hr)
     void calculate_movement();
     void reset_destinations_and_dock(); // Reset destinations and dock at locatoin
+
+    void set_position(Point point);
+    void set_course(double course);
+    void set_speed(double speed);
+    void set_fuel(double fuel);
 };
 
 #endif

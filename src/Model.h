@@ -45,6 +45,7 @@ public:
 
     using IslandSet_t = std::set<std::shared_ptr<Island>>;
 
+    // TODO should we be giving a set or is there a better way?
     IslandSet_t get_set_of_islands() const;
 
     // is there such a ship?
@@ -77,7 +78,9 @@ public:
     // notify the views about an object's location
     void notify_location(const std::string &name, Point location);
 
-    void notify_course_speed(const std::string& name, Course_speed cs);
+    void notify_course(const std::string& name, double course);
+
+    void notify_speed(const std::string& name, double speed);
 
     void notify_fuel(const std::string& name, double fuel);
 

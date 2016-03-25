@@ -60,33 +60,50 @@ public:
     void set_defaults();
 
 private:
-    int size;			// current size of the display
-    double scale;		// distance per cell of the display
-    Point origin;		// coordinates of the lower-left-hand corner
-
     std::map<std::string, Point> location_map;	// Locations of ships and islands
-
-    // specified helper function
-    bool get_subscripts(int &ix, int &iy, Point location) const;
-
+    int size;
+    double scale;
+    Point origin;
 };
 
 class SailingView : public View {
 public:
-    virtual void update_course_speed(const std::string& name, Course_speed cs) override;
+    void update_course(const std::string& name, double course) override;
 
-    virtual void update_fuel(const std::string& name, double fuel) override;
+    void update_speed(const std::string& name, double speed) override;
 
-    virtual void update_remove(const std::string& name) override;
+    void update_fuel(const std::string& name, double fuel) override;
 
-    virtual void draw() const override;
+    void update_remove(const std::string& name) override;
+
+    void draw() const override;
 
 private:
     struct SailingData {
-        Course_speed course_speed;
+        double course = 0.0;
+        double speed = 0.0;
         double fuel = 0.0;
     };
     std::map<std::string, SailingData> sailing_data_map;
+};
+
+class BridgeView : public View {
+public:
+    BridgeView(const std::string& ship_name);
+    void update_location(const std::string& name, Point point) override;
+
+    void update_course(const std::string& name, double course) override;
+
+    void update_remove(const std::string& name) override;
+
+    void draw() const override;
+
+private:
+    // TODO think about static location map
+    std::map<std::string, Point> location_map;
+    std::string ship_name;
+    double ship_heading;
+    Point ship_location;
 };
 
 #endif

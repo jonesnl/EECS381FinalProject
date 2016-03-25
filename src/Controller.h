@@ -13,6 +13,7 @@ with the user.
 class View;
 class MapView;
 class SailingView;
+class BridgeView;
 class Ship;
 
 class Controller {
@@ -31,13 +32,16 @@ private:
     // Future versions will need to manage more than one view.
     std::shared_ptr<MapView> map_view;
     std::shared_ptr<SailingView> sailing_view;
+    std::map<std::string, std::shared_ptr<BridgeView>> bridge_view_map;
     std::list<std::shared_ptr<View>> all_views;
 
     // Helper commands called in run()
     void open_map_view();
     void open_sailing_view();
+    void open_bridge_view();
     void close_map_view();
     void close_sailing_view();
+    void close_bridge_view();
     void view_default_cmd();
     void view_size_cmd();
     void view_zoom_cmd();

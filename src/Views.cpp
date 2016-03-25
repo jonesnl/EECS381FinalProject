@@ -1,6 +1,7 @@
 #include "Views.h"
 #include "Geometry.h"
 #include "Utility.h"
+#include "Navigation.h"
 
 #include <cmath>
 #include <string>
@@ -8,11 +9,18 @@
 #include <iostream>
 #include <iomanip>
 #include <list>
+#include <cassert>
+#include <algorithm>
+#include <iterator>
 
 using namespace std;
 
-const string empty_cell_c = ". ";
 const int sailing_column_width_c = 10;
+
+/* Shared Helpers */
+const string empty_cell_c = ". ";
+static bool get_subscripts(int &ix, int &iy, Point location,
+        int size, double scale, Point origin);
 
 class CoutSettingsSaver {
 public:
@@ -27,6 +35,7 @@ private:
     decltype(cout.precision()) precision;
 };
 
+/*********** MapView ***********/
 MapView::MapView () {
     cout << "View constructed" << endl;
     set_defaults();
@@ -48,7 +57,7 @@ void MapView::draw() const {
     // Save formatting settings
     CoutSettingsSaver settings_saver;
     cout << "Display size: " << size << ", scale: " <<
-    scale << ", origin: " << origin << endl;
+            scale << ", origin: " << origin << endl;
 
     vector<vector<string>> array(30, vector<string>(30, empty_cell_c));
     list<string> objects_outside_map;
@@ -57,7 +66,7 @@ void MapView::draw() const {
         const string& name = p.first;
         Point location = p.second;
 
-        if (get_subscripts(x, y, location)) {
+        if (get_subscripts(x, y, location, size, scale, origin)) {
             if (array[x][y] != empty_cell_c)
                 array[x][y] = "* ";
             else
@@ -115,8 +124,105 @@ void MapView::set_origin(Point origin_) {
 void MapView::set_defaults() {
     size = 25;
     scale = 2.;
-    origin = {-10, -10};
+    origin = Point {-10, -10};
 }
+
+/*********** SailingView **********/
+void SailingView::update_course(const string &name, double course) {
+    sailing_data_map[name].course = course;
+}
+
+void SailingView::update_speed(const string &name, double speed) {
+    sailing_data_map[name].speed = speed;
+}
+
+void SailingView::update_fuel(const string& name, double fuel) {
+    sailing_data_map[name].fuel = fuel;
+}
+
+void SailingView::update_remove(const string& name) {
+    sailing_data_map.erase(name);
+}
+
+void SailingView::draw() const {
+    CoutSettingsSaver settings_saver;
+    cout << "----- Sailing Data -----" << endl;
+    cout << setw(sailing_column_width_c) << "Ship" <<
+            setw(sailing_column_width_c) << "Fuel" <<
+            setw(sailing_column_width_c) << "Course" <<
+            setw(sailing_column_width_c) << "Speed" << endl;
+    for(auto& data_pair : sailing_data_map) {
+        cout << setw(sailing_column_width_c) << data_pair.first;
+        const SailingData& sailing_data = data_pair.second;
+        cout << setw(sailing_column_width_c) << sailing_data.fuel <<
+                setw(sailing_column_width_c) << sailing_data.course <<
+                setw(sailing_column_width_c) << sailing_data.speed <<
+                endl;
+    }
+}
+
+/******* BridgeView *******/
+
+BridgeView::BridgeView(const string& ship_name_) :
+        ship_name(ship_name_) { }
+
+void BridgeView::update_location(const string& name, Point point) {
+    if (name == ship_name)
+        ship_location = point;
+    else
+        location_map[name] = point;
+}
+
+void BridgeView::update_course(const std::string &name, double course) {
+    if (name == ship_name)
+        ship_heading = course;
+}
+
+void BridgeView::update_remove(const string& name) {
+    assert(name != ship_name);
+    location_map.erase(name);
+}
+
+void BridgeView::draw() const {
+    cout << "Bridge view from " << ship_name <<
+            " position " << ship_location <<
+            " heading " << ship_heading << endl;
+    for (int i = 0; i < 2; ++i) {
+        cout << "     ";
+        for (int j = 0; j < 19; ++j)
+            cout << empty_cell_c;
+        cout << endl;
+    }
+
+    vector<string> array(19, empty_cell_c);// TODO name
+    for (const auto& name_loc_pair : location_map) {
+        Compass_position position(ship_location, name_loc_pair.second);
+        if (position.range > 20) // TODO magic number
+            continue;
+        int ix, dummy;
+        if (position.bearing > 180.)
+            position.bearing -= 360.;
+        else if (position.bearing < -180.)
+            position.bearing += 360.;
+
+        get_subscripts(ix, dummy, {position.bearing, 0}, 19, 10., {-90., 0.});
+        if (array[ix] == empty_cell_c)
+            array[ix] = name_loc_pair.first.substr(0, 2);
+        else
+            array[ix] = "* "; // TODO magic value
+    }
+    cout << "     ";
+    copy(array.cbegin(), array.cend(), ostream_iterator<string>(cout));
+    cout << endl;
+    cout.precision(0);
+    for (int i = 0; i < 19; i += 3) { // TODO duplicated code
+        cout << "  " << setw(4) << -90. + (i * 10.);
+    }
+    cout << endl;
+
+}
+
+/********* Shared Helpers **********/
 
 // Calculate the cell subscripts corresponding to the supplied location parameter,
 // using the current size, scale, and origin of the display.
@@ -124,8 +230,8 @@ void MapView::set_defaults() {
 // scale is a double value, and size is an integer for the number of rows/columns
 // currently being used for the grid.
 // Return true if the location is within the grid, false if not
-bool MapView::get_subscripts(int &ix, int &iy, Point location) const
-{
+static bool get_subscripts(int &ix, int &iy, Point location,
+        int size, double scale, Point origin) {
     // adjust with origin and scale
     Cartesian_vector subscripts = (location - origin) / scale;
     // truncate coordinates to appropriate integer after taking the floor
@@ -141,33 +247,3 @@ bool MapView::get_subscripts(int &ix, int &iy, Point location) const
     else
         return true;
 }
-
-void SailingView::update_course_speed(const std::string& name, Course_speed cs) {
-    sailing_data_map[name].course_speed = cs;
-}
-
-void SailingView::update_fuel(const std::string& name, double fuel) {
-    sailing_data_map[name].fuel = fuel;
-}
-
-void SailingView::update_remove(const std::string& name) {
-    sailing_data_map.erase(name);
-}
-
-void SailingView::draw() const {
-    CoutSettingsSaver settings_saver;
-    cout << "----- Sailing Data -----" << endl;
-    cout << setw(sailing_column_width_c) << "Ship" <<
-            setw(sailing_column_width_c) << "Fuel" <<
-            setw(sailing_column_width_c) << "Course" <<
-            setw(sailing_column_width_c) << "Speed" << endl;
-    for(auto& data_pair : sailing_data_map) {
-        cout << setw(sailing_column_width_c) << data_pair.first;
-        const SailingData& sailing_data = data_pair.second;
-        cout << setw(sailing_column_width_c) << sailing_data.fuel <<
-                setw(sailing_column_width_c) << sailing_data.course_speed.course <<
-                setw(sailing_column_width_c) << sailing_data.course_speed.speed <<
-                endl;
-    }
-}
-

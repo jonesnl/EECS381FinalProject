@@ -20,14 +20,15 @@ has the same object name since update_location will add any object name supplied
 */
 
 #include "Geometry.h"
-#include "Navigation.h"
 
 class View {
 public:
     // Update hooks for derived view classes TODO make better comments
 	virtual void update_location(const std::string& name, Point location);
 
-    virtual void update_course_speed(const std::string& name, Course_speed course_speed);
+	virtual void update_course(const std::string& name, double course);
+
+	virtual void update_speed(const std::string& name, double speed);
 
     virtual void update_fuel(const std::string& name, double fuel);
 
