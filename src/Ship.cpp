@@ -147,6 +147,7 @@ void Ship::set_course_and_speed(double course, double speed) {
     if (!can_move())
         throw Error("Ship cannot move!");
     reset_destinations_and_dock();
+    ship_state = State::moving_on_course;
     set_course(course);
     set_speed(speed);
     cout << get_name() << " will sail on " << track_base.get_course_speed() << endl;
@@ -209,8 +210,8 @@ void Ship::receive_hit(int hit_force, shared_ptr<Ship>) {
         ship_state = State::sunk;
         set_speed(0.);
         cout << get_name() << " sunk" << endl;
-        model_ptr->notify_gone(get_name());
         model_ptr->remove_ship(shared_from_this());
+        model_ptr->notify_gone(get_name());
     }
 }
 

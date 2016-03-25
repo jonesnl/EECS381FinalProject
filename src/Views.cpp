@@ -179,41 +179,58 @@ void BridgeView::update_course(const std::string &name, double course) {
 }
 
 void BridgeView::update_remove(const string& name) {
-    assert(name != ship_name);
-    location_map.erase(name);
+    if (name == ship_name)
+        sunk = true;
+    else
+        location_map.erase(name);
 }
 
 void BridgeView::draw() const {
-    cout << "Bridge view from " << ship_name <<
-            " position " << ship_location <<
-            " heading " << ship_heading << endl;
-    for (int i = 0; i < 2; ++i) {
+    CoutSettingsSaver settings_saver;
+    if (sunk) {
+        cout << "Bridge view from " << ship_name <<
+        " sunk at " << ship_location << endl;
+        for (int i = 0; i < 3; ++i) {
+            cout << "     ";
+            for (int j = 0; j < 19; ++j)
+                cout << "w-";
+            cout << endl;
+        }
+    } else {
+        cout << "Bridge view from " << ship_name <<
+        " position " << ship_location <<
+        " heading " << ship_heading << endl;
+        for (int i = 0; i < 2; ++i) {
+            cout << "     ";
+            for (int j = 0; j < 19; ++j)
+                cout << empty_cell_c;
+            cout << endl;
+        }
+
+        vector<string> array(19, empty_cell_c);// TODO name
+        for (const auto& name_loc_pair : location_map) {
+            Compass_position position(ship_location, name_loc_pair.second);
+            if (position.range > 20) // TODO magic number
+                continue;
+            int ix, dummy;
+            double bow_angle = position.bearing - ship_heading;
+            if (bow_angle > 180.)
+                bow_angle -= 360.;
+            else if (bow_angle < -180.)
+                bow_angle += 360.;
+
+            if (!get_subscripts(ix, dummy, {bow_angle, 0}, 19, 10.,
+                    {-90., 0.}))
+                continue;
+            if (array[ix] == empty_cell_c)
+                array[ix] = name_loc_pair.first.substr(0, 2);
+            else
+                array[ix] = "* "; // TODO magic value
+        }
         cout << "     ";
-        for (int j = 0; j < 19; ++j)
-            cout << empty_cell_c;
+        copy(array.cbegin(), array.cend(), ostream_iterator<string>(cout));
         cout << endl;
     }
-
-    vector<string> array(19, empty_cell_c);// TODO name
-    for (const auto& name_loc_pair : location_map) {
-        Compass_position position(ship_location, name_loc_pair.second);
-        if (position.range > 20) // TODO magic number
-            continue;
-        int ix, dummy;
-        if (position.bearing > 180.)
-            position.bearing -= 360.;
-        else if (position.bearing < -180.)
-            position.bearing += 360.;
-
-        get_subscripts(ix, dummy, {position.bearing, 0}, 19, 10., {-90., 0.});
-        if (array[ix] == empty_cell_c)
-            array[ix] = name_loc_pair.first.substr(0, 2);
-        else
-            array[ix] = "* "; // TODO magic value
-    }
-    cout << "     ";
-    copy(array.cbegin(), array.cend(), ostream_iterator<string>(cout));
-    cout << endl;
     cout.precision(0);
     for (int i = 0; i < 19; i += 3) { // TODO duplicated code
         cout << "  " << setw(4) << -90. + (i * 10.);

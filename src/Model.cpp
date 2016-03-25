@@ -75,6 +75,7 @@ void Model::remove_ship(shared_ptr<Ship> ship_ptr) {
     const string& ship_name = ship_ptr->get_name();
     ship_map.erase(ship_name);
     object_map.erase(ship_name);
+
 }
 
 shared_ptr<Ship> Model::get_ship_ptr(const std::string& name) const {

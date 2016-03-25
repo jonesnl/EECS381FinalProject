@@ -145,6 +145,8 @@ void Controller::open_sailing_view() {
 void Controller::open_bridge_view() {
     string ship_name;
     cin >> ship_name;
+    if (!Model::get_Instance()->is_ship_present(ship_name))
+        throw Error("Ship not found!");
     auto bridge_view_ptr = make_shared<BridgeView>(ship_name);
     bool success = bridge_view_map.emplace(ship_name, bridge_view_ptr).second;
     if (!success)

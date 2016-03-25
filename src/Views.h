@@ -102,6 +102,7 @@ private:
     // TODO think about static location map
     std::map<std::string, Point> location_map;
     std::string ship_name;
+    bool sunk = false;
     double ship_heading;
     Point ship_location;
 };
