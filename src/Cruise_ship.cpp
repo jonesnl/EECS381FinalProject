@@ -80,7 +80,8 @@ void Cruise_ship::set_destination_island_and_speed(
     origin_island = destination_island;
     cruise_speed = speed;
     cruise_to(destination_island);
-    islands_to_visit = Model::get_Instance()->get_set_of_islands();
+    auto island_vect = Model::get_Instance()->get_vector_of_islands();
+    islands_to_visit = set<shared_ptr<Island>>(island_vect.begin(), island_vect.end());
     islands_to_visit.erase(origin_island);
     cout << get_name() << " cruise will start and end at " <<
             destination_island->get_name() << endl;

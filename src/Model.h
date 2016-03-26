@@ -3,10 +3,12 @@
 
 #include "Geometry.h"
 #include "Navigation.h"
+
 #include <string>
-#include <map>
 #include <set>
+#include <map>
 #include <memory>
+#include <vector>
 
 /*
 Model is part of a simplified Model-View-Controller pattern.
@@ -43,10 +45,9 @@ public:
     // will throw Error("Island not found!") if no island of that name
     std::shared_ptr<Island> get_island_ptr(const std::string &name) const;
 
-    using IslandSet_t = std::set<std::shared_ptr<Island>>;
-
     // TODO should we be giving a set or is there a better way?
-    IslandSet_t get_set_of_islands() const;
+    // Sorted by island name
+    std::vector<std::shared_ptr<Island>> get_vector_of_islands() const;
 
     // is there such a ship?
     bool is_ship_present(const std::string &name) const;

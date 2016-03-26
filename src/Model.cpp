@@ -48,12 +48,12 @@ shared_ptr<Island> Model::get_island_ptr(const std::string& name) const {
     return itt->second;
 }
 
-Model::IslandSet_t Model::get_set_of_islands() const {
-    IslandSet_t island_set;
+vector<shared_ptr<Island>> Model::get_vector_of_islands() const {
+    vector<shared_ptr<Island>> island_vect;
     transform(island_map.begin(), island_map.end(),
-            inserter(island_set, island_set.begin()),
+            back_inserter(island_vect),
             mem_fn(&IslandMap_t::value_type::second));
-    return island_set;
+    return island_vect;
 }
 
 bool Model::is_ship_present(const std::string& name) const {

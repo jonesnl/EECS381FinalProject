@@ -131,14 +131,9 @@ void Torpedo_boat::receive_hit(int hit_force, std::shared_ptr<Ship> attacker_ptr
         if (is_attacking())
             stop_attack();
         // Take evasive action
-        auto island_set = Model::get_Instance()->get_set_of_islands();
-        assert(island_set.size() > 0);
+        auto island_vect = Model::get_Instance()->get_vector_of_islands();
+        assert(island_vect.size() > 0);
         Point attacker_position = attacker_ptr->get_location();
-        vector<shared_ptr<Island>> island_vect(island_set.begin(), island_set.end());
-        sort(island_vect.begin(), island_vect.end(),
-                [](shared_ptr<Island> i1, shared_ptr<Island> i2) {
-                    return i1->get_name() < i2->get_name();
-                });
         stable_sort(island_vect.begin(), island_vect.end(), IslandPtrDistComparator{get_location()});
         auto dest_itt = find_if(island_vect.begin(), island_vect.end(),
                 [attacker_position](shared_ptr<Island> isl) {
