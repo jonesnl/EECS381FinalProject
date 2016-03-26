@@ -3,7 +3,7 @@ project(src)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic-errors -std=c++14 -Wall -Wextra")
 
-set(HEADER_FILES Cruiser.h
+set(HEADER_FILES Warships.h
         Geometry.h
         Island.h
         Model.h
@@ -12,7 +12,7 @@ set(HEADER_FILES Cruiser.h
         Ship.h
         Utility.h
         Track_base.h
-        Cruiser.h
+        Warships.h
         Ship_factory.h
         Controller.h
         View.h
@@ -28,7 +28,7 @@ set(SHARED_SOURCE_FILES
         Island.cpp
         Ship.cpp
         Track_base.cpp
-        Cruiser.cpp
+        Warships.cpp
         Ship_factory.cpp
         Controller.cpp
         View.cpp
