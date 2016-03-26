@@ -8,14 +8,7 @@ using std::cout; using std::endl;
 
 Island::Island(const std::string &name_, Point position_, double fuel_,
         double production_rate_) : Sim_object(name_), position(position_),
-        fuel(fuel_), production_rate(production_rate_) {
-
-    cout << "Island " << get_name() << " constructed" << endl;
-}
-
-Island::~Island() {
-    cout << "Island " << get_name() << " destructed" << endl;
-}
+        fuel(fuel_), production_rate(production_rate_) { }
 
 void Island::update() {
     // Production rate is assumed to be on a per hour basis

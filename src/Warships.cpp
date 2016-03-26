@@ -15,13 +15,7 @@ Warship::Warship(const std::string& name_, Point position_, double fuel_capacity
         double maximum_speed, double fuel_consumption_, int resistance_, int firepower_,
         double attack_range_) :
             Ship(name_, position_, fuel_capacity_, maximum_speed, fuel_consumption_, resistance_),
-            firepower(firepower_), attack_range(attack_range_) {
-    cout << "Warship constructed" << endl;
-}
-
-Warship::~Warship() {
-    cout << "Warship destructed" << endl;
-}
+            firepower(firepower_), attack_range(attack_range_) { }
 
 void Warship::update() {
     Ship::update(); // TODO
@@ -83,13 +77,7 @@ void Warship::stop_attack() {
 /******** Cruiser Class ********/
 
 Cruiser::Cruiser(const string &name_, Point position_) :
-        Warship(name_, position_, 1000., 20., 10., 6, 3, 15.) {
-    cout << "Cruiser " << get_name() << " constructed" << endl;
-}
-
-Cruiser::~Cruiser() {
-    cout << "Cruiser " << get_name() << " destructed" << endl;
-}
+        Warship(name_, position_, 1000., 20., 10., 6, 3, 15.) { }
 
 void Cruiser::describe() const {
     cout << "\nCruiser ";
@@ -110,13 +98,7 @@ void Cruiser::target_out_of_range_handler() {
 /********** Torpedo_boat Class ********/
 
 Torpedo_boat::Torpedo_boat(const string& name_, Point position_) :
-        Warship(name_, position_, 800., 12., 5., 9, 3, 5) {
-    cout << "Torpedo_boat " << get_name() << " destructed" << endl;
-}
-
-Torpedo_boat::~Torpedo_boat() {
-    cout << "Torpedo_boat " << get_name() << " destructed" << endl;
-}
+        Warship(name_, position_, 800., 12., 5., 9, 3, 5) { }
 
 void Torpedo_boat::describe() const {
     cout << "\nTorpedo_boat ";
@@ -166,7 +148,6 @@ void Torpedo_boat::receive_hit(int hit_force, std::shared_ptr<Ship> attacker_ptr
             dest_itt = max_element(island_vect.begin(), island_vect.end(),
                     IslandPtrDistComparator{attacker_position});
         }
-        auto& dest_island = **dest_itt;
         assert(dest_itt != island_vect.end());
         set_destination_island_and_speed(*dest_itt, get_maximum_speed());
     }

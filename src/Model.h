@@ -99,7 +99,6 @@ public:
     friend class Model_destroyer;
 private:
     Model();
-    ~Model();
     static Model *singleton_ptr;
 
     int time = 0;        // the simulated time

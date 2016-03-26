@@ -13,7 +13,7 @@ public:
 	Sim_object(const std::string& name_);
 
     // *** define the destructor in Sim_object.cpp to output the supplied message
-    virtual ~Sim_object();
+    virtual ~Sim_object() = default;
 	
 	const std::string& get_name() const
 		{return name;}

@@ -21,9 +21,6 @@ public:
             double maximum_speed, double fuel_consumption_, int resistance_, int firepower_,
             double attack_range_);
 
-    // output destructor message
-    ~Warship();
-
     // perform Cruiser-specific behavior
     void update() override;
 
@@ -50,9 +47,6 @@ public:
     // initialize, then output constructor message
     Cruiser(const std::string& name_, Point position_);
 
-    // output destructor message
-    ~Cruiser();
-
     void describe() const override;
 
     // respond to an attack
@@ -65,8 +59,6 @@ class Torpedo_boat : public Warship {
 public:
     // initialize
     Torpedo_boat(const std::string& name_, Point position_);
-
-    ~Torpedo_boat();
 
     void describe() const override;
 

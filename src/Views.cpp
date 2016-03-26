@@ -37,12 +37,7 @@ private:
 
 /*********** MapView ***********/
 MapView::MapView () {
-    cout << "View constructed" << endl;
     set_defaults();
-}
-
-MapView::~MapView() {
-    cout << "View destructed" << endl;
 }
 
 void MapView::update_location(const std::string &name, Point location) {

@@ -15,9 +15,7 @@ Ship::Ship(const std::string &name_, Point position_, double fuel_capacity_,
         fuel {fuel_capacity_}, fuel_capacity {fuel_capacity_},
         fuel_consumption {fuel_consumption_},
         maximum_speed {maximum_speed_},
-        resistance {resistance_}, track_base(position_) {
-    cout << "Ship " << get_name() << " constructed" << endl;
-}
+        resistance {resistance_}, track_base(position_) { }
 
 /*
 Define the destructor function even if it was declared as a pure virtual function.
@@ -26,11 +24,6 @@ that declares them. But this is often done as a way to make a class abstract,
 if there is no other virtual function that makes sense to mark as pure. Here we
 are defining it just to get the destructor message output.
 */
-
-Ship::~Ship()
-{
-	cout << "Ship "  << get_name() << " destructed" << endl;
-}
 
 bool Ship::can_move() const {
     return is_afloat() && ship_state != State::dead_in_the_water;

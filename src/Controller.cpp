@@ -13,14 +13,6 @@
 using namespace std;
 using namespace placeholders;
 
-Controller::Controller() {
-    cout << "Controller constructed" << endl;
-}
-
-Controller::~Controller() {
-    cout << "Controller destructed" << endl;
-}
-
 void Controller::run() {
     // Initialize command maps
     using ShipCmdMap_t = map<string, void (Controller::*) (shared_ptr<Ship>)>;

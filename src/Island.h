@@ -15,9 +15,6 @@ public:
     Island(const std::string &name_, Point position_, double fuel_ = 0.,
             double production_rate_ = 0.);
 
-    // output destructor message
-    ~Island();
-
     Point get_location() const override { return position; }
 
     // if production_rate > 0, compute production_rate * unit time, and add to amount, and print an update message

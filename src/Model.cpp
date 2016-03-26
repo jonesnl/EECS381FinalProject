@@ -25,12 +25,6 @@ Model::Model() {
     insert_ship(create_ship("Ajax", "Cruiser", Point(15, 15)));
     insert_ship(create_ship("Xerxes", "Cruiser", Point(25, 25)));
     insert_ship(create_ship("Valdez", "Tanker", Point(30, 30)));
-
-    cout << "Model constructed" << endl;
-}
-
-Model::~Model() {
-    cout << "Model destructed" << endl;
 }
 
 bool Model::is_name_in_use(const std::string& name) const {

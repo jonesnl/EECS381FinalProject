@@ -33,7 +33,6 @@ class MapView : public View {
 public:
     // default constructor sets the default size, scale, and origin, outputs constructor message
     MapView();
-    ~MapView(); // outputs destructor message
 
     // Save the supplied name and location for future use in a draw() call
     // If the name is already present,the new location replaces the previous one.

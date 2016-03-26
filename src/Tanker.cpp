@@ -10,13 +10,7 @@ using namespace std;
 Tanker::Tanker(const string &name_, Point position_) :
         Ship(name_, position_, 100, 10, 2., 0),
         tanker_state(TankerState_t::no_cargo_dest), cargo(0.),
-        cargo_capacity(1000.) {
-    cout << "Tanker " << get_name() << " constructed" << endl;
-}
-
-Tanker::~Tanker() {
-    cout << "Tanker " << get_name() << " destructed" << endl;
-}
+        cargo_capacity(1000.) { }
 
 void Tanker::set_destination_position_and_speed(Point destination_point,
         double speed) {

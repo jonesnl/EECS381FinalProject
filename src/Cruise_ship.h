@@ -21,8 +21,6 @@ public:
     // Construct a cruise ship
     Cruise_ship(const std::string &name_, Point position_);
 
-    ~Cruise_ship() override;
-
     // Update the state of the cruise ship
     void update() override;
 

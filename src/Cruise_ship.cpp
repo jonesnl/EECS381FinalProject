@@ -10,13 +10,7 @@
 using namespace std;
 
 Cruise_ship::Cruise_ship(const std::string &name_, Point position_) :
-        Ship(name_, position_, 500, 15, 2, 0) {
-    cout << "Cruise_ship " << get_name() << " constructed" << endl;
-}
-
-Cruise_ship::~Cruise_ship() {
-    cout << "Cruise_ship " << get_name() << " destructed" << endl;
-}
+        Ship(name_, position_, 500, 15, 2, 0) { }
 
 void Cruise_ship::update() {
     Ship::update();

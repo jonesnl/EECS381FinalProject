@@ -21,9 +21,6 @@ public:
 	// initialize, the output constructor message
 	Tanker(const std::string &name_, Point position_);
 
-	// output destructor message
-	~Tanker();
-
 	// This class overrides these Ship functions so that it can check if this Tanker has assigned cargo destinations.
 	// if so, throw an Error("Tanker has cargo destinations!"); otherwise, simply call the Ship functions.
 	void set_destination_position_and_speed(Point destination_point,

@@ -8,26 +8,12 @@ using namespace std;
 
 /* Public Function Definitions */
 
-Track_base::Track_base() : altitude(0.)
-{
-	std::cout << "Track_base constructed" << std::endl;
-}
+Track_base::Track_base() : altitude(0.) { }
 
-Track_base::Track_base(Point position_) : position(position_), altitude(0.)
-{
-	std::cout << "Track_base constructed" << std::endl;
-}
+Track_base::Track_base(Point position_) : position(position_), altitude(0.) { }
 
 Track_base::Track_base(Point position_, Course_speed course_speed_, double altitude_) :
-		position(position_), course_speed(course_speed_), altitude(altitude_)
-{
-	std::cout << "Track_base constructed" << std::endl;
-}
-
-Track_base::~Track_base()
-{
-	std::cout << "Track_base destructed" << std::endl;
-}
+		position(position_), course_speed(course_speed_), altitude(altitude_) { }
 
 
 // range and bearing of this track from a specified position

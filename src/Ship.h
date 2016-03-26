@@ -26,10 +26,6 @@ class Island;
 class Ship : public Sim_object, public std::enable_shared_from_this<Ship> {
 
 public:
-    // made pure virtual to mark this class as abstract, but defined anyway
-    // to output destructor message
-    virtual ~Ship();
-
     /*** Readers ***/
     // return the current position
     Point get_location() const override { return track_base.get_position(); }
