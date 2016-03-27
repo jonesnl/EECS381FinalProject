@@ -78,10 +78,10 @@ public:
     void draw() const override;
 
 private:
-    struct SailingData {
-        double course = 0.0;
-        double speed = 0.0;
-        double fuel = 0.0;
+    struct SailingData { // TODO remove setinal
+        double course = -300.;
+        double speed = -300.;
+        double fuel = -300.;
     };
     std::map<std::string, SailingData> sailing_data_map;
 };

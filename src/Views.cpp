@@ -168,7 +168,7 @@ void BridgeView::update_location(const string& name, Point point) {
         location_map[name] = point;
 }
 
-void BridgeView::update_course(const std::string &name, double course) {
+void BridgeView::update_course(const string &name, double course) {
     if (name == ship_name)
         ship_heading = course;
 }
@@ -205,7 +205,7 @@ void BridgeView::draw() const {
         vector<string> array(19, empty_cell_c);// TODO name
         for (const auto& name_loc_pair : location_map) {
             Compass_position position(ship_location, name_loc_pair.second);
-            if (position.range > 20) // TODO magic number
+            if (position.range > 20 || position.range < 0.005) // TODO magic number
                 continue;
             int ix, dummy;
             double bow_angle = position.bearing - ship_heading;

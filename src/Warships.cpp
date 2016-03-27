@@ -9,7 +9,7 @@
 
 using namespace std;
 
-/********* Warship Intermediate Class ***********/
+/********* Warship Class ***********/
 
 Warship::Warship(const std::string& name_, Point position_, double fuel_capacity_,
         double maximum_speed, double fuel_consumption_, int resistance_, int firepower_,
@@ -48,7 +48,7 @@ void Warship::describe() const {
         if (!target_ptr || !target_ptr->is_afloat()) {
             cout << "Attacking absent ship" << endl;
         } else {
-            cout << "Attacking " << target.lock()->get_name() << endl;
+            cout << "Attacking " << target_ptr->get_name() << endl;
         }
     }
 }
