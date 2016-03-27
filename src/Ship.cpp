@@ -57,7 +57,7 @@ void Ship::update() {
     } else if (is_moving()) {
         calculate_movement();
         cout << get_name() << " now at " << get_location() << endl;
-        Model::get_Instance()->notify_location(get_name(), get_location());
+        Model::get_inst()->notify_location(get_name(), get_location());
     } else if (ship_state == State_t::stopped) {
         cout << get_name() << " stopped at " << get_location() << endl;
     } else if (is_docked()) {
@@ -92,7 +92,7 @@ void Ship::describe() const {
 }
 
 void Ship::broadcast_current_state() const {
-    Model* model_inst = Model::get_Instance();
+    Model* model_inst = Model::get_inst();
     model_inst->notify_location(get_name(), get_location());
     model_inst->notify_course(get_name(), track_base.get_course());
     model_inst->notify_speed(get_name(), track_base.get_speed());
@@ -199,7 +199,7 @@ void Ship::receive_hit(int hit_force, shared_ptr<Ship>) {
     cout << get_name() << " hit with " << hit_force << ", resistance now " <<
             resistance << endl;
     if (is_afloat() && resistance < 0.) {
-        Model *model_ptr = Model::get_Instance();
+        Model *model_ptr = Model::get_inst();
         ship_state = State_t::sunk;
         set_speed(0.);
         cout << get_name() << " sunk" << endl;
@@ -264,7 +264,7 @@ void Ship::calculate_movement() {
         // go as far as we can, stay in the same movement state
         // simply move for the amount of time possible
         track_base.update_position(time_possible); // TODO think about ways to clean
-        Model::get_Instance()->notify_location(get_name(), track_base.get_position());
+        Model::get_inst()->notify_location(get_name(), track_base.get_position());
         // have we used up our fuel?
         if (full_fuel_required >= fuel) {
             set_fuel(0.);
@@ -285,21 +285,21 @@ void Ship::reset_destinations_and_dock() {
 
 void Ship::set_position(Point point) {
     track_base.set_position(point);
-    Model::get_Instance()->notify_location(get_name(), point);
+    Model::get_inst()->notify_location(get_name(), point);
 }
 
 void Ship::set_course(double course) {
     track_base.set_course(course);
-    Model::get_Instance()->notify_course(get_name(), course);
+    Model::get_inst()->notify_course(get_name(), course);
 }
 
 void Ship::set_speed(double speed) {
     track_base.set_speed(speed);
-    Model::get_Instance()->notify_speed(get_name(), speed);
+    Model::get_inst()->notify_speed(get_name(), speed);
 }
 
 void Ship::set_fuel(double fuel_) {
     fuel = fuel_;
-    Model::get_Instance()->notify_fuel(get_name(), fuel);
+    Model::get_inst()->notify_fuel(get_name(), fuel);
 }
 

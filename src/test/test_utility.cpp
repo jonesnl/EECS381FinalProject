@@ -11,5 +11,5 @@ void set_fp_cout() {
     cout.setf(ios::fixed, ios::floatfield);
     cout.precision(2);
     shared_ptr<View> v = make_shared<MapView>();
-    Model::get_Instance()->attach(v);
+    Model::get_inst()->attach(v);
 }

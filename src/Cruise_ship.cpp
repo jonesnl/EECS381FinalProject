@@ -81,7 +81,7 @@ void Cruise_ship::set_destination_island_and_speed(
     origin_island = destination_island; // TODO if error, these are set when they shouldn't be
     cruise_speed = speed;
     cruise_to(destination_island);
-    auto island_vect = Model::get_Instance()->get_vector_of_islands();
+    auto island_vect = Model::get_inst()->get_vector_of_islands();
     islands_to_visit =
             set<shared_ptr<Island>, IslandNameComp>(island_vect.begin(), island_vect.end());
     islands_to_visit.erase(origin_island);

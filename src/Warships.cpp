@@ -93,8 +93,20 @@ void Cruiser::target_out_of_range_handler() {
 
 /********** Torpedo_boat Class ********/
 
+const double torpedo_boat_fuel_capacity_c = 800.;
+const double torpedo_boat_maximum_speed_c = 12.;
+const double torpedo_boat_fuel_consumption_c = 5;
+const int torpedo_boat_firepower_c = 3;
+const double torpedo_boat_attack_range_c = 5;
+const int torpedo_boat_resistance_c = 9;
+
 Torpedo_boat::Torpedo_boat(const string& name_, Point position_) :
-        Warship(name_, position_, 800., 12., 5., 9, 3, 5) { }
+        Warship(name_, position_, torpedo_boat_fuel_capacity_c,
+                torpedo_boat_maximum_speed_c,
+                torpedo_boat_fuel_consumption_c,
+                torpedo_boat_resistance_c,
+                torpedo_boat_firepower_c,
+                torpedo_boat_attack_range_c) { }
 
 void Torpedo_boat::describe() const {
     cout << "\nTorpedo_boat ";
@@ -108,15 +120,22 @@ void Torpedo_boat::receive_hit(int hit_force, std::shared_ptr<Ship> attacker_ptr
         if (is_attacking())
             stop_attack();
         // Take evasive action
-        auto island_vect = Model::get_Instance()->get_vector_of_islands();
+        auto island_vect = Model::get_inst()->get_vector_of_islands();
         assert(island_vect.size() > 0);
-        Point attacker_position = attacker_ptr->get_location();
+        // Sort by distance from this boat, closest first
         stable_sort(island_vect.begin(), island_vect.end(), IslandDistComp{get_location()});
+
+        Point attacker_position = attacker_ptr->get_location();
+        // Find closest island that is at least 15 nm from the attacker
         auto dest_itt = find_if(island_vect.begin(), island_vect.end(),
                 [attacker_position](shared_ptr<Island> isl) {
                     return Compass_vector(attacker_position, isl->get_location()).distance >= 15.;
                 });
+        // If no island at least 15 nm from attacker, choose island that is
+        // furthest from the attacker
         if (dest_itt == island_vect.end()) {
+            // Should be sorted by name, so refetch island vector
+            island_vect = Model::get_inst()->get_vector_of_islands();
             dest_itt = max_element(island_vect.begin(), island_vect.end(),
                     IslandDistComp{attacker_position});
         }

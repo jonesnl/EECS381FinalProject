@@ -128,7 +128,7 @@ void Model::notify_gone(const std::string& name) {
             bind(&View::update_remove, _1, name));
 }
 
-Model *Model::get_Instance() {
+Model *Model::get_inst() {
     if (!singleton_ptr)
         singleton_ptr = new Model();
     return singleton_ptr;

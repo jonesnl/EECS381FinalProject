@@ -47,7 +47,7 @@ void Controller::run() {
             {"create", &Controller::model_create_cmd}
     };
 
-    Model *model_ptr = Model::get_Instance();
+    Model *model_ptr = Model::get_inst();
 
     while (true) {
         try {
@@ -117,7 +117,7 @@ static double get_speed_from_cin() {
 static shared_ptr<Island> get_island_ptr_from_cin() {
     string island_name;
     cin >> island_name;
-    return Model::get_Instance()->get_island_ptr(island_name);
+    return Model::get_inst()->get_island_ptr(island_name);
 }
 
 void Controller::open_map_view() {
@@ -137,7 +137,7 @@ void Controller::open_sailing_view() {
 void Controller::open_bridge_view() {
     string ship_name;
     cin >> ship_name;
-    if (!Model::get_Instance()->is_ship_present(ship_name))
+    if (!Model::get_inst()->is_ship_present(ship_name))
         throw Error("Ship not found!");
     auto bridge_view_ptr = make_shared<BridgeView>(ship_name);
     bool success = bridge_view_map.emplace(ship_name, bridge_view_ptr).second;
@@ -196,15 +196,15 @@ void Controller::view_pan_cmd() {
 
 void Controller::view_show_cmd() {
     for_each(all_views.begin(), all_views.end(),
-            bind(&View::draw, _1));
+            mem_fn(&View::draw));
 }
 
 void Controller::model_status_cmd() {
-    Model::get_Instance()->describe();
+    Model::get_inst()->describe();
 }
 
 void Controller::model_go_cmd() {
-    Model::get_Instance()->update();
+    Model::get_inst()->update();
 }
 
 void Controller::model_create_cmd() {
@@ -213,7 +213,7 @@ void Controller::model_create_cmd() {
     if (ship_name.length() < 2) // TODO magic number
         throw Error("Name is too short!");
 
-    Model *model_ptr = Model::get_Instance();
+    Model *model_ptr = Model::get_inst();
     if (model_ptr->is_name_in_use(ship_name))
         throw Error("Name is invalid!");
     cin >> ship_type;
@@ -262,7 +262,7 @@ void Controller::ship_attack_cmd(shared_ptr<Ship> ship) {
     string ship_name;
     cin >> ship_name;
     shared_ptr<Ship> ship_to_attack =
-            Model::get_Instance()->get_ship_ptr(ship_name);
+            Model::get_inst()->get_ship_ptr(ship_name);
     ship->attack(ship_to_attack);
 }
 
@@ -289,11 +289,11 @@ void Controller::if_map_view_closed_error() const {
 
 void Controller::open_view_helper(std::shared_ptr<View> view) {
     all_views.push_back(view);
-    Model::get_Instance()->attach(view);
+    Model::get_inst()->attach(view);
 }
 
 void Controller::close_view_helper(std::shared_ptr<View> view) {
-    Model::get_Instance()->detach(view);
+    Model::get_inst()->detach(view);
     all_views.erase(remove(all_views.begin(), all_views.end(), view),
             all_views.end());
 }

@@ -140,7 +140,6 @@ void SailingView::update_remove(const string& name) {
 }
 
 void SailingView::draw() const {
-    CoutSettingsSaver settings_saver;
     cout << "----- Sailing Data -----" << endl;
     cout << setw(sailing_column_width_c) << "Ship" <<
             setw(sailing_column_width_c) << "Fuel" <<
@@ -159,22 +158,22 @@ void SailingView::draw() const {
 /******* BridgeView *******/
 
 BridgeView::BridgeView(const string& ship_name_) :
-        ship_name(ship_name_) { }
+        ownship(ship_name_) { }
 
 void BridgeView::update_location(const string& name, Point point) {
-    if (name == ship_name)
+    if (name == ownship)
         ship_location = point;
     else
         location_map[name] = point;
 }
 
 void BridgeView::update_course(const string &name, double course) {
-    if (name == ship_name)
+    if (name == ownship)
         ship_heading = course;
 }
 
 void BridgeView::update_remove(const string& name) {
-    if (name == ship_name)
+    if (name == ownship)
         sunk = true;
     else
         location_map.erase(name);
@@ -183,7 +182,7 @@ void BridgeView::update_remove(const string& name) {
 void BridgeView::draw() const {
     CoutSettingsSaver settings_saver;
     if (sunk) {
-        cout << "Bridge view from " << ship_name <<
+        cout << "Bridge view from " << ownship <<
         " sunk at " << ship_location << endl;
         for (int i = 0; i < 3; ++i) {
             cout << "     ";
@@ -192,7 +191,7 @@ void BridgeView::draw() const {
             cout << endl;
         }
     } else {
-        cout << "Bridge view from " << ship_name <<
+        cout << "Bridge view from " << ownship <<
         " position " << ship_location <<
         " heading " << ship_heading << endl;
         for (int i = 0; i < 2; ++i) {
