@@ -1,6 +1,7 @@
 #include "Cruise_ship.h"
 #include "Model.h"
 #include "Island.h"
+#include "Utility.h"
 
 #include <limits>
 #include <algorithm>
@@ -77,11 +78,12 @@ void Cruise_ship::set_destination_position_and_speed(Point destination_position,
 void Cruise_ship::set_destination_island_and_speed(
         std::shared_ptr<Island> destination_island, double speed) {
     cancel_cruise();
-    origin_island = destination_island;
+    origin_island = destination_island; // TODO if error, these are set when they shouldn't be
     cruise_speed = speed;
     cruise_to(destination_island);
     auto island_vect = Model::get_Instance()->get_vector_of_islands();
-    islands_to_visit = set<shared_ptr<Island>>(island_vect.begin(), island_vect.end());
+    islands_to_visit =
+            set<shared_ptr<Island>, IslandNameComp>(island_vect.begin(), island_vect.end());
     islands_to_visit.erase(origin_island);
     cout << get_name() << " cruise will start and end at " <<
             destination_island->get_name() << endl;
@@ -93,19 +95,6 @@ void Cruise_ship::set_course_and_speed(double course, double speed) {
 }
 
 /* Private helper functions */
-
-static double island_distance(shared_ptr<Island> island1, shared_ptr<Island> island2) {
-    return cartesian_distance(island1->get_location(), island2->get_location());
-}
-
-class IslandDistComp {
-    shared_ptr<Island> common_island;
-public:
-    IslandDistComp(shared_ptr<Island> island) : common_island(island) {}
-    bool operator() (shared_ptr<Island> i1, shared_ptr<Island> i2) {
-        return island_distance(i1, common_island) < island_distance(i2, common_island);
-    }
-};
 
 void Cruise_ship::cruise_to(shared_ptr<Island> island) {
     Ship::set_destination_island_and_speed(island, cruise_speed);
@@ -120,7 +109,7 @@ shared_ptr<Island> Cruise_ship::next_island_to_visit() {
         return origin_island;
 
     auto next_island_itt = min_element(islands_to_visit.cbegin(),
-            islands_to_visit.cend(), IslandDistComp{get_docked_Island()});
+            islands_to_visit.cend(), IslandDistComp{get_docked_Island()->get_location()});
     shared_ptr<Island> next_island_ptr = *next_island_itt;
     islands_to_visit.erase(next_island_itt);
     return next_island_ptr;

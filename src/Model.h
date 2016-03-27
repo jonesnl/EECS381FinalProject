@@ -88,7 +88,7 @@ public:
     // notify the views that an object is now gone
     void notify_gone(const std::string &name);
 
-    // get model pointer
+    // get model pointer TODO rename and remove local pointers
     static Model *get_Instance();
 
     // disallow copy/move construction or assignment

@@ -86,10 +86,10 @@ void Model::describe() const {
 }
 
 void Model::update() {
+    time += 1;
     for_each(object_map.begin(), object_map.end(),
             bind(&Sim_object::update,
                     bind(&ObjectMap_t::value_type::second, _1)));
-    time += 1;
 }
 
 void Model::attach(shared_ptr<View> view) {

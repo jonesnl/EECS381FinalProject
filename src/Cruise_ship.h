@@ -11,9 +11,11 @@
  */
 
 #include "Ship.h"
+#include "Utility.h"
 
-#include <set>
 #include <memory>
+#include <string>
+#include <set>
 
 class Cruise_ship : public Ship {
 
@@ -46,7 +48,7 @@ private:
     std::shared_ptr<Island> origin_island;
     double cruise_speed = 0.0;
     std::shared_ptr<Island> cruise_next_destination;
-    std::set<std::shared_ptr<Island>> islands_to_visit;
+    std::set<std::shared_ptr<Island>, IslandNameComp> islands_to_visit;
 
     void cruise_to(std::shared_ptr<Island> destination_island);
     std::shared_ptr<Island> next_island_to_visit();

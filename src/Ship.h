@@ -127,10 +127,10 @@ private:
     Point destination_point = {0., 0.};  // Current destination position
     std::shared_ptr<Island> docked_Island;    // Island we're docked at
     std::shared_ptr<Island> destination_Island; // Current destination Island, if any
-    enum class State {
+    enum class State_t {
         docked, stopped, moving_on_course, dead_in_the_water,
         moving_to_position, moving_to_island, sunk
-    } ship_state = State::stopped;      // State of the ship
+    } ship_state = State_t::stopped;      // State of the ship
     double maximum_speed;               // Maximum speed the ship supports
     int resistance;                     // Resistance to damage for the ship
     Track_base track_base;              // Location tracking and navigation

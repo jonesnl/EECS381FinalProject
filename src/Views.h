@@ -31,7 +31,7 @@ using the new settings.
 
 class MapView : public View {
 public:
-    // default constructor sets the default size, scale, and origin, outputs constructor message
+    // default constructor sets the default size, scale, and origin
     MapView();
 
     // Save the supplied name and location for future use in a draw() call

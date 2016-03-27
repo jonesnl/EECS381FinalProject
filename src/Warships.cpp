@@ -21,12 +21,8 @@ void Warship::update() {
     Ship::update(); // TODO
     if (!attacking)
         return;
-    if (target.expired()) {
-        stop_attack();
-        return;
-    }
     shared_ptr<Ship> target_ptr = target.lock();
-    if (!is_afloat() || !target_ptr->is_afloat()) {
+    if (!is_afloat() || !target_ptr || !target_ptr->is_afloat()) {
         stop_attack();
         return;
     }
@@ -48,7 +44,7 @@ void Warship::describe() const {
         if (!target_ptr || !target_ptr->is_afloat()) {
             cout << "Attacking absent ship" << endl;
         } else {
-            cout << "Attacking " << target_ptr->get_name() << endl;
+            cout << "Attacking " << target.lock()->get_name() << endl;
         }
     }
 }
@@ -106,25 +102,6 @@ void Torpedo_boat::describe() const {
 }
 
 void Torpedo_boat::receive_hit(int hit_force, std::shared_ptr<Ship> attacker_ptr) {
-    class IslandPtrDistComparator {
-    public:
-        IslandPtrDistComparator(Point comp_loc_) : comp_loc(comp_loc_) {}
-
-        bool operator()(const shared_ptr<Island>& island1,
-                const shared_ptr<Island>& island2) {
-            double dist1 = Compass_vector(comp_loc, island1->get_location()).distance;
-            double dist2 = Compass_vector(comp_loc, island2->get_location()).distance;
-            return dist1 < dist2;
-        }
-
-        bool operator()(const shared_ptr<Island>& island1, double dist2) {
-            double dist1 = Compass_vector(comp_loc, island1->get_location()).distance;
-            return dist1 < dist2;
-        }
-    private:
-        Point comp_loc;
-    };
-
     Warship::receive_hit(hit_force, attacker_ptr);
     if (can_move()) {
         cout << get_name() << " taking evasive action" << endl;
@@ -134,14 +111,14 @@ void Torpedo_boat::receive_hit(int hit_force, std::shared_ptr<Ship> attacker_ptr
         auto island_vect = Model::get_Instance()->get_vector_of_islands();
         assert(island_vect.size() > 0);
         Point attacker_position = attacker_ptr->get_location();
-        stable_sort(island_vect.begin(), island_vect.end(), IslandPtrDistComparator{get_location()});
+        stable_sort(island_vect.begin(), island_vect.end(), IslandDistComp{get_location()});
         auto dest_itt = find_if(island_vect.begin(), island_vect.end(),
                 [attacker_position](shared_ptr<Island> isl) {
                     return Compass_vector(attacker_position, isl->get_location()).distance >= 15.;
                 });
         if (dest_itt == island_vect.end()) {
             dest_itt = max_element(island_vect.begin(), island_vect.end(),
-                    IslandPtrDistComparator{attacker_position});
+                    IslandDistComp{attacker_position});
         }
         assert(dest_itt != island_vect.end());
         set_destination_island_and_speed(*dest_itt, get_maximum_speed());

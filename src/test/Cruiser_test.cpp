@@ -10,7 +10,6 @@ TEST (CruiserTest, basic) {
     Cruiser ship("Test", {0., 0.});
     Island island("HI", {0, 0});
     ASSERT_TRUE(ship.is_afloat());
-    ASSERT_FALSE(ship.is_on_the_bottom());
     ASSERT_FALSE(ship.is_moving());
     ASSERT_FALSE(ship.is_docked());
     ASSERT_TRUE(ship.can_dock(&island));
