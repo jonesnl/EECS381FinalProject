@@ -263,7 +263,8 @@ void Ship::calculate_movement() {
     else {
         // go as far as we can, stay in the same movement state
         // simply move for the amount of time possible
-        track_base.update_position(time_possible);
+        track_base.update_position(time_possible); // TODO think about ways to clean
+        Model::get_Instance()->notify_location(get_name(), track_base.get_position());
         // have we used up our fuel?
         if (full_fuel_required >= fuel) {
             set_fuel(0.);
@@ -301,3 +302,4 @@ void Ship::set_fuel(double fuel_) {
     fuel = fuel_;
     Model::get_Instance()->notify_fuel(get_name(), fuel);
 }
+
