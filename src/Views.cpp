@@ -240,7 +240,7 @@ void BridgeView::draw() const {
         cout << endl;
     }
     cout.precision(0);
-    draw_x_axis(bridge_view_size_c, bridge_view_scale_c, bridge_view_scale_c);
+    draw_x_axis(bridge_view_size_c, bridge_view_scale_c, bridge_view_origin_c);
     cout << endl;
 
 }
