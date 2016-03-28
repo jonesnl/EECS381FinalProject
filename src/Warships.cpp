@@ -1,4 +1,5 @@
 #include "Warships.h"
+
 #include "Utility.h"
 #include "Model.h"
 #include "Island.h"
@@ -8,6 +9,10 @@
 #include <algorithm>
 
 using namespace std;
+
+/* Warships are ships that can attack other ships. The file contains three classes:
+ * Warship, Cruiser, and Torpedo_boat.
+ */
 
 /********* Warship Class ***********/
 

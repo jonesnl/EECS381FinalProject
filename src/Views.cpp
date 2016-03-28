@@ -15,6 +15,8 @@
 
 using namespace std;
 
+const int name_abreviation_length_c = 2;
+
 const int sailing_column_width_c = 10;
 
 /* Shared Helpers */

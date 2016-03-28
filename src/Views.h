@@ -29,6 +29,8 @@ using the new settings.
 #include <string>
 #include <map>
 
+extern const int name_abreviation_length_c;
+
 class MapView : public View {
 public:
     // default constructor sets the default size, scale, and origin
