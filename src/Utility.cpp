@@ -3,11 +3,12 @@
 #include "Island.h"
 #include "Navigation.h"
 
-#include <memory>
+#include <cassert>
 
 using namespace std;
 
-const double double_full_gap_c = 0.005;
+const double double_close_enough_c = 0.005;
+const int name_abbreviation_length_c = 2;
 
 IslandDistComp::IslandDistComp(Point location) : common_location(location) {}
 
@@ -22,3 +23,8 @@ bool IslandNameComp::operator()(const std::shared_ptr<Island>& p1,
     return p1->get_name() < p2->get_name();
 }
 
+// Abbreviate a name
+string name_abrv(const string& name) {
+    assert(name.size() >= name_abbreviation_length_c);
+    return name.substr(0, name_abbreviation_length_c);
+}

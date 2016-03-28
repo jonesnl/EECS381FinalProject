@@ -15,7 +15,6 @@
 
 using namespace std;
 
-const int name_abreviation_length_c = 2;
 
 const int sailing_column_width_c = 10;
 
@@ -67,7 +66,7 @@ void MapView::draw() const {
             if (array[x][y] != empty_cell_c)
                 array[x][y] = "* ";
             else
-                array[x][y] = name.substr(0, 2); // TODO magic number
+                array[x][y] = name_abrv(name);
         } else
             objects_outside_map.push_back(name);
     }
@@ -206,7 +205,7 @@ void BridgeView::draw() const {
         vector<string> array(19, empty_cell_c);// TODO name
         for (const auto& name_loc_pair : location_map) {
             Compass_position position(ship_location, name_loc_pair.second);
-            if (position.range > 20 || position.range < 0.005) // TODO magic number
+            if (position.range > 20 || position.range < double_close_enough_c)
                 continue;
             int ix, dummy;
             double bow_angle = position.bearing - ship_heading;
@@ -219,7 +218,7 @@ void BridgeView::draw() const {
                     {-90., 0.}))
                 continue;
             if (array[ix] == empty_cell_c)
-                array[ix] = name_loc_pair.first.substr(0, 2);
+                array[ix] = name_abrv(name_loc_pair.first);
             else
                 array[ix] = "* "; // TODO magic value
         }

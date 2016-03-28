@@ -221,7 +221,7 @@ void Controller::create_cmd() {
     cin >> ship_name;
 
     // If the name is too short for the views to abbreviate correctly
-    if (ship_name.length() < name_abreviation_length_c)
+    if (ship_name.length() < name_abbreviation_length_c)
         throw Error("Name is too short!");
 
     // If the name is already in use by an island or ship name. Also compares

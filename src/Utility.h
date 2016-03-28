@@ -7,6 +7,7 @@
 
 class Island;
 
+
 class Error : public std::exception {
 public:
 	Error(const char* msg_) : msg(msg_) {}
@@ -17,7 +18,8 @@ private:
 };
 
 /* add any of your own declarations here */
-extern const double double_full_gap_c;
+extern const double double_close_enough_c;
+extern const int name_abbreviation_length_c;
 
 class IslandDistComp {
 public:
@@ -31,5 +33,7 @@ struct IslandNameComp {
     bool operator() (const std::shared_ptr<Island>& p1,
             const std::shared_ptr<Island>& p2);
 };
+
+std::string name_abrv(const std::string& name);
 
 #endif
