@@ -10,7 +10,8 @@
 using namespace std;
 
 Cruise_ship::Cruise_ship(const std::string &name_, Point position_) :
-        Ship(name_, position_, 500, 15, 2, 0) { }
+        Ship(name_, position_, 500, 15, 2, 0),
+        cruise_state(CruiseState_t::not_cruising) { }
 
 void Cruise_ship::update() {
     Ship::update();
