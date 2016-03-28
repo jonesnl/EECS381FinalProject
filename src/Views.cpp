@@ -15,14 +15,17 @@
 
 using namespace std;
 
-
-const int sailing_column_width_c = 10;
+// TODO comments
 
 /* Shared Helpers */
-const string empty_cell_c = ". ";
 static bool get_subscripts(int &ix, int &iy, Point location,
         int size, double scale, Point origin);
 
+static void draw_x_axis(int size, double scale, Point origin);
+
+// Saves the format of cout when constructed, then when we leave the
+// scope of the object, restore that format. Used in the view draw functions
+// if we modify the cout format in order to draw the view.
 class CoutSettingsSaver {
 public:
     CoutSettingsSaver() :
@@ -35,6 +38,10 @@ private:
     decltype(cout.flags()) flags;
     decltype(cout.precision()) precision;
 };
+
+/* Shared constants */
+const string empty_cell_c = ". ";
+const string multiple_entry_cell_c = "* ";
 
 /*********** MapView ***********/
 MapView::MapView () {
@@ -64,7 +71,7 @@ void MapView::draw() const {
 
         if (get_subscripts(x, y, location, size, scale, origin)) {
             if (array[x][y] != empty_cell_c)
-                array[x][y] = "* ";
+                array[x][y] = multiple_entry_cell_c;
             else
                 array[x][y] = name_abrv(name);
         } else
@@ -93,9 +100,7 @@ void MapView::draw() const {
         }
         cout << endl;
     }
-    for (int i = 0; i < size; i += 3) {
-        cout << "  " << setw(4) << origin.x + (i * scale);
-    }
+    draw_x_axis(size, scale, origin);
     cout << endl;
 }
 
@@ -124,6 +129,8 @@ void MapView::set_defaults() {
 }
 
 /*********** SailingView **********/
+const int sailing_column_width_c = 10;
+
 void SailingView::update_course(const string &name, double course) {
     sailing_data_map[name].course = course;
 }
@@ -157,6 +164,11 @@ void SailingView::draw() const {
 }
 
 /******* BridgeView *******/
+const Point bridge_view_origin_c = {-90., 0.};
+const double bridge_view_scale_c = 10.;
+const int bridge_view_size_c = 19;
+const int bridge_view_sky_height_c = 2;
+const double bridge_view_draw_dist_c = 20.;
 
 BridgeView::BridgeView(const string& ship_name_) :
         ownship(ship_name_) { }
@@ -185,9 +197,9 @@ void BridgeView::draw() const {
     if (sunk) {
         cout << "Bridge view from " << ownship <<
         " sunk at " << ship_location << endl;
-        for (int i = 0; i < 3; ++i) {
+        for (int i = 0; i < bridge_view_sky_height_c + 1; ++i) {
             cout << "     ";
-            for (int j = 0; j < 19; ++j)
+            for (int j = 0; j < bridge_view_size_c; ++j)
                 cout << "w-";
             cout << endl;
         }
@@ -195,17 +207,18 @@ void BridgeView::draw() const {
         cout << "Bridge view from " << ownship <<
         " position " << ship_location <<
         " heading " << ship_heading << endl;
-        for (int i = 0; i < 2; ++i) {
+        for (int i = 0; i < bridge_view_sky_height_c; ++i) {
             cout << "     ";
-            for (int j = 0; j < 19; ++j)
+            for (int j = 0; j < bridge_view_size_c; ++j)
                 cout << empty_cell_c;
             cout << endl;
         }
 
-        vector<string> array(19, empty_cell_c);// TODO name
+        vector<string> array(bridge_view_size_c, empty_cell_c);// TODO name
         for (const auto& name_loc_pair : location_map) {
             Compass_position position(ship_location, name_loc_pair.second);
-            if (position.range > 20 || position.range < double_close_enough_c)
+            if (position.range > bridge_view_draw_dist_c ||
+                    position.range < double_close_enough_c)
                 continue;
             int ix, dummy;
             double bow_angle = position.bearing - ship_heading;
@@ -214,22 +227,20 @@ void BridgeView::draw() const {
             else if (bow_angle < -180.)
                 bow_angle += 360.;
 
-            if (!get_subscripts(ix, dummy, {bow_angle, 0}, 19, 10.,
-                    {-90., 0.}))
+            if (!get_subscripts(ix, dummy, {bow_angle, 0}, bridge_view_size_c,
+                    bridge_view_scale_c, bridge_view_origin_c))
                 continue;
             if (array[ix] == empty_cell_c)
                 array[ix] = name_abrv(name_loc_pair.first);
             else
-                array[ix] = "* "; // TODO magic value
+                array[ix] = multiple_entry_cell_c;
         }
         cout << "     ";
         copy(array.cbegin(), array.cend(), ostream_iterator<string>(cout));
         cout << endl;
     }
     cout.precision(0);
-    for (int i = 0; i < 19; i += 3) { // TODO duplicated code
-        cout << "  " << setw(4) << -90. + (i * 10.);
-    }
+    draw_x_axis(bridge_view_size_c, bridge_view_scale_c, bridge_view_scale_c);
     cout << endl;
 
 }
@@ -258,4 +269,11 @@ static bool get_subscripts(int &ix, int &iy, Point location,
     }
     else
         return true;
+}
+
+// Draw the x axis for both the MapView and the BridgeView
+static void draw_x_axis(int size, double scale, Point origin) {
+    for (int i = 0; i < size; i += 3) { // TODO duplicated code
+        cout << "  " << setw(4) << origin.x + (i * scale);
+    }
 }

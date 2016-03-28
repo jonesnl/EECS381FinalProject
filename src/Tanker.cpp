@@ -7,6 +7,8 @@
 
 using namespace std;
 
+// TODO comments
+
 Tanker::Tanker(const string &name_, Point position_) :
         Ship(name_, position_, 100, 10, 2., 0),
         tanker_state(TankerState_t::no_cargo_dest), cargo(0.),
@@ -51,13 +53,13 @@ void Tanker::set_unload_destination(shared_ptr<Island> island) {
 
 void Tanker::stop() {
     Ship::stop();
-    stop_cargo_loop();
+    stop_tanker_cycle();
 }
 
 void Tanker::update() {
     Ship::update();
     if (!can_move()) {
-        stop_cargo_loop();
+        stop_tanker_cycle();
         return;
     }
     double fuel_needed_to_fill_cargo; // TODO refactor?
@@ -161,7 +163,7 @@ void Tanker::start_tanker_cycle_if_possible() {
     }
 }
 
-void Tanker::stop_cargo_loop() {
+void Tanker::stop_tanker_cycle() {
     loading_island.reset();
     unloading_island.reset();
     tanker_state = TankerState_t::no_cargo_dest;

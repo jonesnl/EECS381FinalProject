@@ -2,7 +2,9 @@
 
 using namespace std;
 
-// TODO comment
+// Empty function definitions to allow derived views to ignore certain data streams
+// by simply not overriding these functions.
+
 void View::update_location(const std::string&, Point) { }
 void View::update_course(const std::string&, double) { }
 void View::update_speed(const std::string&, double) { }

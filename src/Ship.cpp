@@ -17,13 +17,6 @@ Ship::Ship(const std::string &name_, Point position_, double fuel_capacity_,
         maximum_speed {maximum_speed_},
         resistance {resistance_}, track_base(position_) { }
 
-/*
-Define the destructor function even if it was declared as a pure virtual function.
-This seems odd, because pure virtual functions are usually not defined in the class
-that declares them. But this is often done as a way to make a class abstract,
-if there is no other virtual function that makes sense to mark as pure. Here we
-are defining it just to get the destructor message output.
-*/
 bool Ship::can_move() const {
     return is_afloat() && ship_state != State_t::dead_in_the_water;
 }

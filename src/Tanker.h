@@ -45,20 +45,23 @@ public:
 	// perform Tanker-specific behavior
 	void update() override;
 
+	// describe the tanker
 	void describe() const override;
 
 private:
     enum class TankerState_t {
         loading, moving_to_unloading, unloading, moving_to_loading, no_cargo_dest
     } tanker_state;
-    double cargo;
-    double cargo_capacity;
-    std::weak_ptr<Island> loading_island;
-    std::weak_ptr<Island> unloading_island;
+    double cargo; // Current cargo of the tanker
+    double cargo_capacity; // Cargo capacity of the tanker TODO may be able to remove
+    std::weak_ptr<Island> loading_island; // Loading island location
+    std::weak_ptr<Island> unloading_island; // Unloading island location
 
-    void no_cargo_dest_or_error();
+    void no_cargo_dest_or_error(); // Throw an error if there are cargo destinations
+    // Start the tanker cycle if we can
     void start_tanker_cycle_if_possible();
-    void stop_cargo_loop();
+    // Stop the tanker cycle
+    void stop_tanker_cycle();
 };
 
 #endif
