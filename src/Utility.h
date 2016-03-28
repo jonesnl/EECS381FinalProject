@@ -19,7 +19,7 @@ private:
 
 /* add any of your own declarations here */
 extern const double double_close_enough_c;
-extern const int name_abbreviation_length_c;
+extern const size_t name_abbreviation_length_c;
 
 class IslandDistComp {
 public:

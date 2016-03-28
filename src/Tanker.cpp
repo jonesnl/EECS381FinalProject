@@ -81,7 +81,7 @@ void Tanker::update() {
     case TankerState_t::loading:
         refuel();
         fuel_needed_to_fill_cargo = cargo_capacity - cargo;
-        if (fuel_needed_to_fill_cargo < double_full_gap_c) {
+        if (fuel_needed_to_fill_cargo < double_close_enough_c) {
             cargo = cargo_capacity;
             Ship::set_destination_island_and_speed(locked_unloading_island,
                     get_maximum_speed());

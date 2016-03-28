@@ -8,7 +8,7 @@
 using namespace std;
 
 const double double_close_enough_c = 0.005;
-const int name_abbreviation_length_c = 2;
+const size_t name_abbreviation_length_c = 2;
 
 IslandDistComp::IslandDistComp(Point location) : common_location(location) {}
 

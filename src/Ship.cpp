@@ -169,7 +169,7 @@ void Ship::refuel() {
     if (!is_docked())
         throw Error("Must be docked!");
     double needed_fuel = fuel_capacity - fuel;
-    if (needed_fuel < double_full_gap_c) {
+    if (needed_fuel < double_close_enough_c) {
         set_fuel(fuel_capacity);
         return;
     }
