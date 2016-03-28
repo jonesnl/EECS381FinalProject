@@ -45,7 +45,7 @@ public:
     // will throw Error("Island not found!") if no island of that name
     std::shared_ptr<Island> get_island_ptr(const std::string &name) const;
 
-    // Sorted by island name
+    // Get vector of island pointers, is sorted by island name
     std::vector<std::shared_ptr<Island>> get_vector_of_islands() const;
 
     // is there such a ship?

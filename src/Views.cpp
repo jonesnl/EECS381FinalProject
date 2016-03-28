@@ -174,6 +174,8 @@ BridgeView::BridgeView(const string& ship_name_) :
         ownship(ship_name_) { }
 
 void BridgeView::update_location(const string& name, Point point) {
+    if (sunk)
+        return;
     if (name == ownship)
         ship_location = point;
     else
@@ -181,11 +183,15 @@ void BridgeView::update_location(const string& name, Point point) {
 }
 
 void BridgeView::update_course(const string &name, double course) {
+    if (sunk)
+        return;
     if (name == ownship)
         ship_heading = course;
 }
 
 void BridgeView::update_remove(const string& name) {
+    if (sunk)
+        return;
     if (name == ownship)
         sunk = true;
     else

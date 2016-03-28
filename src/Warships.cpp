@@ -23,7 +23,7 @@ Warship::Warship(const std::string& name_, Point position_, double fuel_capacity
             firepower(firepower_), attack_range(attack_range_) { }
 
 void Warship::update() {
-    Ship::update(); // TODO
+    Ship::update();
     if (!attacking)
         return;
     shared_ptr<Ship> target_ptr = target.lock();
@@ -49,7 +49,7 @@ void Warship::describe() const {
         if (!target_ptr || !target_ptr->is_afloat()) {
             cout << "Attacking absent ship" << endl;
         } else {
-            cout << "Attacking " << target.lock()->get_name() << endl;
+            cout << "Attacking " << target_ptr->get_name() << endl;
         }
     }
 }

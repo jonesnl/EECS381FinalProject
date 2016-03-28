@@ -1,7 +1,6 @@
 #include "Cruise_ship.h"
 #include "Model.h"
 #include "Island.h"
-#include "Utility.h"
 
 #include <limits>
 #include <algorithm>
