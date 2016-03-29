@@ -125,12 +125,16 @@ void Torpedo_boat::receive_hit(int hit_force, std::shared_ptr<Ship> attacker_ptr
         if (is_attacking())
             stop_attack();
         // Take evasive action
+
+        // Vector is sorted by island name by default
         auto island_vect = Model::get_inst()->get_vector_of_islands();
         assert(island_vect.size() > 0);
-        // Sort by distance from this boat, closest first
-        stable_sort(island_vect.begin(), island_vect.end(), IslandDistComp{get_location()});
 
         Point attacker_position = attacker_ptr->get_location();
+        // Sort by distance from the attacker, closest first
+        stable_sort(island_vect.begin(), island_vect.end(),
+                IslandDistComp{attacker_position});
+
         // Find closest island that is at least 15 nm from the attacker
         auto dest_itt = find_if(island_vect.begin(), island_vect.end(),
                 [attacker_position](shared_ptr<Island> isl) {
@@ -139,8 +143,9 @@ void Torpedo_boat::receive_hit(int hit_force, std::shared_ptr<Ship> attacker_ptr
         // If no island at least 15 nm from attacker, choose island that is
         // furthest from the attacker
         if (dest_itt == island_vect.end()) {
-            // Should be sorted by name, so refetch island vector
-            island_vect = Model::get_inst()->get_vector_of_islands();
+            // Can't just take the last element of the array since we still
+            // need to take the name into account if the last couple islands
+            // are the same distance from each other.
             dest_itt = max_element(island_vect.begin(), island_vect.end(),
                     IslandDistComp{attacker_position});
         }
