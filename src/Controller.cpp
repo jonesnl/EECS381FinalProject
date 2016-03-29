@@ -147,16 +147,16 @@ void Controller::open_bridge_view() {
 // Close the map view.
 void Controller::close_map_view() {
     if_map_view_closed_error();
-    map_view = nullptr;
     close_view_helper(map_view);
+    map_view = nullptr;
 }
 
 // Close the sailing view.
 void Controller::close_sailing_view() {
     if (!sailing_view)
         throw Error("Sailing data view is not open!");
-    sailing_view = nullptr;
     close_view_helper(sailing_view);
+    sailing_view = nullptr;
 }
 
 // Close the bridge view for a given ship.
@@ -322,8 +322,7 @@ void Controller::open_view_helper(std::shared_ptr<View> view) {
 // Detach a view from the model, and erase it from all_views.
 void Controller::close_view_helper(std::shared_ptr<View> view) {
     Model::get_inst()->detach(view);
-    all_views.erase(remove(all_views.begin(), all_views.end(), view),
-            all_views.end());
+    all_views.erase(find(all_views.begin(), all_views.end(), view));
 }
 
 /******* General helper functions *********/
