@@ -202,7 +202,7 @@ void BridgeView::draw() const {
     CoutSettingsSaver settings_saver;
     if (sunk) {
         cout << "Bridge view from " << ownship <<
-        " sunk at " << ship_location << endl;
+                " sunk at " << ship_location << endl;
         for (int i = 0; i < bridge_view_sky_height_c + 1; ++i) {
             cout << "     ";
             for (int j = 0; j < bridge_view_size_c; ++j)
@@ -211,8 +211,8 @@ void BridgeView::draw() const {
         }
     } else {
         cout << "Bridge view from " << ownship <<
-        " position " << ship_location <<
-        " heading " << ship_heading << endl;
+                " position " << ship_location <<
+                " heading " << ship_heading << endl;
         for (int i = 0; i < bridge_view_sky_height_c; ++i) {
             cout << "     ";
             for (int j = 0; j < bridge_view_size_c; ++j)
