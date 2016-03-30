@@ -7,7 +7,7 @@
  */
 class Warship : public Ship {
 public:
-    // initialize, then output constructor message
+    // initialize a warship
     Warship(const std::string& name_, Point position_, double fuel_capacity_,
             double maximum_speed, double fuel_consumption_, int resistance_, int firepower_,
             double attack_range_);

@@ -18,7 +18,7 @@ class Island;
 
 class Tanker : public Ship {
 public:
-	// initialize, the output constructor message
+	// initialize a tanker
 	Tanker(const std::string &name_, Point position_);
 
 	// This class overrides these Ship functions so that it can check if this Tanker has assigned cargo destinations.

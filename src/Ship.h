@@ -105,7 +105,6 @@ public:
     virtual void receive_hit(int hit_force, std::shared_ptr<Ship> attacker_ptr);
 
 protected:
-    // initialize, then output constructor message
     // Protected to prevent construction of plain ship objects
     Ship(const std::string &name_, Point position_, double fuel_capacity_,
             double maximum_speed_, double fuel_consumption_, int resistance_);
