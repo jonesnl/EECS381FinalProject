@@ -9,6 +9,11 @@
 
 using namespace std;
 
+/* Implementation of the Ship class. Handles navigation and resistance calculations
+ * for derived ships.
+ */
+
+// If a ship is within the dock distance of an island, we can dock at that island
 const double ship_dock_distance_c = 0.1;
 
 /* Public Function Definitions */
@@ -97,10 +102,13 @@ void Ship::broadcast_current_state() const {
 // Tell the ship to travel to a position at a speed
 void Ship::set_destination_position_and_speed(Point destination_position,
         double speed) {
+    // Set the speed and course
     set_speed_with_check(speed);
-    reset_destinations_and_dock();
     Compass_vector vect {get_location(), destination_position};
     set_course(vect.direction);
+    // Reset any old destinations that may have been set
+    reset_destinations_and_dock();
+    // Set our new destination
     ship_state = State_t::moving_to_position;
     destination_point = destination_position;
     cout << get_name() << " will sail on " << track_base.get_course_speed() <<
@@ -110,10 +118,13 @@ void Ship::set_destination_position_and_speed(Point destination_position,
 // Tell the ship to travel to an island at a speed
 void Ship::set_destination_island_and_speed(shared_ptr<Island> destination_island,
         double speed) {
+    // Set the speed and the course
     set_speed_with_check(speed);
-    reset_destinations_and_dock();
     Compass_vector vect {get_location(), destination_island->get_location()};
     set_course(vect.direction);
+    // Reset any old destinations that may have been set
+    reset_destinations_and_dock();
+    // Set our new destination
     ship_state = State_t::moving_to_island;
     destination_Island = destination_island;
     destination_point = destination_island->get_location();
@@ -123,19 +134,20 @@ void Ship::set_destination_island_and_speed(shared_ptr<Island> destination_islan
 
 // Tell the ship to travel at the provided course and speed
 void Ship::set_course_and_speed(double course, double speed) {
+    // Set the speed and the course
     set_speed_with_check(speed);
-    reset_destinations_and_dock();
-    ship_state = State_t::moving_on_course;
     set_course(course);
+    // Reset any old destinations that may have been set
+    reset_destinations_and_dock();
+    // Set our new state
+    ship_state = State_t::moving_on_course;
     cout << get_name() << " will sail on " << track_base.get_course_speed() << endl;
 }
 
 // Stop the ship
 void Ship::stop() {
-    if (!can_move())
-        throw Error("Ship cannot move!");
+    set_speed_with_check(0.);
     reset_destinations_and_dock();
-    set_speed(0.);
     ship_state = State_t::stopped;
     cout << get_name() << " stopping at " << get_location() << endl;
 }
@@ -189,10 +201,13 @@ void Ship::stop_attack() {
 // We don't care about who attacked us, but functions that override this
 // function might.
 void Ship::receive_hit(int hit_force, shared_ptr<Ship>) {
+    // We should never be getting hit if we are sunk
     assert(ship_state != State_t::sunk);
+    // Take the hit
     resistance -= hit_force;
     cout << get_name() << " hit with " << hit_force << ", resistance now " <<
             resistance << endl;
+    // If we have negative resistance, sink the ship
     if (is_afloat() && resistance < 0.) {
         Model *model_ptr = Model::get_inst();
         ship_state = State_t::sunk;
@@ -203,7 +218,7 @@ void Ship::receive_hit(int hit_force, shared_ptr<Ship>) {
     }
 }
 
-/************ Protected Function Definitions ****************/
+/* Protected Function Definitions */
 
 // Construct a ship object using the parameters passed by the derived class.
 Ship::Ship(const std::string &name_, Point position_, double fuel_capacity_,
@@ -286,14 +301,15 @@ void Ship::calculate_movement() {
     }
 }
 
-// Reset the destination state
+// Reset the destination state, usually called if we change how the ship is
+// moving in any of the set_destination functions, or by stopping the ship.
 void Ship::reset_destinations_and_dock() {
     destination_point = {0., 0.};
     docked_Island = nullptr;
     destination_Island = nullptr;
 }
 
-// Check that we can travel at the provided speed, and set the speed
+// Check that we can travel at the provided speed, then set the speed
 void Ship::set_speed_with_check(double speed) {
     if (speed > get_maximum_speed())
         throw Error("Ship cannot go that fast!");

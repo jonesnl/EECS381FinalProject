@@ -6,7 +6,7 @@
 #include <string>
 #include <map>
 
-/* *** MapView class ***
+/* *** MapView ***
  * The MapView class encapsulates the data and functions needed to generate the map
  * display, and control its properties. It has a "memory" for the names and locations
  * of the to-be-plotted objects.
@@ -99,6 +99,10 @@ private:
  *
  * The bridge view from the ship faces the course of the ship and it's width is
  * 190 degrees, from -90 degrees bow angle up to (but not including) 100 degrees bow angle.
+ *
+ * If a ship sinks, the BridgeView will ignore new updates from the model
+ * so that if another ship with the same name is constructed, it will not change
+ * where the original ship sunk at.
  */
 
 class BridgeView : public View {
@@ -120,11 +124,11 @@ public:
     void draw() const override;
 
 private:
-    std::string ownship; // The name of the ship that we are looking from
+    std::string ownship_name; // The name of the ship that we are looking from
     std::map<std::string, Point> location_map; // Location of other objects on the ocean
-    bool sunk = false; // Track if ownship has sunk
-    double ship_heading; // Track the heading of ownship
-    Point ship_location; // Track the location of ownship
+    Point ownship_location;
+    double ownship_heading; // Track the heading of ownship
+    bool sunk; // Track if ownship has sunk
 };
 
 #endif

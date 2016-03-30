@@ -1,8 +1,8 @@
 #include "Sim_object.h"
 
-#include <iostream>
 #include <string>
 
-using std::cout; using std::endl; using std::string;
+using std::string;
 
+// Construct a new Sim_object by populating the name field
 Sim_object::Sim_object(const string &name_) : name(name_) { }

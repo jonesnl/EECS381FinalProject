@@ -11,10 +11,11 @@ accordingly.
 
 class Island : public Sim_object {
 public:
-    // initialize then output constructor message
+    // initialize the island
     Island(const std::string &name_, Point position_, double fuel_ = 0.,
             double production_rate_ = 0.);
 
+    // Get the location of the island
     Point get_location() const override { return position; }
 
     // if production_rate > 0, compute production_rate * unit time, and add to amount, and print an update message

@@ -7,6 +7,8 @@
 
 using namespace std;
 
+// Create a new ship of type `type`. Return a pointer to the new ship.
+// If the type is unrecognized, throw an error.
 shared_ptr<Ship> create_ship(const string& name,
         const string& type, Point initial_position) {
     if (type == "Cruiser") {

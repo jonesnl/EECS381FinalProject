@@ -9,17 +9,17 @@ struct Point;
 
 class Sim_object {
 public:
-    // *** define the constructor in Sim_object.cpp to output the supplied message
+	// Sim_object constructor
 	Sim_object(const std::string& name_);
 
-    // *** define the destructor in Sim_object.cpp to output the supplied message
+	// Use the default destructor for the Sim_object. Needs to be virtual
+	// so derived classes can override it.
     virtual ~Sim_object() = default;
 	
 	const std::string& get_name() const
 		{return name;}
     
 	/* Interface for derived classes */
-	// *** declare the following as pure virtual functions 
 	// ask model to notify views of current state
     virtual void broadcast_current_state() const = 0;
 	virtual Point get_location() const = 0;
@@ -28,9 +28,13 @@ public:
 	
 	// Sim_objects must be unique, so disable copy/move construction, assignment
     // of base class; this will disable these operations for derived classes also.
+	Sim_object(const Sim_object&) = delete;
+	Sim_object(const Sim_object&&) = delete;
+	Sim_object& operator= (const Sim_object&) = delete;
+	Sim_object& operator= (const Sim_object&&) = delete;
 
 private:
-	std::string name;
+	std::string name; // The name of the object
 };
 
 

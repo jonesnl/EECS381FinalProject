@@ -7,7 +7,7 @@
 
 class Island;
 
-
+// Error class used in this project, acts pretty much just like std::exception
 class Error : public std::exception {
 public:
 	Error(const char* msg_) : msg(msg_) {}
@@ -17,10 +17,14 @@ private:
 	const char* msg;
 };
 
-/* add any of your own declarations here */
+// Constant used for some double comparisons if we only care about the value being
+// within a margin of error caused by floating point arithmetic.
 extern const double double_close_enough_c;
+
+// Constant that says how long a name abreviation is in the project
 extern const size_t name_abbreviation_length_c;
 
+// Allows us to compare how far two islands are from a common point
 class IslandDistComp {
 public:
     IslandDistComp(Point comparison_point);
@@ -29,11 +33,10 @@ private:
     Point common_location;
 };
 
+// Compare two islands based on their names
 struct IslandNameComp {
     bool operator() (const std::shared_ptr<Island>& p1,
             const std::shared_ptr<Island>& p2);
 };
-
-std::string name_abrv(const std::string& name);
 
 #endif

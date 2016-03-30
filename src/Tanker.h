@@ -1,7 +1,7 @@
 #ifndef TANKER_H
 #define TANKER_H
 /*
-A Tanker is a ship with a large corgo capacity for fuel.
+A Tanker is a ship with a large cargo capacity for fuel.
 It can be told an Island to load fuel at, and an Island to unload at.
 Once it is sent to the loading destination, it will start shuttling between 
 the loading and unloading destination. At the loading destination, 
@@ -53,11 +53,11 @@ private:
         loading, moving_to_unloading, unloading, moving_to_loading, no_cargo_dest
     } tanker_state;
     double cargo; // Current cargo of the tanker
-    double cargo_capacity; // Cargo capacity of the tanker TODO may be able to remove
-    std::weak_ptr<Island> loading_island; // Loading island location
-    std::weak_ptr<Island> unloading_island; // Unloading island location
+    std::shared_ptr<Island> loading_island; // Loading island location
+    std::shared_ptr<Island> unloading_island; // Unloading island location
 
-    void no_cargo_dest_or_error(); // Throw an error if there are cargo destinations
+	// Throw an error if if we are hauling cargo
+    void not_hauling_cargo_or_error();
     // Start the tanker cycle if we can
     void start_tanker_cycle_if_possible();
     // Stop the tanker cycle

@@ -22,6 +22,8 @@ using namespace std::placeholders;
 // Initial value of Model's singleton pointer.
 Model *Model::singleton_ptr = nullptr;
 
+/* Public member functions*/
+
 // Construct the basis of our simulation.
 Model::Model() {
     insert_island(make_shared<Island>("Exxon", Point(10, 10), 1000, 200));
@@ -39,9 +41,10 @@ bool Model::is_name_in_use(const std::string& name) const {
     // lower_bound will match an abbreviated name with an object with the same
     // abbreviation if such an object exists in the object_map. If the abbreviation of the object
     // is the same as the found object in the object map's name, then the name is in use.
-    string abrv_name = name_abrv(name);
+    string abrv_name = name.substr(0, name_abbreviation_length_c);
     auto itt = object_map.lower_bound(abrv_name);
-    return itt != object_map.end() && name_abrv(itt->first) == abrv_name;
+    return itt != object_map.end() &&
+            itt->first.substr(0, name_abbreviation_length_c) == abrv_name;
 }
 
 // Checks if an island exists in the simulation
