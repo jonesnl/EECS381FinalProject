@@ -9,41 +9,40 @@
 
 using namespace std;
 
-Ship::Ship(const std::string &name_, Point position_, double fuel_capacity_,
-        double maximum_speed_, double fuel_consumption_, int resistance_) :
-        Sim_object(name_),
-        fuel {fuel_capacity_}, fuel_capacity {fuel_capacity_},
-        fuel_consumption {fuel_consumption_},
-        maximum_speed {maximum_speed_},
-        resistance {resistance_}, track_base(position_) { }
+const double ship_dock_distance_c = 0.1;
 
+/* Public Function Definitions */
+// Return true if we can move
 bool Ship::can_move() const {
     return is_afloat() && ship_state != State_t::dead_in_the_water;
 }
 
+// Return true if the ship is in a moving state
 bool Ship::is_moving() const {
     return ship_state == State_t::moving_to_position ||
            ship_state == State_t::moving_to_island ||
            ship_state == State_t::moving_on_course;
 }
 
+// Return true if the ship is docked
 bool Ship::is_docked() const {
     return ship_state == State_t::docked;
 }
 
+// Return true as long as the ship is not sunk
 bool Ship::is_afloat() const {
     return ship_state != State_t::sunk;
 }
 
-bool Ship::can_dock(std::shared_ptr<Island> island_ptr) const { // TODO remove magic numbers
+// Return true if we are within range to dock at the provided island
+bool Ship::can_dock(std::shared_ptr<Island> island_ptr) const {
     assert(island_ptr);
     double dist_to_island =
             cartesian_distance(island_ptr->get_location(), get_location());
-    if (ship_state != State_t::stopped || dist_to_island > 0.1)
-        return false;
-    return true;
+    return ship_state == State_t::stopped && dist_to_island <= ship_dock_distance_c;
 }
 
+// Update the state of the ship, simulating a single time step
 void Ship::update() {
     if (ship_state == State_t::sunk) {
         cout << get_name() << " sunk" << endl;
@@ -61,6 +60,7 @@ void Ship::update() {
     }
 }
 
+// Describe the state of the ship
 void Ship::describe() const {
     cout << get_name() << " at " << get_location();
     if (ship_state == State_t::sunk)
@@ -84,41 +84,36 @@ void Ship::describe() const {
     }
 }
 
+// Broadcast the state of the ship to the Model
 void Ship::broadcast_current_state() const {
-    Model* model_inst = Model::get_inst();
-    model_inst->notify_location(get_name(), get_location());
-    model_inst->notify_course(get_name(), track_base.get_course());
-    model_inst->notify_speed(get_name(), track_base.get_speed());
-    model_inst->notify_fuel(get_name(), fuel);
+    Model::get_inst()->notify_location(get_name(), get_location());
+    Model::get_inst()->notify_course(get_name(), track_base.get_course());
+    Model::get_inst()->notify_speed(get_name(), track_base.get_speed());
+    Model::get_inst()->notify_fuel(get_name(), fuel);
 }
 
+/*** Command functions ***/
+
+// Tell the ship to travel to a position at a speed
 void Ship::set_destination_position_and_speed(Point destination_position,
         double speed) {
-    if (speed > get_maximum_speed())
-        throw Error("Ship cannot go that fast!");
-    if (!can_move())
-        throw Error("Ship cannot move!");
+    set_speed_with_check(speed);
     reset_destinations_and_dock();
     Compass_vector vect {get_location(), destination_position};
     set_course(vect.direction);
-    set_speed(speed);
     ship_state = State_t::moving_to_position;
     destination_point = destination_position;
     cout << get_name() << " will sail on " << track_base.get_course_speed() <<
             " to " << destination_position << endl;
 }
 
+// Tell the ship to travel to an island at a speed
 void Ship::set_destination_island_and_speed(shared_ptr<Island> destination_island,
         double speed) {
-    assert(destination_island);
-    if (speed > get_maximum_speed())
-        throw Error("Ship cannot go that fast!");
-    if (!can_move())
-        throw Error("Ship cannot move!");
+    set_speed_with_check(speed);
     reset_destinations_and_dock();
     Compass_vector vect {get_location(), destination_island->get_location()};
     set_course(vect.direction);
-    set_speed(speed);
     ship_state = State_t::moving_to_island;
     destination_Island = destination_island;
     destination_point = destination_island->get_location();
@@ -126,18 +121,16 @@ void Ship::set_destination_island_and_speed(shared_ptr<Island> destination_islan
             " to " << destination_island->get_name() << endl;
 }
 
+// Tell the ship to travel at the provided course and speed
 void Ship::set_course_and_speed(double course, double speed) {
-    if (speed > get_maximum_speed())
-        throw Error("Ship cannot go that fast!");
-    if (!can_move())
-        throw Error("Ship cannot move!");
+    set_speed_with_check(speed);
     reset_destinations_and_dock();
     ship_state = State_t::moving_on_course;
     set_course(course);
-    set_speed(speed);
     cout << get_name() << " will sail on " << track_base.get_course_speed() << endl;
 }
 
+// Stop the ship
 void Ship::stop() {
     if (!can_move())
         throw Error("Ship cannot move!");
@@ -147,6 +140,7 @@ void Ship::stop() {
     cout << get_name() << " stopping at " << get_location() << endl;
 }
 
+// Dock the ship at the provided island
 void Ship::dock(shared_ptr<Island> island_ptr) {
     assert(island_ptr);
     if (!can_dock(island_ptr))
@@ -158,6 +152,7 @@ void Ship::dock(shared_ptr<Island> island_ptr) {
     cout << get_name() << " docked at " << island_ptr->get_name() << endl;
 }
 
+// Refuel at the docked island
 void Ship::refuel() {
     if (!is_docked())
         throw Error("Must be docked!");
@@ -170,22 +165,29 @@ void Ship::refuel() {
     cout << get_name() << " now has " << fuel << " tons of fuel" << endl;
 }
 
+// Throw error for fat interface functions
 void Ship::set_load_destination(shared_ptr<Island>) {
     throw Error("Cannot load at a destination!");
 }
 
+// Throw error for fat interface functions
 void Ship::set_unload_destination(shared_ptr<Island>) {
     throw Error("Cannot unload at a destination!");
 }
 
+// Throw error for fat interface functions
 void Ship::attack(shared_ptr<Ship>) {
     throw Error("Cannot attack!");
 }
 
+// Throw error for fat interface functions
 void Ship::stop_attack() {
     throw Error("Cannot attack!");
 }
 
+// Take a hit from a ship, which can sink us if our resistance goes below 0.
+// We don't care about who attacked us, but functions that override this
+// function might.
 void Ship::receive_hit(int hit_force, shared_ptr<Ship>) {
     assert(ship_state != State_t::sunk);
     resistance -= hit_force;
@@ -200,6 +202,18 @@ void Ship::receive_hit(int hit_force, shared_ptr<Ship>) {
         model_ptr->notify_gone(get_name());
     }
 }
+
+/************ Protected Function Definitions ****************/
+
+// Construct a ship object using the parameters passed by the derived class.
+Ship::Ship(const std::string &name_, Point position_, double fuel_capacity_,
+        double maximum_speed_, double fuel_consumption_, int resistance_) :
+        Sim_object(name_),
+        fuel {fuel_capacity_}, fuel_capacity {fuel_capacity_},
+        fuel_consumption {fuel_consumption_},
+        maximum_speed {maximum_speed_},
+        resistance {resistance_}, track_base(position_) { }
+
 
 /* Private Function Definitions */
 
@@ -256,7 +270,9 @@ void Ship::calculate_movement() {
     else {
         // go as far as we can, stay in the same movement state
         // simply move for the amount of time possible
-        track_base.update_position(time_possible); // TODO think about ways to clean
+        track_base.update_position(time_possible);
+        // update_position does not call set_position, so send a notification
+        // for the location that we are now at.
         Model::get_inst()->notify_location(get_name(), track_base.get_position());
         // have we used up our fuel?
         if (full_fuel_required >= fuel) {
@@ -270,27 +286,41 @@ void Ship::calculate_movement() {
     }
 }
 
+// Reset the destination state
 void Ship::reset_destinations_and_dock() {
     destination_point = {0., 0.};
     docked_Island = nullptr;
     destination_Island = nullptr;
 }
 
+// Check that we can travel at the provided speed, and set the speed
+void Ship::set_speed_with_check(double speed) {
+    if (speed > get_maximum_speed())
+        throw Error("Ship cannot go that fast!");
+    if (!can_move())
+        throw Error("Ship cannot move!");
+    set_speed(speed);
+}
+
+// Set the position of the ship and tell the model where we are
 void Ship::set_position(Point point) {
     track_base.set_position(point);
     Model::get_inst()->notify_location(get_name(), point);
 }
 
+// Set the course and tell the model what it is
 void Ship::set_course(double course) {
     track_base.set_course(course);
     Model::get_inst()->notify_course(get_name(), course);
 }
 
+// Set the speed adn tell the model what it is
 void Ship::set_speed(double speed) {
     track_base.set_speed(speed);
     Model::get_inst()->notify_speed(get_name(), speed);
 }
 
+// Set the fuel and tell the model what it is
 void Ship::set_fuel(double fuel_) {
     fuel = fuel_;
     Model::get_inst()->notify_fuel(get_name(), fuel);

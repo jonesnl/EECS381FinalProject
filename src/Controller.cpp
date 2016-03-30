@@ -21,6 +21,8 @@ static double get_speed_from_cin();
 static shared_ptr<Island> get_island_ptr_from_cin();
 
 
+/****************** Public Function Definitions *******************/
+
 // Take user input in a loop and call the corresponding member function to handle that
 // input.
 void Controller::run() {
@@ -113,6 +115,8 @@ void Controller::run() {
         }
     }
 }
+
+/************** Private Helper Function Definitions ******************/
 
 // Create and open the map view
 void Controller::open_map_view() {

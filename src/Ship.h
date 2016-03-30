@@ -53,6 +53,7 @@ public:
     // output a description of current state to cout
     void describe() const override;
 
+    // Broadcast the state of the ship to the Model
     void broadcast_current_state() const override;
 
     /*** Command functions ***/
@@ -105,11 +106,11 @@ public:
 
 protected:
     // initialize, then output constructor message
-    // Protected to prevent initialization of plain ship objects
+    // Protected to prevent construction of plain ship objects
     Ship(const std::string &name_, Point position_, double fuel_capacity_,
             double maximum_speed_, double fuel_consumption_, int resistance_);
 
-
+    // Get the maximum speed for the ship
     double get_maximum_speed() const { return maximum_speed; }
 
     // return pointer to the Island currently docked at, or nullptr if not docked
@@ -138,11 +139,23 @@ private:
 
     // Updates position, fuel, and movement_state, assuming 1 time unit (1 hr)
     void calculate_movement();
-    void reset_destinations_and_dock(); // Reset destinations and dock at locatoin
 
+    // Reset the destination point, destination island, and docked island
+    void reset_destinations_and_dock();
+
+    // Set the speed after ensuring that we can move at the requested speed
+    void set_speed_with_check(double speed);
+
+    // Set the position of the ship and notify the Model about it.
     void set_position(Point point);
+
+    // Set the course of the ship and notify the Model about it.
     void set_course(double course);
+
+    // Set the speed of the ship and notify the Model about it.
     void set_speed(double speed);
+
+    // Set the fuel level of the ship and notify the Model about it.
     void set_fuel(double fuel);
 };
 
