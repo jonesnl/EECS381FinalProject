@@ -25,8 +25,8 @@ public:
     // Stop attacking
     void stop_attack() override;
 protected:
-    // If the target is out of range, derived classes must decide what the ship
-    // will do
+    // Derived classes must decide what to do if the target is out of range durring
+    // an attack
     virtual void target_out_of_range_handler() = 0;
 
     // Return true if we are attackign a target
@@ -38,8 +38,7 @@ private:
     int firepower;          // Firepower of the curiser
     double attack_range;  // Attack range of the cruiser
     bool attacking;
-    std::weak_ptr<Ship> target;     // Target to attack (also controls whether we're
-                                    // attacking or not
+    std::weak_ptr<Ship> target;     // Target to attack
 };
 
 /*
