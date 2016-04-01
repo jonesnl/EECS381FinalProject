@@ -3,7 +3,6 @@
 #include "Navigation.h"
 
 #include <cmath>
-#include <string>
 #include <vector>
 #include <iostream>
 #include <iomanip>
@@ -14,36 +13,50 @@
 
 using namespace std;
 
-
-/* Shared Helpers */
-static bool get_subscripts(int &ix, int &iy, Point location,
-        int size, double scale, Point origin);
-
-static void draw_x_axis(int size, double scale, Point origin);
-
-// CoutSettingsSaver saves the format of cout when constructed, then when we leave the
-// scope of the object, restore that format. Used in the view draw functions
-// if we modify the cout format in order to draw the view.
-class CoutSettingsSaver {
+/* OceanMap Helper Class Declaration
+ *
+ * An OceanMap is used to create and draw a map view of the ocean. You set the maps
+ * width, height, scale, and origin as constructor elements, then you add locations
+ * to the map. If a cell in the map is filled by more than one object, it will
+ * use "* " as the cell. If no object is in the map, it will use ". " for the cell.
+ * If only one object is in a cell, it will use an abbreviation of the string as
+ * the cell contents "Aj".
+ *
+ * You can fill the map with a specific string if you wish using the fill() function.
+ *
+ * Draw the map using the draw function.
+ */
+class OceanMap {
 public:
-    CoutSettingsSaver() :
-            flags(cout.flags()), precision(cout.precision()) { }
-    ~CoutSettingsSaver() {
-        cout.flags(flags);
-        cout.precision(precision);
-    }
-private:
-    decltype(cout.flags()) flags;
-    decltype(cout.precision()) precision;
-};
+    // Construct an OceanMap object
+    OceanMap(int width_, int height_, double scale_, Point origin_);
 
-/* Shared constants */
-// Cell strings
-const string empty_cell_c = ". ";
-const string multiple_entry_cell_c = "* ";
-const int rows_cols_per_label_c = 3; // Axis labels are printed every 3 rows/columns
-const int label_width_c = 4;
-const string empty_y_axis_label = "     ";
+    // Returns false when the object we are trying to add to the map is not added,
+    // due to it lying outside the bounds of the map. Otherwise the object's name
+    // is abbreviated and added to the map at the cell corresponding to "point" and
+    // the function returns true.
+    bool add_to_map(const string& obj_name, Point point);
+
+    // Fill the map with a given character string.
+    void fill(const string& fill_string);
+
+    // Disable drawing the y axis when the draw() function is called. By default
+    // OceanMap will draw y axis labels.
+    void disable_y_axis_labels();
+
+    // Draw the map.
+    void draw() const;
+private:
+    int width, height; // Width and height of the map
+    vector<vector<string>> map; // Cell elements are contained in the 2-D map array.
+    double scale; // Scale of the map
+    Point origin; // Origin of the map
+    bool y_axis_labels_enabled; // Controls whether we draw y axis labels.
+
+    // Helper function that maps a point to a specific cell in the map. Returns
+    // false if the location does not correspond to a map cell.
+    bool get_subscripts(int &ix, int &iy, Point location);
+};
 
 /*********** MapView ***********/
 const int max_map_size_c = 30;
@@ -68,31 +81,16 @@ void MapView::update_remove(const std::string &name) {
 
 // Draw the map
 void MapView::draw() const {
-    assert("     " == empty_y_axis_label);
-    // Save formatting settings
-    CoutSettingsSaver settings_saver;
     cout << "Display size: " << size << ", scale: " <<
             scale << ", origin: " << origin << endl;
 
-    // The array that contains the map we will draw
-    vector<vector<string>> map_array(max_map_size_c, vector<string>(max_map_size_c, empty_cell_c));
+    OceanMap map(size, size, scale, origin);
+
     // The list of objects that are outside of the map
-    list<string> objects_outside_map;
-
-    int x, y;
+    vector<string> objects_outside_map;
     for (auto& p : location_map) {
-        const string& name = p.first;
-        Point location = p.second;
-
-        if (get_subscripts(x, y, location, size, scale, origin)) {
-            // If multiple objects are in the same cell, use the multiple entry cell,
-            // otherwise put the ship's abbreviated name there
-            if (map_array[x][y] != empty_cell_c)
-                map_array[x][y] = multiple_entry_cell_c;
-            else
-                map_array[x][y] = name.substr(0, name_abbreviation_length_c);
-        } else
-            objects_outside_map.push_back(name);
+        if (!map.add_to_map(p.first, p.second))
+            objects_outside_map.push_back(p.first);
     }
 
     // Print all the objects outside of the map if we have any
@@ -105,25 +103,8 @@ void MapView::draw() const {
         }
     }
 
-    cout.precision(0);
-    // print the map from top to bottom, left to right
-    for (int j = size - 1; j >= 0; --j) {
-        // Print the label if the row needs one
-        if (j % rows_cols_per_label_c == 0) {
-            double y_val = origin.y + (j * scale);
-            cout << setw(label_width_c) << y_val << " ";
-        } else {
-            cout << empty_y_axis_label;
-        }
-        for (int i = 0; i < size; ++i) {
-            cout << map_array[i][j];
-        }
-        cout << endl;
-    }
-
-    // Print the column labels
-    draw_x_axis(size, scale, origin);
-    cout << endl;
+    // Draw map with y axis labels
+    map.draw();
 }
 
 // Set the map's size
@@ -201,8 +182,8 @@ void SailingView::draw() const {
 // Some constants used for printing the view
 const Point bridge_view_origin_c = {-90., 0.};
 const double bridge_view_scale_c = 10.;
-const int bridge_view_size_c = 19;
-const int bridge_view_sky_height_c = 2;
+const int bridge_view_map_width_c = 19;
+const int bridge_view_map_height_c = 3;
 const double bridge_view_draw_dist_c = 20.;
 
 // Construct a bridge view for a ship called ship_name_
@@ -240,34 +221,21 @@ void BridgeView::update_remove(const string& name) {
 
 // Draw the view from the bridge of the ship
 void BridgeView::draw() const {
-    CoutSettingsSaver settings_saver;
+    OceanMap ocean_map(bridge_view_map_width_c, bridge_view_map_height_c,
+            bridge_view_scale_c, bridge_view_origin_c);
     if (sunk) {
         // If the ship is sunk, use a special bridge view that shows only water
         cout << "Bridge view from " << ownship_name <<
                 " sunk at " << ownship_location << endl;
-        for (int i = 0; i < bridge_view_sky_height_c + 1; ++i) {
-            cout << "     ";
-            for (int j = 0; j < bridge_view_size_c; ++j)
-                cout << "w-";
-            cout << endl;
-        }
+        ocean_map.fill("w-");
     } else {
         // If we're afloat, print information about ownship
         cout << "Bridge view from " << ownship_name <<
                 " position " << ownship_location <<
                 " heading " << ownship_heading << endl;
 
-        // Print the sky
-        for (int i = 0; i < bridge_view_sky_height_c; ++i) {
-            cout << empty_y_axis_label;
-            for (int j = 0; j < bridge_view_size_c; ++j)
-                cout << empty_cell_c;
-            cout << endl;
-        }
-
         // Construct the view_array which will show what is in any given 10 degree
         // chunk of our view off the front of the bridge of our ship
-        vector<string> view_array(bridge_view_size_c, empty_cell_c);
         for (const auto& name_loc_pair : location_map) {
             Compass_position position(ownship_location, name_loc_pair.second);
             // If the object is out of range, do not show it to the user
@@ -283,35 +251,97 @@ void BridgeView::draw() const {
             else if (bow_angle < -180.)
                 bow_angle += 360.;
 
-            int ix, dummy;
             // If the resulting bow_angle is not within -90 to 100 degrees, do not
             // add it to the view. ix tells us what cell of the view we should put
             // the object in.
-            if (!get_subscripts(ix, dummy, {bow_angle, 0}, bridge_view_size_c,
-                    bridge_view_scale_c, bridge_view_origin_c))
-                continue;
-
-            // If more than one object is in the same cell, use the multiple entry cell
-            if (view_array[ix] == empty_cell_c)
-                view_array[ix] = name_loc_pair.first.substr(0, name_abbreviation_length_c);
-            else
-                view_array[ix] = multiple_entry_cell_c;
+            ocean_map.add_to_map(name_loc_pair.first, {bow_angle, 0});
         }
+    }
+    ocean_map.disable_y_axis_labels();
+    ocean_map.draw();
+}
 
-        // Print the view array to the screen
-        cout << empty_y_axis_label;
-        copy(view_array.cbegin(), view_array.cend(), ostream_iterator<string>(cout));
+/* OceanMap Implementation */
+
+/* map is indexed using map[y][x] instead of map[x][y]. */
+
+const string empty_cell_c = ". ";
+const string multiple_entry_cell_c = "* ";
+const int rows_cols_per_label_c = 3; // Axis labels are printed every 3 rows/columns
+const int label_width_c = 4;
+const string empty_y_axis_label = "     ";
+
+// Construct an OceanMap using the provided parameters
+OceanMap::OceanMap(int width_, int height_, double scale_, Point origin_) :
+        width(width_), height(height_),
+        map(height, vector<string>(width, empty_cell_c)), scale(scale_),
+        origin(origin_), y_axis_labels_enabled(true) { }
+
+// Add an object to the map
+bool OceanMap::add_to_map(const string& obj_name, Point point) {
+    int ix, iy;
+    // See if a point maps to a location on the map, if so, add it to the map.
+    if (!get_subscripts(ix, iy, point))
+        return false;
+
+    // If more than one object is in the same cell, use the multiple entry cell
+    if (map[iy][ix] == empty_cell_c)
+        map[iy][ix] = obj_name.substr(0, name_abbreviation_length_c);
+    else
+        map[iy][ix] = multiple_entry_cell_c;
+    return true;
+}
+
+// Fill the map with the provided string
+void OceanMap::fill(const string& fill_string) {
+    assert(fill_string.length() == name_abbreviation_length_c);
+    for (auto& row_vect : map) {
+        for (auto& str : row_vect) {
+            str = fill_string;
+        }
+    }
+}
+
+// Disable drawing y axis labels in the draw() function
+void OceanMap::disable_y_axis_labels() {
+    y_axis_labels_enabled = false;
+}
+
+// Draw the ocean
+void OceanMap::draw() const {
+    // Save cout settings since we modify them to draw the map
+    auto saved_cout_flags = cout.flags();
+    auto saved_precision = cout.precision();
+
+    // We don't want decimal points in our labels
+    cout.precision(0);
+
+    // Print the map from top to bottom, left to right
+    for (int j = height - 1; j >= 0; --j) {
+        // Print the label if the row needs one
+        if (y_axis_labels_enabled && j % rows_cols_per_label_c == 0) {
+            double y_val = origin.y + (j * scale);
+            cout << setw(label_width_c) << y_val << " ";
+        } else {
+            cout << empty_y_axis_label;
+        }
+        // Print the row in the map
+        for (int i = 0; i < width; ++i) {
+            cout << map[j][i];
+        }
         cout << endl;
     }
 
     // Print the x axis labels
-    cout.precision(0);
-    draw_x_axis(bridge_view_size_c, bridge_view_scale_c, bridge_view_origin_c);
+    for (int i = 0; i < width; i += rows_cols_per_label_c) {
+        cout << "  " << setw(label_width_c) << origin.x + (i * scale);
+    }
     cout << endl;
 
+    // Restore the cout settings
+    cout.flags(saved_cout_flags);
+    cout.precision(saved_precision);
 }
-
-/********* Shared Helpers **********/
 
 // Calculate the cell subscripts corresponding to the supplied location parameter,
 // using the current size, scale, and origin of the display.
@@ -319,8 +349,7 @@ void BridgeView::draw() const {
 // scale is a double value, and size is an integer for the number of rows/columns
 // currently being used for the grid.
 // Return true if the location is within the grid, false if not
-static bool get_subscripts(int &ix, int &iy, Point location,
-        int size, double scale, Point origin) {
+bool OceanMap::get_subscripts(int &ix, int &iy, Point location) {
     // adjust with origin and scale
     Cartesian_vector subscripts = (location - origin) / scale;
     // truncate coordinates to appropriate integer after taking the floor
@@ -330,16 +359,10 @@ static bool get_subscripts(int &ix, int &iy, Point location,
     ix = int(floor(subscripts.delta_x));
     iy = int(floor(subscripts.delta_y));
     // if out of range, return false
-    if ((ix < 0) || (ix >= size) || (iy < 0) || (iy >= size)) {
+    if ((ix < 0) || (ix >= width) || (iy < 0) || (iy >= height)) {
         return false;
     }
     else
         return true;
 }
 
-// Draw the x axis for both the MapView and the BridgeView
-static void draw_x_axis(int size, double scale, Point origin) {
-    for (int i = 0; i < size; i += rows_cols_per_label_c) {
-        cout << "  " << setw(label_width_c) << origin.x + (i * scale);
-    }
-}

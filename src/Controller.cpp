@@ -9,7 +9,14 @@
 #include <iostream>
 #include <algorithm>
 
-/* Controls the simulation by taking in user input and controlling views and ships */
+/* Controls the simulation by taking in user commands, executing member functions
+ * based on the commands of the user, and letting those member functions handle
+ * implimenting each command by controlling views, ships, and the simulation.
+ *
+ * There are two distinct types of commands, ship commands that start with a ship's
+ * name, and general commands that do not. These commands are seperated into two
+ * different maps in Controller::run(), and ship member functions start with "ship_".
+ */
 
 using namespace std;
 using namespace placeholders;
