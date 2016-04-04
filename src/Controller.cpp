@@ -2,9 +2,11 @@
 
 #include "Model.h"
 #include "Utility.h"
-#include "Views.h"
 #include "Ship_factory.h"
 #include "Ship.h"
+#include "Map_view.h"
+#include "Sailing_view.h"
+#include "Bridge_view.h"
 
 #include <iostream>
 #include <algorithm>
@@ -129,7 +131,7 @@ void Controller::run() {
 void Controller::open_map_view() {
     if (map_view)
         throw Error("Map view is already open!");
-    map_view = make_shared<MapView>();
+    map_view = make_shared<Map_view>();
     open_view_helper(map_view);
 }
 
@@ -137,7 +139,7 @@ void Controller::open_map_view() {
 void Controller::open_sailing_view() {
     if (sailing_view)
         throw Error("Sailing data view is already open!");
-    sailing_view = make_shared<SailingView>();
+    sailing_view = make_shared<Sailing_view>();
     open_view_helper(sailing_view);
 }
 
@@ -148,7 +150,7 @@ void Controller::open_bridge_view() {
     cin >> ship_name;
     if (!Model::get_inst()->is_ship_present(ship_name))
         throw Error("Ship not found!");
-    auto bridge_view_ptr = make_shared<BridgeView>(ship_name);
+    auto bridge_view_ptr = make_shared<Bridge_view>(ship_name);
     bool success = bridge_view_map.emplace(ship_name, bridge_view_ptr).second;
     if (!success)
         throw Error("Bridge view is already open for that ship!");

@@ -7,9 +7,9 @@
 #include <list>
 
 class View;
-class MapView;
-class SailingView;
-class BridgeView;
+class Map_view;
+class Sailing_view;
+class Bridge_view;
 class Ship;
 
 /* Controller
@@ -31,9 +31,9 @@ private:
     // View containers. map_view and sailing_view are null when they are not in use,
     // and bridge_view_map contains a map of all bridge views, with the keys being
     // the corresponding ship's name.
-    std::shared_ptr<MapView> map_view;
-    std::shared_ptr<SailingView> sailing_view;
-    std::map<std::string, std::shared_ptr<BridgeView>> bridge_view_map;
+    std::shared_ptr<Map_view> map_view;
+    std::shared_ptr<Sailing_view> sailing_view;
+    std::map<std::string, std::shared_ptr<Bridge_view>> bridge_view_map;
 
     // all_views contains a list of all views open so far, in the order in which
     // they were opened. This allows us to output each view in that order when
@@ -68,7 +68,7 @@ private:
     // Throws an error if that bridge view was not open.
     void close_bridge_view();
 
-    // "default": Resets the map_view to its default values. See the MapView class for
+    // "default": Resets the map_view to its default values. See the Map_view class for
     // default values.
     void map_default_cmd();
 

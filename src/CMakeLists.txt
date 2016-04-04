@@ -3,7 +3,7 @@ project(src)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic-errors -std=c++14 -Wall -Wextra")
 
-set(HEADER_FILES Warships.h
+set(HEADER_FILES
         Geometry.h
         Island.h
         Model.h
@@ -12,13 +12,18 @@ set(HEADER_FILES Warships.h
         Ship.h
         Utility.h
         Track_base.h
-        Warships.h
         Ship_factory.h
         Controller.h
         View.h
         Tanker.h
         Cruise_ship.h
-        Views.h)
+        Warship.h
+        Cruiser.h
+        Torpedo_boat.h
+        Ocean_map.h
+        Bridge_view.h
+        Map_view.h
+        Sailing_view.h)
 
 set(SHARED_SOURCE_FILES
         Geometry.cpp
@@ -28,14 +33,19 @@ set(SHARED_SOURCE_FILES
         Island.cpp
         Ship.cpp
         Track_base.cpp
-        Warships.cpp
         Ship_factory.cpp
         Controller.cpp
         View.cpp
         Tanker.cpp
         Utility.cpp
         Cruise_ship.cpp
-        Views.cpp)
+        Warship.cpp
+        Cruiser.cpp
+        Torpedo_boat.cpp
+        Ocean_map.cpp
+        Bridge_view.cpp
+        Map_view.cpp
+        Sailing_view.cpp)
 
 macro(add_gtest _name)
     add_executable(${ARGV})
