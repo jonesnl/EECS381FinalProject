@@ -146,7 +146,7 @@ shared_ptr<Island> Cruise_ship::next_island_to_visit() {
     // next island in our cruise. Erase it from the set of islands we still need
     // to visit.
     auto next_island_itt = min_element(islands_to_visit.cbegin(),
-            islands_to_visit.cend(), IslandDistComp{get_docked_Island()->get_location()});
+            islands_to_visit.cend(), DistComp{get_docked_Island()->get_location()});
     shared_ptr<Island> next_island_ptr = *next_island_itt;
     islands_to_visit.erase(next_island_itt);
     return next_island_ptr;

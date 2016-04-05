@@ -145,6 +145,19 @@ void Tanker::describe() const {
     cout << "Cargo: " << cargo << " tons" << describe_map[tanker_state] << endl;
 }
 
+// Provide fuel
+double Tanker::provide_fuel(double request) {
+    double return_fuel;
+    if (request < cargo) {
+        return_fuel = request;
+        cargo -= request;
+    } else {
+        return_fuel = cargo;
+        cargo = 0.;
+    }
+    return return_fuel;
+}
+
 /* Private member functions */
 
 // Throw an error if we are hauling cargo

@@ -63,7 +63,7 @@ private:
     std::shared_ptr<Island> next_destination;
 
     // Track the set of islands that we still need to visit on the cruise
-    std::set<std::shared_ptr<Island>, IslandNameComp> islands_to_visit;
+    std::set<std::shared_ptr<Island>, NameComp> islands_to_visit;
 
     // Start cruising to destination_island
     void cruise_to(std::shared_ptr<Island> destination_island);

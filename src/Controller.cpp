@@ -49,7 +49,8 @@ void Controller::run() {
             {"attack", &Controller::ship_attack_cmd},
             {"refuel", &Controller::ship_refuel_cmd},
             {"stop", &Controller::ship_stop_cmd},
-            {"stop_attack", &Controller::ship_stop_attack_cmd}
+            {"stop_attack", &Controller::ship_stop_attack_cmd},
+            {"start_skimming", &Controller::ship_start_skimming_cmd}
     };
 
     // Command map for commands that do not start with a ship's name.
@@ -317,6 +318,13 @@ void Controller::ship_stop_cmd(shared_ptr<Ship> ship) {
 // Tell the ship to stop attacking.
 void Controller::ship_stop_attack_cmd(shared_ptr<Ship> ship) {
     ship->stop_attack();
+}
+
+// Tell ship to skim an oil spill
+void Controller::ship_start_skimming_cmd(std::shared_ptr<Ship> ship) {
+    Point spill_loc = get_point_from_cin();
+    double size = get_double_from_cin();
+    ship->start_skimming(spill_loc, size);
 }
 
 /******* Helper member functions *********/

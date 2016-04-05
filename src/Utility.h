@@ -5,7 +5,7 @@
 
 #include "Geometry.h"
 
-class Island;
+class Sim_object;
 
 // Error class used in this project, acts pretty much just like std::exception
 class Error : public std::exception {
@@ -25,18 +25,19 @@ extern const double double_close_enough_c;
 extern const size_t name_abbreviation_length_c;
 
 // Allows us to compare how far two islands are from a common point
-class IslandDistComp {
+class DistComp {
 public:
-    IslandDistComp(Point comparison_point);
-    bool operator() (std::shared_ptr<Island> i1, std::shared_ptr<Island> i2);
+    DistComp(Point comparison_point);
+    bool operator() (const std::shared_ptr<Sim_object>& i1,
+            const std::shared_ptr<Sim_object>& i2);
 private:
-    Point common_location;
+    Point common_loc;
 };
 
 // Compare two islands based on their names
-struct IslandNameComp {
-    bool operator() (const std::shared_ptr<Island>& p1,
-            const std::shared_ptr<Island>& p2);
+struct NameComp {
+    bool operator() (const std::shared_ptr<Sim_object>& p1,
+            const std::shared_ptr<Sim_object>& p2);
 };
 
 #endif

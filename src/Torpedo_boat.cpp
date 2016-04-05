@@ -51,7 +51,7 @@ void Torpedo_boat::receive_hit(int hit_force, std::shared_ptr<Ship> attacker_ptr
         Point attacker_position = attacker_ptr->get_location();
         // Sort by distance from the attacker, closest first
         stable_sort(island_vect.begin(), island_vect.end(),
-                IslandDistComp{attacker_position});
+                DistComp{attacker_position});
 
         // Find closest island that is at least 15 nm from the attacker
         auto dest_itt = find_if(island_vect.begin(), island_vect.end(),
@@ -66,7 +66,7 @@ void Torpedo_boat::receive_hit(int hit_force, std::shared_ptr<Ship> attacker_ptr
             // need to take the name into account if the last couple islands
             // are the same distance from each other.
             dest_itt = max_element(island_vect.begin(), island_vect.end(),
-                    IslandDistComp{attacker_position});
+                    DistComp{attacker_position});
         }
         assert(dest_itt != island_vect.end());
         set_destination_island_and_speed(*dest_itt, get_maximum_speed());

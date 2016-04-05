@@ -197,6 +197,11 @@ void Ship::stop_attack() {
     throw Error("Cannot attack!");
 }
 
+// Throw error for fat interface functions
+void Ship::start_skimming(Point, double) {
+    throw Error("Cannot skim!");
+}
+
 // Take a hit from a ship, which can sink us if our resistance goes below 0.
 // We don't care about who attacked us, but functions that override this
 // function might.

@@ -133,6 +133,10 @@ private:
     // "<ship_name> stop_attack": Tells a ship to stop attacking.
     void ship_stop_attack_cmd(std::shared_ptr<Ship> ship);
 
+    // "<ship_name> start_skimming <x> <y> <size>": Tells a ship to clean up an oil spill
+    // at (<x>, <y>) with a size of <size>
+    void ship_start_skimming_cmd(std::shared_ptr<Ship> ship);
+
     /******* Helper functions ********/
     // Throw an error if the map view is closed
     void if_map_view_closed_error() const;

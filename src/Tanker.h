@@ -48,6 +48,7 @@ public:
 	// describe the tanker
 	void describe() const override;
 
+	double provide_fuel(double request);
 private:
     enum class TankerState_t {
         loading, moving_to_unloading, unloading, moving_to_loading, no_cargo_dest

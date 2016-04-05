@@ -48,6 +48,9 @@ public:
     // Get vector of island pointers, sorted by island name
     std::vector<std::shared_ptr<Island>> get_vector_of_islands() const;
 
+    // Get vector of Tanker pointers, sorted by ship name
+    std::vector<std::shared_ptr<Ship>> get_vector_of_ships() const;
+
     // is there such a ship?
     bool is_ship_present(const std::string &name) const;
 

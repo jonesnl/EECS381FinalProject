@@ -23,7 +23,8 @@ set(HEADER_FILES
         Ocean_map.h
         Bridge_view.h
         Map_view.h
-        Sailing_view.h)
+        Sailing_view.h
+        Skimmer.h)
 
 set(SHARED_SOURCE_FILES
         Geometry.cpp
@@ -45,7 +46,8 @@ set(SHARED_SOURCE_FILES
         Ocean_map.cpp
         Bridge_view.cpp
         Map_view.cpp
-        Sailing_view.cpp)
+        Sailing_view.cpp
+        Skimmer.cpp)
 
 macro(add_gtest _name)
     add_executable(${ARGV})

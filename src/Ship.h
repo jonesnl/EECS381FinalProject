@@ -100,6 +100,9 @@ public:
     // will always throw Error("Cannot attack!");
     virtual void stop_attack();
 
+    // will always throw Error("Cannot skim!");
+    virtual void start_skimming(Point spill_origin_, double spill_size_);
+
     // interactions with other objects
     // receive a hit from an attacker
     virtual void receive_hit(int hit_force, std::shared_ptr<Ship> attacker_ptr);

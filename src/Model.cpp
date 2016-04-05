@@ -69,6 +69,14 @@ vector<shared_ptr<Island>> Model::get_vector_of_islands() const {
     return island_vect;
 }
 
+vector<shared_ptr<Ship>> Model::get_vector_of_ships() const {
+    vector<shared_ptr<Ship>> ship_vect;
+    transform(ship_map.begin(), ship_map.end(),
+            back_inserter(ship_vect),
+            mem_fn(&ShipMap_t::value_type::second));
+    return ship_vect;
+}
+
 // Checks if a ship currently exists in the simulation
 bool Model::is_ship_present(const std::string& name) const {
     return ship_map.find(name) != ship_map.end();
