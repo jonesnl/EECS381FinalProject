@@ -198,7 +198,7 @@ void Ship::stop_attack() {
 }
 
 // Throw error for fat interface functions
-void Ship::start_skimming(Point, double) {
+void Ship::start_skimming(Point, int) {
     throw Error("Cannot skim!");
 }
 

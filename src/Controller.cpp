@@ -323,7 +323,7 @@ void Controller::ship_stop_attack_cmd(shared_ptr<Ship> ship) {
 // Tell ship to skim an oil spill
 void Controller::ship_start_skimming_cmd(std::shared_ptr<Ship> ship) {
     Point spill_loc = get_point_from_cin();
-    double size = get_double_from_cin();
+    int size = get_int_from_cin();
     ship->start_skimming(spill_loc, size);
 }
 

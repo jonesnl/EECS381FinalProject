@@ -21,7 +21,8 @@ void Skimmer::describe() const {
     cout << "\nSkimmer ";
     Ship::describe();
     if (is_skimming())
-        cout << "Is skimming" << endl;
+        cout << "Is skimming a spill of size " << spill_size <<
+                " starting at " << spill_ll_corner << endl;
 }
 
 // TODO add destination point stuff and fix logic
@@ -33,55 +34,58 @@ void Skimmer::update() {
         stop_skimming();
         return;
     }
-    double next_side_dist = skimmed_size;
-    double next_side_direction;
 
-    if (skimming_state == SkimmingState_t::going_to_spill &&
-            get_location() == spill_origin) {
-        skimmed_size = 0.;
-        skimming_state = SkimmingState_t::going_up;
-        next_side_direction = 0.;
-        next_side_dist += 1;
-    } else {
-        switch (skimming_state) {
-        case SkimmingState_t::going_up:
-            skimming_state = SkimmingState_t::going_right;
-            next_side_direction = 90.;
-            skimmed_size += 1;
-            next_side_dist += 1;
-            break;
-        case SkimmingState_t::going_right:
-            skimming_state = SkimmingState_t::going_down;
-            next_side_direction = 180.;
-            break;
-        case SkimmingState_t::going_down:
-            skimming_state = SkimmingState_t::going_left;
-            next_side_direction = 270.;
-            skimmed_size += 1;
-            next_side_dist += 1;
-            break;
-        case SkimmingState_t::going_left:
-            skimming_state = SkimmingState_t::going_up;
-            next_side_direction = 0.;
-            skimmed_size += 1.;
-            break;
-        default:
-            assert(0);
-        }
+    // If we're still moving to our next point, keep moving
+    if (is_moving())
+        return;
+
+    if (additional_sides_to_skim == 0) {
+        cout << get_name() << " finished skimming spill" << endl;
+        stop_skimming();
+        return;
     }
-    Point next_dest = get_location() + Compass_vector{next_side_direction, next_side_dist};
 
-    set_destination_position_and_speed(next_dest, get_maximum_speed());
+    double next_direction;
+    switch (skimming_state) {
+    case SkimmingState_t::going_to_spill:
+        skim_first_side();
+        return;
+    case SkimmingState_t::going_up:
+        next_direction = 90.;
+        skimming_state = SkimmingState_t::going_right;
+        break;
+    case SkimmingState_t::going_right:
+        next_direction = 180.;
+        skimming_state = SkimmingState_t::going_down;
+        break;
+    case SkimmingState_t::going_down:
+        next_direction = 270.;
+        skimming_state = SkimmingState_t::going_left;
+        break;
+    case SkimmingState_t::going_left:
+        next_direction = 0.;
+        skimming_state = SkimmingState_t::going_up;
+        break;
+    default:
+        assert(0);
+    }
+
+    int dist_to_travel = (additional_sides_to_skim + 3) / 2;
+    --additional_sides_to_skim;
+    Point new_dest = get_location() + Compass_vector (next_direction, dist_to_travel);
+
+    set_destination_position_and_speed(new_dest, get_maximum_speed());
 }
 
-void Skimmer::start_skimming(Point spill_origin_, double spill_size_) {
+void Skimmer::start_skimming(Point spill_ll_corner_, int spill_size_) {
     if (!can_move())
         throw Error("Can't move!");
 
-    spill_origin = spill_origin_;
+    spill_ll_corner = spill_ll_corner_;
     spill_size = spill_size_;
+    additional_sides_to_skim = (spill_size - 1) * 2 + 1;
     skimming_state = SkimmingState_t::going_to_spill;
-    set_destination_position_and_speed(spill_origin_, get_maximum_speed());
+    set_destination_position_and_speed(spill_ll_corner_, get_maximum_speed());
 }
 
 void Skimmer::stop() {
@@ -89,9 +93,15 @@ void Skimmer::stop() {
     stop_skimming();
 }
 
+void Skimmer::skim_first_side() {
+    Point new_dest = get_location() + Compass_vector (0., spill_size);
+    skimming_state = SkimmingState_t::going_up;
+    --additional_sides_to_skim;
+    set_destination_position_and_speed(new_dest, get_maximum_speed());
+}
+
 void Skimmer::stop_skimming() {
     skimming_state = SkimmingState_t::not_skimming;
-    skimmed_size = 0.;
-    spill_size = 0.;
-    spill_origin = {0., 0.};
+    spill_size = 0;
+    spill_ll_corner = {0., 0.};
 }

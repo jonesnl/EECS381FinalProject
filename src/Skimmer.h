@@ -11,19 +11,20 @@ public:
 
     void update() override;
 
-    void start_skimming(Point spill_origin_, double spill_size_) override;
+    void start_skimming(Point spill_origin_, int spill_size_) override;
 
     void stop() override;
 
 private:
     enum class SkimmingState_t {not_skimming, going_to_spill, going_up,
         going_right, going_down, going_left} skimming_state;
-    double skimmed_size;
-    double spill_size;
-    Point spill_origin;
+    int spill_size;
+    Point spill_ll_corner;
+    int additional_sides_to_skim;
 
     bool is_skimming() const
         {return skimming_state != SkimmingState_t::not_skimming;};
+    void skim_first_side();
     void stop_skimming();
 };
 

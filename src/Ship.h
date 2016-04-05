@@ -101,7 +101,7 @@ public:
     virtual void stop_attack();
 
     // will always throw Error("Cannot skim!");
-    virtual void start_skimming(Point spill_origin_, double spill_size_);
+    virtual void start_skimming(Point spill_origin_, int spill_size_);
 
     // interactions with other objects
     // receive a hit from an attacker
