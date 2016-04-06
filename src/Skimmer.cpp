@@ -80,10 +80,12 @@ void Skimmer::update() {
 void Skimmer::start_skimming(Point spill_ll_corner_, int spill_size_) {
     if (!can_move())
         throw Error("Can't move!");
+    if (spill_size_ <= 0)
+        throw Error("Spill size can't be zero or negative!");
 
     spill_ll_corner = spill_ll_corner_;
     spill_size = spill_size_;
-    additional_sides_to_skim = (spill_size - 1) * 2 + 1;
+    additional_sides_to_skim = spill_size * 2 - 1;
     skimming_state = SkimmingState_t::going_to_spill;
     set_destination_position_and_speed(spill_ll_corner_, get_maximum_speed());
 }
