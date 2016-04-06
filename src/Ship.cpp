@@ -228,7 +228,7 @@ void Ship::receive_hit(int hit_force, shared_ptr<Ship>) {
 // Construct a ship object using the parameters passed by the derived class.
 Ship::Ship(const std::string &name_, Point position_, double fuel_capacity_,
         double maximum_speed_, double fuel_consumption_, int resistance_) :
-        Sim_object(name_),
+        Ship_component(name_),
         fuel {fuel_capacity_}, fuel_capacity {fuel_capacity_},
         fuel_consumption {fuel_consumption_},
         maximum_speed {maximum_speed_},

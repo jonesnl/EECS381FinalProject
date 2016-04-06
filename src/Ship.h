@@ -18,12 +18,13 @@ functions are implemented in this class to throw an Error exception.
 */
 
 #include <memory>
+
 #include "Track_base.h"
-#include "Sim_object.h"
+#include "Ship_component.h"
 
 class Island;
 
-class Ship : public Sim_object, public std::enable_shared_from_this<Ship> {
+class Ship : public Ship_component, public std::enable_shared_from_this<Ship> {
 
 public:
     /*** Readers ***/
@@ -31,20 +32,20 @@ public:
     Point get_location() const override { return track_base.get_position(); }
 
     // Return true if ship can move (it is not dead in the water or in the process or sinking);
-    bool can_move() const;
+    bool can_move() const override;
 
     // Return true if ship is moving
-    bool is_moving() const;
+    bool is_moving() const override;
 
     // Return true if ship is docked
-    bool is_docked() const;
+    bool is_docked() const override;
 
     // Return true if ship is afloat (not in process of sinking), false if not
-    bool is_afloat() const;
+    bool is_afloat() const override;
 
     // Return true if the ship is Stopped and the distance to the supplied island
     // is less than or equal to 0.1 nm
-    bool can_dock(std::shared_ptr<Island> island_ptr) const;
+    bool can_dock(std::shared_ptr<Island> island_ptr) const override;
 
     /*** Interface to derived classes ***/
     // Update the state of the Ship
@@ -60,52 +61,52 @@ public:
     // Start moving to a destination position at a speed
     // may throw Error("Ship cannot move!")
     // may throw Error("Ship cannot go that fast!")
-    virtual void set_destination_position_and_speed(Point destination_position,
-            double speed);
+    void set_destination_position_and_speed(Point destination_position,
+            double speed) override;
 
     // Start moving to a destination Island at a speed
     // may throw Error("Ship cannot move!")
     // may throw Error("Ship cannot go that fast!")
-    virtual void set_destination_island_and_speed(std::shared_ptr<Island> destination_island,
-            double speed);
+    void set_destination_island_and_speed(std::shared_ptr<Island> destination_island,
+            double speed) override;
 
     // Start moving on a course and speed
     // may throw Error("Ship cannot move!")
     // may throw Error("Ship cannot go that fast!");
-    virtual void set_course_and_speed(double course, double speed);
+    void set_course_and_speed(double course, double speed) override;
 
     // Stop moving
     // may throw Error("Ship cannot move!");
-    virtual void stop();
+    void stop() override;
 
     // dock at an Island - set our position = Island's position, go into Docked state
     // may throw Error("Can't dock!");
-    virtual void dock(std::shared_ptr<Island> island_ptr);
+    void dock(std::shared_ptr<Island> island_ptr) override;
 
     // Refuel - must already be docked at an island; fill takes as much as possible
     // may throw Error("Must be docked!");
-    virtual void refuel();
+    void refuel() override;
 
     /*** Fat interface command functions ***/
     // These functions throw an Error exception for this class
     // will always throw Error("Cannot load at a destination!");
-    virtual void set_load_destination(std::shared_ptr<Island>);
+    void set_load_destination(std::shared_ptr<Island>) override;
 
     // will always throw Error("Cannot unload at a destination!");
-    virtual void set_unload_destination(std::shared_ptr<Island>);
+    void set_unload_destination(std::shared_ptr<Island>) override;
 
     // will always throw Error("Cannot attack!");
-    virtual void attack(std::shared_ptr<Ship> in_target_ptr);
+    void attack(std::shared_ptr<Ship> in_target_ptr) override;
 
     // will always throw Error("Cannot attack!");
-    virtual void stop_attack();
+    void stop_attack() override;
 
     // will always throw Error("Cannot skim!");
-    virtual void start_skimming(Point spill_origin_, int spill_size_);
+    void start_skimming(Point spill_origin_, int spill_size_) override;
 
     // interactions with other objects
     // receive a hit from an attacker
-    virtual void receive_hit(int hit_force, std::shared_ptr<Ship> attacker_ptr);
+    void receive_hit(int hit_force, std::shared_ptr<Ship> attacker_ptr) override;
 
 protected:
     // Protected to prevent construction of plain ship objects
@@ -113,14 +114,15 @@ protected:
             double maximum_speed_, double fuel_consumption_, int resistance_);
 
     // Get the maximum speed for the ship
-    double get_maximum_speed() const { return maximum_speed; }
+    double get_maximum_speed() const override
+        { return maximum_speed; }
 
     // return pointer to the Island currently docked at, or nullptr if not docked
-    std::shared_ptr<Island> get_docked_Island() const
+    std::shared_ptr<Island> get_docked_Island() const override
         { return docked_Island; }
 
     // return pointer to current destination Island, nullptr if not set
-    std::shared_ptr<Island> get_destination_Island() const
+    std::shared_ptr<Island> get_destination_Island() const override
         { return destination_Island; }
 
 private:
