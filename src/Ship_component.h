@@ -13,6 +13,13 @@ class Ship_component : public Sim_object {
 public:
     Ship_component(const std::string& name);
 
+    /*** Component functions ***/
+    virtual void add_component();
+
+    virtual void remove_component(const std::string& name);
+
+    virtual std::shared_ptr<Ship_component> get_child(const std::string& name);
+
     /*** Readers ***/
     // Return true if ship can move (it is not dead in the water or in the process or sinking);
     virtual bool can_move() const = 0;
