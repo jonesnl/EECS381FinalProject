@@ -15,6 +15,9 @@
 
 class View {
 public:
+    // Virtual destructor to make sure right destructors are called.
+	virtual ~View() = default;
+
     // Update the location of an object in the view.
 	virtual void update_location(const std::string& name, Point location);
 

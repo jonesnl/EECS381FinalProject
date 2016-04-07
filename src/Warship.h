@@ -29,7 +29,7 @@ protected:
     // an attack
     virtual void target_out_of_range_handler() = 0;
 
-    // Return true if we are attackign a target
+    // Return true if we are attacking a target
     bool is_attacking() {return attacking;}
 
     // Return the target of our attack

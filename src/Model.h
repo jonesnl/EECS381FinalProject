@@ -105,8 +105,9 @@ public:
     // Friend Model_destoryer to destroy the singleton_ptr
     friend class Model_destroyer;
 private:
-    // Private constructor to adhere to the singleton idiom.
+    // Private constructor and destructor to adhere to the singleton idiom.
     Model();
+    ~Model() = default;
 
     // Pointer to the singleton Model object.
     static Model *singleton_ptr;
