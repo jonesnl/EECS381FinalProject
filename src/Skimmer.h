@@ -11,6 +11,14 @@ public:
 
     void update() override;
 
+    void set_destination_position_and_speed(Point destination_position,
+            double speed) override;
+
+    void set_destination_island_and_speed(std::shared_ptr<Island> destination_island,
+            double speed) override;
+
+    void set_course_and_speed(double course, double speed) override;
+
     void start_skimming(Point spill_origin_, int spill_size_) override;
 
     void stop() override;

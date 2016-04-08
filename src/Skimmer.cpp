@@ -77,6 +77,25 @@ void Skimmer::update() {
     set_destination_position_and_speed(new_dest, get_maximum_speed());
 }
 
+void Skimmer::set_destination_position_and_speed(Point destination_position, double speed) {
+    if (is_skimming())
+        stop_skimming();
+    Ship::set_destination_position_and_speed(destination_position, speed);
+}
+
+void Skimmer::set_destination_island_and_speed(shared_ptr<Island> destination_island,
+        double speed) {
+    if (is_skimming())
+        stop_skimming();
+    Ship::set_destination_island_and_speed(destination_island, speed);
+}
+
+void Skimmer::set_course_and_speed(double course, double speed) {
+    if (is_skimming())
+        stop_skimming();
+    Ship::set_course_and_speed(course, speed);
+}
+
 void Skimmer::start_skimming(Point spill_ll_corner_, int spill_size_) {
     if (!can_move())
         throw Error("Can't move!");

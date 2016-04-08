@@ -8,6 +8,7 @@
 
 class Island;
 class Ship;
+class Ship_composite;
 
 class Ship_component : public Sim_object {
 public:
@@ -48,8 +49,7 @@ public:
     // may throw Error("Ship cannot move!")
     // may throw Error("Ship cannot go that fast!")
     virtual void set_destination_island_and_speed(
-            std::shared_ptr <Island> destination_island,
-            double speed) = 0;
+            std::shared_ptr <Island> destination_island, double speed) = 0;
 
     // Start moving on a course and speed
     // may throw Error("Ship cannot move!")
@@ -71,13 +71,13 @@ public:
     /*** Fat interface command functions ***/
     // These functions throw an Error exception for this class
     // will always throw Error("Cannot load at a destination!");
-    virtual void set_load_destination(std::shared_ptr <Island>) = 0;
+    virtual void set_load_destination(std::shared_ptr <Island> island_ptr) = 0;
 
     // will always throw Error("Cannot unload at a destination!");
-    virtual void set_unload_destination(std::shared_ptr <Island>) = 0;
+    virtual void set_unload_destination(std::shared_ptr <Island> island_ptr) = 0;
 
     // will always throw Error("Cannot attack!");
-    virtual void attack(std::shared_ptr<Ship> in_target_ptr) = 0;
+    virtual void attack(std::shared_ptr<Ship> target_ptr) = 0;
 
     // will always throw Error("Cannot attack!");
     virtual void stop_attack() = 0;
@@ -87,8 +87,7 @@ public:
 
     // interactions with other objects
     // receive a hit from an attacker
-    virtual void receive_hit(int hit_force,
-            std::shared_ptr <Ship> attacker_ptr) = 0;
+    virtual void receive_hit(int hit_force, std::shared_ptr <Ship> attacker_ptr) = 0;
 protected:
     // Get the maximum speed for the ship
     virtual double get_maximum_speed() const = 0;
@@ -98,6 +97,9 @@ protected:
 
     // return pointer to current destination Island, nullptr if not set
     virtual std::shared_ptr<Island> get_destination_Island() const = 0;
+
+private:
+    std::weak_ptr<Ship_composite> parent; // TODO
 };
 
 #endif

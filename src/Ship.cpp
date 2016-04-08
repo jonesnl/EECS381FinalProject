@@ -177,6 +177,27 @@ void Ship::refuel() {
     cout << get_name() << " now has " << fuel << " tons of fuel" << endl;
 }
 
+// Take a hit from a ship, which can sink us if our resistance goes below 0.
+// We don't care about who attacked us, but functions that override this
+// function might.
+void Ship::receive_hit(int hit_force, shared_ptr<Ship>) {
+    // We should never be getting hit if we are sunk
+    assert(ship_state != State_t::sunk);
+    // Take the hit
+    resistance -= hit_force;
+    cout << get_name() << " hit with " << hit_force << ", resistance now " <<
+    resistance << endl;
+    // If we have negative resistance, sink the ship
+    if (is_afloat() && resistance < 0.) {
+        Model *model_ptr = Model::get_inst();
+        ship_state = State_t::sunk;
+        set_speed(0.);
+        cout << get_name() << " sunk" << endl;
+        model_ptr->remove_ship(shared_from_this());
+        model_ptr->notify_gone(get_name());
+    }
+}
+
 // Throw error for fat interface functions
 void Ship::set_load_destination(shared_ptr<Island>) {
     throw Error("Cannot load at a destination!");
@@ -200,27 +221,6 @@ void Ship::stop_attack() {
 // Throw error for fat interface functions
 void Ship::start_skimming(Point, int) {
     throw Error("Cannot skim!");
-}
-
-// Take a hit from a ship, which can sink us if our resistance goes below 0.
-// We don't care about who attacked us, but functions that override this
-// function might.
-void Ship::receive_hit(int hit_force, shared_ptr<Ship>) {
-    // We should never be getting hit if we are sunk
-    assert(ship_state != State_t::sunk);
-    // Take the hit
-    resistance -= hit_force;
-    cout << get_name() << " hit with " << hit_force << ", resistance now " <<
-            resistance << endl;
-    // If we have negative resistance, sink the ship
-    if (is_afloat() && resistance < 0.) {
-        Model *model_ptr = Model::get_inst();
-        ship_state = State_t::sunk;
-        set_speed(0.);
-        cout << get_name() << " sunk" << endl;
-        model_ptr->remove_ship(shared_from_this());
-        model_ptr->notify_gone(get_name());
-    }
 }
 
 /* Protected Function Definitions */

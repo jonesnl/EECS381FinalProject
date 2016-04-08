@@ -58,19 +58,19 @@ public:
     void broadcast_current_state() const override;
 
     /*** Command functions ***/
-    // Start moving to a destination position at a speed
+    virtual // Start moving to a destination position at a speed
     // may throw Error("Ship cannot move!")
     // may throw Error("Ship cannot go that fast!")
     void set_destination_position_and_speed(Point destination_position,
             double speed) override;
 
-    // Start moving to a destination Island at a speed
+    virtual // Start moving to a destination Island at a speed
     // may throw Error("Ship cannot move!")
     // may throw Error("Ship cannot go that fast!")
     void set_destination_island_and_speed(std::shared_ptr<Island> destination_island,
             double speed) override;
 
-    // Start moving on a course and speed
+    virtual // Start moving on a course and speed
     // may throw Error("Ship cannot move!")
     // may throw Error("Ship cannot go that fast!");
     void set_course_and_speed(double course, double speed) override;
@@ -86,6 +86,10 @@ public:
     // Refuel - must already be docked at an island; fill takes as much as possible
     // may throw Error("Must be docked!");
     void refuel() override;
+
+    // interactions with other objects
+    // receive a hit from an attacker
+    void receive_hit(int hit_force, std::shared_ptr<Ship> attacker_ptr) override;
 
     /*** Fat interface command functions ***/
     // These functions throw an Error exception for this class
@@ -103,10 +107,6 @@ public:
 
     // will always throw Error("Cannot skim!");
     void start_skimming(Point spill_origin_, int spill_size_) override;
-
-    // interactions with other objects
-    // receive a hit from an attacker
-    void receive_hit(int hit_force, std::shared_ptr<Ship> attacker_ptr) override;
 
 protected:
     // Protected to prevent construction of plain ship objects
