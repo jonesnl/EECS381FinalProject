@@ -9,43 +9,40 @@ using namespace placeholders;
 Ship_composite::Ship_composite(const string& name_) :
         Ship_component(name_) { }
 
-void Ship_composite::add_component() {
-    // TODO
+void Ship_composite::add_component(shared_ptr<Ship_component> ship_ptr) {
+    children.insert({ship_ptr->get_name(), ship_ptr});
 }
 
 void Ship_composite::remove_component(const string& name) {
-    // TODO
+    children.erase(name);
 }
 
 shared_ptr<Ship_component> Ship_composite::get_child(const string& name) {
-    // TODO
+    auto child_itt = children.find(name);
+    if (child_itt == children.end())
+        return nullptr;
+    else
+        return child_itt->second.lock();
 }
 
 bool Ship_composite::can_move() const {
-    return all_of(children.begin(), children.end(),
-            bind(children_if_helper, _1, &Ship_component::can_move));
+    throw Error("Group boolean!");
 }
 
 bool Ship_composite::is_moving() const {
-    return any_of(children.begin(), children.end(),
-            bind(children_if_helper, _1, &Ship_component::is_moving));
+    throw Error("Group boolean!");
 }
 
 bool Ship_composite::is_docked() const {
-    return all_of(children.begin(), children.end(),
-            bind(children_if_helper, _1, &Ship_component::is_docked));
+    throw Error("Group boolean!");
 }
 
 bool Ship_composite::is_afloat() const {
-    return all_of(children.begin(), children.end(),
-            bind(children_if_helper, _1, &Ship_component::is_afloat));
+    throw Error("Group boolean!");
 }
 
-bool Ship_composite::can_dock(shared_ptr<Island> island_ptr) const {
-    return all_of(children.begin(), children.end(),
-            [island_ptr](const ChildrenMap_t::value_type& map_pair) {
-                return map_pair.second.lock()->can_dock(island_ptr);
-            });
+bool Ship_composite::can_dock(shared_ptr<Island>) const {
+    throw Error("Group boolean!");
 }
 
 void Ship_composite::set_destination_position_and_speed(

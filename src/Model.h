@@ -26,6 +26,7 @@ Model also provides facilities for looking up objects given their name.
 
 class Model;
 class Ship;
+class Ship_composite;
 class View;
 class Island;
 class Sim_object;
@@ -48,7 +49,7 @@ public:
     // Get vector of island pointers, sorted by island name
     std::vector<std::shared_ptr<Island>> get_vector_of_islands() const;
 
-    // Get vector of Tanker pointers, sorted by ship name
+    // Get vector of ship pointers, sorted by ship name
     std::vector<std::shared_ptr<Ship>> get_vector_of_ships() const;
 
     // is there such a ship?
@@ -59,6 +60,12 @@ public:
 
     // remove a Ship from the model.
     void remove_ship(std::shared_ptr<Ship> ship_ptr);
+
+    void add_group(std::shared_ptr<Ship_composite> group);
+
+    std::shared_ptr<Ship_composite> get_group_ptr(const std::string& group_name) const;
+
+    void remove_group(std::shared_ptr<Ship_composite> group);
 
     // will throw Error("Ship not found!") if no ship of that name
     std::shared_ptr<Ship> get_ship_ptr(const std::string &name) const;
@@ -117,11 +124,13 @@ private:
     // Alias the data containers to some more meaningful names.
     using ObjectMap_t = std::map<std::string, std::shared_ptr<Sim_object>>;
     using ShipMap_t = std::map<std::string, std::shared_ptr<Ship>>;
+    using GroupMap_t = std::map<std::string, std::shared_ptr<Ship_composite>>;
     using IslandMap_t = std::map<std::string, std::shared_ptr<Island>>;
     using ViewSet_t = std::set<std::shared_ptr<View>>;
 
     ObjectMap_t object_map; // Map of all object pointers, key is the object's name
     ShipMap_t ship_map; // Map of ship pointers , key is the ship's name
+    GroupMap_t group_map; // Map of ship groups
     IslandMap_t island_map; // Map of island pointers, key is the island's name
     ViewSet_t view_set; // Set of view pointers
 

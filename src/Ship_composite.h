@@ -10,7 +10,7 @@ public:
     Ship_composite(const std::string& name_);
 
     /*** Component functions ***/
-    void add_component() override;
+    void add_component(std::shared_ptr<Ship_component> ship_ptr) override;
 
     void remove_component(const std::string& name) override;
 

@@ -15,7 +15,7 @@ public:
     Ship_component(const std::string& name);
 
     /*** Component functions ***/
-    virtual void add_component();
+    virtual void add_component(std::shared_ptr<Ship_component> ship_ptr);
 
     virtual void remove_component(const std::string& name);
 
