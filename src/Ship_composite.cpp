@@ -10,9 +10,6 @@ Ship_composite::Ship_composite(const string& name_) :
         Ship_component(name_) { }
 
 Ship_composite::~Ship_composite() {
-    for (auto& child : children) {
-        child.second.lock()->remove_parent();
-    }
 }
 
 void Ship_composite::add_component(shared_ptr<Ship_component> ship_ptr) {
@@ -21,7 +18,16 @@ void Ship_composite::add_component(shared_ptr<Ship_component> ship_ptr) {
 }
 
 void Ship_composite::remove_component(const string& name) {
-    children.erase(name);
+    auto itt = children.find(name);
+    if (itt == children.end())
+        throw Error("No component with that name!");
+
+    // If the element pointed to by comp_ptr is being destructed, then the comp_ptr
+    // will be null, so need an if statement to ensure we don't get segfaults
+    auto comp_ptr = itt->second.lock();
+    if (comp_ptr)
+        comp_ptr->remove_parent();
+    children.erase(itt);
 }
 
 shared_ptr<Ship_component> Ship_composite::get_child(const string& name) {

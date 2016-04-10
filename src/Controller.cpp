@@ -263,7 +263,7 @@ void Controller::create_cmd() {
 void Controller::create_group_cmd() {
     string group_name;
     cin >> group_name;
-    if(Model::get_inst()->is_name_in_use(group_name))
+    if(Model::get_inst()->is_ship_component_present(group_name))
         throw Error("Name is invalid!");
 
     auto group_ptr = make_shared<Ship_composite>(group_name);
