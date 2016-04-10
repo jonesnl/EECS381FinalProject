@@ -4,6 +4,7 @@
 #include "Utility.h"
 #include "Ship_factory.h"
 #include "Ship.h"
+#include "Ship_composite.h"
 #include "Map_view.h"
 #include "Sailing_view.h"
 #include "Bridge_view.h"
@@ -39,7 +40,7 @@ void Controller::run() {
     // functions that handle that input.
 
     // Command map for commands that start with a ship's name.
-    map<string, void (Controller::*) (shared_ptr<Ship>)> ship_cmd_map = {
+    map<string, void (Controller::*) (shared_ptr<Ship_component>)> ship_cmd_map = {
             {"course", &Controller::ship_course_cmd},
             {"position", &Controller::ship_position_cmd},
             {"destination", &Controller::ship_dest_cmd},
@@ -69,7 +70,12 @@ void Controller::run() {
 
             {"status", &Controller::status_cmd},
             {"go", &Controller::go_cmd},
-            {"create", &Controller::create_cmd}
+            {"create", &Controller::create_cmd},
+
+            {"create_group", &Controller::create_group_cmd},
+            {"add_to_group", &Controller::add_to_group_cmd},
+            {"remove_from_group", &Controller::remove_from_group_cmd},
+            {"remove_group", &Controller::remove_group_cmd}
     };
 
     // Continue to take in user's input
@@ -82,10 +88,10 @@ void Controller::run() {
             if (command == "quit") { // Handle the "quit" command separately.
                 cout << "Done" << endl;
                 return;
-            } else if (Model::get_inst()->is_ship_present(command)) {
+            } else if (Model::get_inst()->is_ship_component_present(command)) {
                 // If command is a ship's name, then this is a ship command
 
-                string &ship_name = command; // Alias command to a more meaningful name
+                string &component_name = command; // Alias command to a more meaningful name
 
                 string ship_cmd;
                 cin >> ship_cmd; // Get the name of the ship command
@@ -95,10 +101,11 @@ void Controller::run() {
                     throw Error("Unrecognized command!");
 
                 // Get the ship's pointer from the model.
-                shared_ptr<Ship> ship_ptr = Model::get_inst()->get_ship_ptr(ship_name);
+                auto ship_component_ptr =
+                        Model::get_inst()->get_ship_component_ptr(component_name);
 
                 // Call the handling ship command function.
-                (this->*itt->second)(ship_ptr);
+                (this->*itt->second)(ship_component_ptr);
             } else {
                 // If it is not a ship command, it must be a regular command
                 auto itt = generic_cmd_map.find(command);
@@ -252,8 +259,45 @@ void Controller::create_cmd() {
     Model::get_inst()->add_ship(ship);
 }
 
+// TODO
+void Controller::create_group_cmd() {
+    string group_name;
+    cin >> group_name;
+    if(Model::get_inst()->is_name_in_use(group_name))
+        throw Error("Name is invalid!");
+
+    auto group_ptr = make_shared<Ship_composite>(group_name);
+    Model::get_inst()->add_group(group_ptr);
+}
+
+void Controller::add_to_group_cmd() {
+    string group_name;
+    cin >> group_name;
+    auto group_ptr = Model::get_inst()->get_ship_composite_ptr(group_name);
+    string component_name;
+    cin >> component_name;
+    auto component_ptr = Model::get_inst()->get_ship_component_ptr(component_name);
+    group_ptr->add_component(component_ptr);
+}
+
+void Controller::remove_from_group_cmd() {
+    string group_name;
+    cin >> group_name;
+    auto group_ptr = Model::get_inst()->get_ship_composite_ptr(group_name);
+    string component_name;
+    cin >> component_name;
+    group_ptr->remove_component(component_name);
+}
+
+void Controller::remove_group_cmd() {
+    string group_name;
+    cin >> group_name;
+    auto group_ptr = Model::get_inst()->get_ship_composite_ptr(group_name);
+    Model::get_inst()->remove_group(group_ptr);
+}
+
 // Set the course and speed of a ship.
-void Controller::ship_course_cmd(shared_ptr<Ship> ship) {
+void Controller::ship_course_cmd(shared_ptr<Ship_component> ship) {
     double heading = get_double_from_cin();
 
     // If the entered heading is not valid heading according to
@@ -266,62 +310,63 @@ void Controller::ship_course_cmd(shared_ptr<Ship> ship) {
 }
 
 // Set the destination position and speed of a ship.
-void Controller::ship_position_cmd(shared_ptr<Ship> ship) {
+void Controller::ship_position_cmd(shared_ptr<Ship_component> ship) {
     Point position = get_point_from_cin();
     double speed = get_speed_from_cin();
     ship->set_destination_position_and_speed(position, speed);
 }
 
 // Set the destination island and speed of a ship.
-void Controller::ship_dest_cmd(shared_ptr<Ship> ship) {
+void Controller::ship_dest_cmd(shared_ptr<Ship_component> ship) {
     shared_ptr<Island> island = get_island_ptr_from_cin();
     double speed = get_speed_from_cin();
     ship->set_destination_island_and_speed(island, speed);
 }
 
 // Set the loading location of a ship.
-void Controller::ship_load_cmd(shared_ptr<Ship> ship) {
+void Controller::ship_load_cmd(shared_ptr<Ship_component> ship) {
     shared_ptr<Island> island = get_island_ptr_from_cin();
     ship->set_load_destination(island);
 }
 
 // Set the unloading location of a ship.
-void Controller::ship_unload_cmd(shared_ptr<Ship> ship) {
+void Controller::ship_unload_cmd(shared_ptr<Ship_component> ship) {
     shared_ptr<Island> island = get_island_ptr_from_cin();
     ship->set_unload_destination(island);
 }
 
 // Tell the ship to dock at an island.
-void Controller::ship_dock_cmd(shared_ptr<Ship> ship) {
+void Controller::ship_dock_cmd(shared_ptr<Ship_component> ship) {
     shared_ptr<Island> island = get_island_ptr_from_cin();
     ship->dock(island);
 }
 
 // Tell the ship to attack another ship
-void Controller::ship_attack_cmd(shared_ptr<Ship> ship) {
+void Controller::ship_attack_cmd(shared_ptr<Ship_component> ship) {
     string target_name;
     cin >> target_name;
-    shared_ptr<Ship> target = Model::get_inst()->get_ship_ptr(target_name);
+    shared_ptr<Ship> target = Model::get_inst()->get_ship_ptr(
+            target_name);
     ship->attack(target);
 }
 
 // Tell the ship to refuel at the docked island.
-void Controller::ship_refuel_cmd(shared_ptr<Ship> ship) {
+void Controller::ship_refuel_cmd(shared_ptr<Ship_component> ship) {
     ship->refuel();
 }
 
 // Tell the ship to stop what it is doing.
-void Controller::ship_stop_cmd(shared_ptr<Ship> ship) {
+void Controller::ship_stop_cmd(shared_ptr<Ship_component> ship) {
     ship->stop();
 }
 
 // Tell the ship to stop attacking.
-void Controller::ship_stop_attack_cmd(shared_ptr<Ship> ship) {
+void Controller::ship_stop_attack_cmd(shared_ptr<Ship_component> ship) {
     ship->stop_attack();
 }
 
 // Tell ship to skim an oil spill
-void Controller::ship_start_skimming_cmd(std::shared_ptr<Ship> ship) {
+void Controller::ship_start_skimming_cmd(std::shared_ptr<Ship_component> ship) {
     Point spill_loc = get_point_from_cin();
     int size = get_int_from_cin();
     ship->start_skimming(spill_loc, size);

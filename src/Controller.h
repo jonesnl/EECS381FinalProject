@@ -10,7 +10,7 @@ class View;
 class Map_view;
 class Sailing_view;
 class Bridge_view;
-class Ship;
+class Ship_component;
 
 /* Controller
  * This class is responsible for controlling the Model and View according to
@@ -100,42 +100,51 @@ private:
     // is not valid, or if <ship_type> is not a valid ship type.
     void create_cmd();
 
+    // TODO
+    void create_group_cmd();
+
+    void add_to_group_cmd();
+
+    void remove_from_group_cmd();
+
+    void remove_group_cmd();
+
     // "<ship_name> course <heading> <speed>": Set the ship's heading and speed.
-    void ship_course_cmd(std::shared_ptr<Ship> ship);
+    void ship_course_cmd(std::shared_ptr<Ship_component> ship);
 
     // "<ship_name> position <x> <y> <speed>": Set the ship's destination position
     // and speed.
-    void ship_position_cmd(std::shared_ptr<Ship> ship);
+    void ship_position_cmd(std::shared_ptr<Ship_component> ship);
 
     // "<ship_name> destination <island_name> <speed>": Set the ship's destination
     // island and speed.
-    void ship_dest_cmd(std::shared_ptr<Ship> ship);
+    void ship_dest_cmd(std::shared_ptr<Ship_component> ship);
 
     // "<ship_name> load_at <island_name>": Tells a ship to load cargo at <island_name>.
-    void ship_load_cmd(std::shared_ptr<Ship> ship);
+    void ship_load_cmd(std::shared_ptr<Ship_component> ship);
 
     // "<ship_name> unload_at <island_name>": Tells a ship to unload cargo at <island_name>.
-    void ship_unload_cmd(std::shared_ptr<Ship> ship);
+    void ship_unload_cmd(std::shared_ptr<Ship_component> ship);
 
     // "<ship_name> dock_at <island_name>": Tells a ship to attempt to dock at <island_name>.
-    void ship_dock_cmd(std::shared_ptr<Ship> ship);
+    void ship_dock_cmd(std::shared_ptr<Ship_component> ship);
 
     // "<ship_name> attack <target_name>": Tells a ship to attack another ship.
-    void ship_attack_cmd(std::shared_ptr<Ship> ship);
+    void ship_attack_cmd(std::shared_ptr<Ship_component> ship);
 
     // "<ship_name> refuel": Tells a ship to attempt to refuel at the docked island.
-    void ship_refuel_cmd(std::shared_ptr<Ship> ship);
+    void ship_refuel_cmd(std::shared_ptr<Ship_component> ship);
 
     // "<ship_name> stop": Tells a ship to stop at its current location and stop doing
     // whatever it may have been doing before.
-    void ship_stop_cmd(std::shared_ptr<Ship> ship);
+    void ship_stop_cmd(std::shared_ptr<Ship_component> ship);
 
     // "<ship_name> stop_attack": Tells a ship to stop attacking.
-    void ship_stop_attack_cmd(std::shared_ptr<Ship> ship);
+    void ship_stop_attack_cmd(std::shared_ptr<Ship_component> ship);
 
     // "<ship_name> start_skimming <x> <y> <size>": Tells a ship to clean up an oil spill
     // at (<x>, <y>) with a size of <size>
-    void ship_start_skimming_cmd(std::shared_ptr<Ship> ship);
+    void ship_start_skimming_cmd(std::shared_ptr<Ship_component> ship);
 
     /******* Helper functions ********/
     // Throw an error if the map view is closed

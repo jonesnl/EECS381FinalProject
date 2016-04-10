@@ -5,9 +5,11 @@
 
 #include <map>
 
-class Ship_composite : public Ship_component {
+class Ship_composite : public Ship_component, public std::enable_shared_from_this<Ship_composite> {
 public:
     Ship_composite(const std::string& name_);
+
+    ~Ship_composite() override;
 
     /*** Component functions ***/
     void add_component(std::shared_ptr<Ship_component> ship_ptr) override;
@@ -26,6 +28,20 @@ public:
     bool is_afloat() const override;
 
     bool can_dock(std::shared_ptr<Island> island_ptr) const override;
+
+    Point get_location() const override;
+
+    std::shared_ptr<Island> get_docked_Island() const override;
+
+    std::shared_ptr<Island> get_destination_Island() const override;
+
+    double get_maximum_speed() const override;
+
+    void update() override;
+
+    void describe() const override;
+
+    void broadcast_current_state() const override;
 
     /*** Command functions ***/
     void set_destination_position_and_speed(Point destination_position,

@@ -14,6 +14,8 @@ class Ship_component : public Sim_object {
 public:
     Ship_component(const std::string& name);
 
+    ~Ship_component() override;
+
     /*** Component functions ***/
     virtual void add_component(std::shared_ptr<Ship_component> ship_ptr);
 
@@ -37,6 +39,15 @@ public:
     // Return true if the ship is Stopped and the distance to the supplied island
     // is less than or equal to 0.1 nm
     virtual bool can_dock(std::shared_ptr <Island> island_ptr) const = 0;
+
+    // Get the maximum speed for the ship
+    virtual double get_maximum_speed() const = 0;
+
+    // return pointer to the Island currently docked at, or nullptr if not docked
+    virtual std::shared_ptr<Island> get_docked_Island() const = 0;
+
+    // return pointer to current destination Island, nullptr if not set
+    virtual std::shared_ptr<Island> get_destination_Island() const = 0;
 
     /*** Command functions ***/
     // Start moving to a destination position at a speed
@@ -88,16 +99,9 @@ public:
     // interactions with other objects
     // receive a hit from an attacker
     virtual void receive_hit(int hit_force, std::shared_ptr <Ship> attacker_ptr) = 0;
-protected:
-    // Get the maximum speed for the ship
-    virtual double get_maximum_speed() const = 0;
 
-    // return pointer to the Island currently docked at, or nullptr if not docked
-    virtual std::shared_ptr<Island> get_docked_Island() const = 0;
-
-    // return pointer to current destination Island, nullptr if not set
-    virtual std::shared_ptr<Island> get_destination_Island() const = 0;
-
+    void add_parent(std::shared_ptr<Ship_composite> parent_);
+    void remove_parent();
 private:
     std::weak_ptr<Ship_composite> parent; // TODO
 };

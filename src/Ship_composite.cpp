@@ -9,7 +9,14 @@ using namespace placeholders;
 Ship_composite::Ship_composite(const string& name_) :
         Ship_component(name_) { }
 
+Ship_composite::~Ship_composite() {
+    for (auto& child : children) {
+        child.second.lock()->remove_parent();
+    }
+}
+
 void Ship_composite::add_component(shared_ptr<Ship_component> ship_ptr) {
+    ship_ptr->add_parent(shared_from_this());
     children.insert({ship_ptr->get_name(), ship_ptr});
 }
 
@@ -44,6 +51,30 @@ bool Ship_composite::is_afloat() const {
 bool Ship_composite::can_dock(shared_ptr<Island>) const {
     throw Error("Group boolean!");
 }
+
+Point Ship_composite::get_location() const {
+    throw Error("Can't get the location of a group!");
+}
+
+shared_ptr<Island> Ship_composite::get_docked_Island() const {
+    throw Error("Can't get member of group!");
+}
+
+shared_ptr<Island> Ship_composite::get_destination_Island() const {
+    throw Error("Can't get member of group!");
+}
+
+double Ship_composite::get_maximum_speed() const {
+    throw Error("Can't get max speed of a group!");
+}
+
+void Ship_composite::update() { }
+
+void Ship_composite::describe() const {
+    cout << "Group " << get_name() << endl;
+}
+
+void Ship_composite::broadcast_current_state() const { }
 
 void Ship_composite::set_destination_position_and_speed(
         Point destination_position, double speed) {

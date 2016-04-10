@@ -47,6 +47,18 @@ public:
     // is less than or equal to 0.1 nm
     bool can_dock(std::shared_ptr<Island> island_ptr) const override;
 
+    // Get the maximum speed for the ship
+    double get_maximum_speed() const override
+    { return maximum_speed; }
+
+    // return pointer to the Island currently docked at, or nullptr if not docked
+    std::shared_ptr<Island> get_docked_Island() const override
+    { return docked_Island; }
+
+    // return pointer to current destination Island, nullptr if not set
+    std::shared_ptr<Island> get_destination_Island() const override
+    { return destination_Island; }
+
     /*** Interface to derived classes ***/
     // Update the state of the Ship
     void update() override;
@@ -112,18 +124,6 @@ protected:
     // Protected to prevent construction of plain ship objects
     Ship(const std::string &name_, Point position_, double fuel_capacity_,
             double maximum_speed_, double fuel_consumption_, int resistance_);
-
-    // Get the maximum speed for the ship
-    double get_maximum_speed() const override
-        { return maximum_speed; }
-
-    // return pointer to the Island currently docked at, or nullptr if not docked
-    std::shared_ptr<Island> get_docked_Island() const override
-        { return docked_Island; }
-
-    // return pointer to current destination Island, nullptr if not set
-    std::shared_ptr<Island> get_destination_Island() const override
-        { return destination_Island; }
 
 private:
     double fuel;                        // Current amount of fuel

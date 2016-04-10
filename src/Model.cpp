@@ -1,6 +1,7 @@
 #include "Model.h"
 
 #include "Ship.h"
+#include "Ship_composite.h"
 #include "Island.h"
 #include "Ship_factory.h"
 #include "Utility.h"
@@ -8,6 +9,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <cassert>
 
 using namespace std;
 using namespace std::placeholders;
@@ -88,18 +90,51 @@ void Model::add_ship(std::shared_ptr<Ship> ship_ptr) {
     ship_ptr->broadcast_current_state();
 }
 
-// Removes a ship from the model.
-void Model::remove_ship(shared_ptr<Ship> ship_ptr) {
-    ship_map.erase(ship_ptr->get_name());
-    object_map.erase(ship_ptr->get_name());
-}
-
 // Get a ship's pointer based on the name of the ship.
-shared_ptr<Ship> Model::get_ship_ptr(const std::string& name) const {
+shared_ptr<Ship> Model::get_ship_ptr(const string& name) const {
     auto itt = ship_map.find(name);
     if (itt == ship_map.end())
         throw Error("Ship not found!");
     return itt->second;
+}
+
+// Removes a ship from the model.
+void Model::remove_ship(shared_ptr<Ship> ship_ptr) {
+    ship_map.erase(ship_ptr->get_name());
+    component_map.erase(ship_ptr->get_name());
+    object_map.erase(ship_ptr->get_name());
+}
+
+// TODO comment
+bool Model::is_ship_component_present(const string& name) const {
+    return component_map.find(name) != component_map.end();
+}
+
+shared_ptr<Ship_component> Model::get_ship_component_ptr(const string& name) const {
+    auto itt = component_map.find(name);
+    if (itt == component_map.end())
+        throw Error("Ship or ship group not found!");
+    return itt->second;
+}
+
+void Model::add_group(shared_ptr<Ship_composite> group) {
+    assert(!is_name_in_use(group->get_name()));
+    composite_map.insert({group->get_name(), group});
+    component_map.insert({group->get_name(), group});
+    object_map.insert({group->get_name(), group});
+}
+
+shared_ptr<Ship_composite> Model::get_ship_composite_ptr(const string& name) const {
+    auto itt = composite_map.find(name);
+    if (itt == composite_map.end())
+        throw Error("Ship group not found!");
+    return itt->second;
+}
+
+void Model::remove_group(shared_ptr<Ship_composite> group) {
+    composite_map.erase(group->get_name());
+    component_map.erase(group->get_name());
+    object_map.erase(group->get_name());
 }
 
 // Describe all objects in the model in alphabetical order.
@@ -179,7 +214,9 @@ void Model::insert_island(shared_ptr<Island> island) {
 
 // Add a ship to relevant data structures
 void Model::insert_ship(shared_ptr<Ship> ship_ptr) {
+    assert(!is_name_in_use(ship_ptr->get_name()));
     ship_map.insert({ship_ptr->get_name(), ship_ptr});
+    component_map.insert({ship_ptr->get_name(), ship_ptr});
     object_map.insert({ship_ptr->get_name(), ship_ptr});
 }
 
