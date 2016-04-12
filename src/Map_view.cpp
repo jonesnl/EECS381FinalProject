@@ -1,6 +1,6 @@
 #include "Map_view.h"
 
-#include "Ocean_map.h"
+#include "Grid_location_view.h"
 #include "Utility.h"
 
 #include <iostream>
@@ -14,46 +14,9 @@ const int default_map_size_c = 25;
 const double default_map_scale_c = 2.;
 
 // Set the defaults when we construct a new map view
-Map_view::Map_view() : size(default_map_size_c), scale(default_map_scale_c),
-                     origin(default_map_origin_c) { }
-
-// Add an object to the map, tracking its location
-void Map_view::update_location(const std::string &name, Point location) {
-    location_map[name] = location;
-}
-
-// Remove an object from the map
-void Map_view::update_remove(const std::string &name) {
-    location_map.erase(name);
-}
-
-// Draw the map
-void Map_view::draw() const {
-    cout << "Display size: " << size << ", scale: " <<
-    scale << ", origin: " << origin << endl;
-
-    Ocean_map map(size, size, scale, origin);
-
-    // The list of objects that are outside of the map
-    vector<string> objects_outside_map;
-    for (auto& p : location_map) {
-        if (!map.add_to_map(p.first, p.second))
-            objects_outside_map.push_back(p.first);
-    }
-
-    // Print all the objects outside of the map if we have any
-    if (objects_outside_map.size() > 0) {
-        for (auto& s : objects_outside_map) {
-            if (s != objects_outside_map.back())
-                cout << s << ", ";
-            else
-                cout << s << " outside the map" << endl;
-        }
-    }
-
-    // Draw map with y axis labels
-    map.draw();
-}
+Map_view::Map_view() :
+       size(default_map_size_c), scale(default_map_scale_c),
+       origin(default_map_origin_c) { }
 
 // Set the map's size
 void Map_view::set_size(int size_) {
@@ -71,15 +34,41 @@ void Map_view::set_scale(double scale_) {
     scale = scale_;
 }
 
-// Set the origin of the map
 void Map_view::set_origin(Point origin_) {
     origin = origin_;
 }
 
 
 void Map_view::set_defaults() {
-    size = default_map_size_c;
-    scale = default_map_scale_c;
-    origin = default_map_origin_c;
+    set_size(default_map_size_c);
+    set_scale(default_map_scale_c);
+    set_origin(default_map_origin_c);
 }
 
+
+// Draw the map
+void Map_view::draw() const {
+    cout << "Display size: " << size << ", scale: " <<
+            scale << ", origin: " << origin << endl;
+
+    Grid_location_view::draw(size, size, scale, origin);
+    return;
+}
+
+void Map_view::objects_not_in_grid_handler(
+        const vector<string> &objects_outside_map) const {
+    // Print all the objects outside of the map if we have any
+    if (objects_outside_map.size() > 0) {
+        for (auto& s : objects_outside_map) {
+            if (s != objects_outside_map.back())
+                cout << s << ", ";
+            else
+                cout << s << " outside the map" << endl;
+        }
+    }
+}
+
+// Don't need to do any translation for the Map_view
+Point Map_view::translate_point_handler(Point point) const {
+    return point;
+}

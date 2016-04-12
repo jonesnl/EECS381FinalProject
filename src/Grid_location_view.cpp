@@ -1,4 +1,4 @@
-#include "Ocean_map.h"
+#include "Grid_location_view.h"
 
 #include "Utility.h"
 
@@ -17,50 +17,59 @@ const int rows_cols_per_label_c = 3; // Axis labels are printed every 3 rows/col
 const int label_width_c = 4;
 const string empty_y_axis_label = "     ";
 
-// Construct an Ocean_map using the provided parameters
-Ocean_map::Ocean_map(int width_, int height_, double scale_, Point origin_) :
-        width(width_), height(height_),
-        map(height, vector<string>(width, empty_cell_c)), scale(scale_),
-        origin(origin_), y_axis_labels_enabled(true) { }
-
-// Add an object to the map
-bool Ocean_map::add_to_map(const string& obj_name, Point point) {
-    int ix, iy;
-    // See if a point maps to a location on the map, if so, add it to the map.
-    if (!get_subscripts(ix, iy, point))
-        return false;
-
-    // If more than one object is in the same cell, use the multiple entry cell
-    if (map[iy][ix] == empty_cell_c)
-        map[iy][ix] = obj_name.substr(0, name_abbreviation_length_c);
-    else
-        map[iy][ix] = multiple_entry_cell_c;
-    return true;
-}
-
-// Fill the map with the provided string
-void Ocean_map::fill(const string& fill_string) {
-    assert(fill_string.length() == name_abbreviation_length_c);
-    for (auto& row_vect : map) {
-        for (auto& str : row_vect) {
-            str = fill_string;
-        }
-    }
-}
+// Construct an Grid_location_view using the provided parameters
+Grid_location_view::Grid_location_view() :
+        y_axis_labels_enabled(true) { }
 
 // Disable drawing y axis labels in the draw() function
-void Ocean_map::disable_y_axis_labels() {
+void Grid_location_view::disable_y_axis_labels() {
     y_axis_labels_enabled = false;
 }
 
-// Draw the ocean
-void Ocean_map::draw() const {
+void Grid_location_view::update_location(const string &name, Point location) {
+    location_map[name] = location;
+}
+
+void Grid_location_view::update_remove(const string &name) {
+    location_map.erase(name);
+}
+
+// Draw the grid
+void Grid_location_view::draw(int width, int height, double scale, Point origin) const {
     // Save cout settings since we modify them to draw the map
     auto saved_cout_flags = cout.flags();
     auto saved_precision = cout.precision();
 
     // We don't want decimal points in our labels
     cout.precision(0);
+
+    vector<vector<string>> grid (height, vector<string>(width, empty_cell_c));
+    vector<string> objects_outside_map;
+
+    // Iterate through each location in the location map, adding it to the grid
+    // if it maps to a location on the grid. Allow a derived class to translate
+    // a point to a new location if they want to.
+    for (auto& p : location_map) {
+        const string& loc_name = p.first;
+        // Translate the tracked point to a new point as specified by derived class
+        Point loc_point = translate_point_handler(p.second);
+
+        int ix, iy;
+        // See if a point maps to a location on the map, if so, add it to the map.
+        if (!get_subscripts(ix, iy, loc_point, width, height, scale, origin)) {
+            objects_outside_map.push_back(loc_name);
+        } else {
+            // If more than one object is in the same cell, use the multiple entry cell
+            if (grid[iy][ix] == empty_cell_c)
+                grid[iy][ix] = loc_name.substr(0, name_abbreviation_length_c);
+            else
+                grid[iy][ix] = multiple_entry_cell_c;
+        }
+    }
+
+    // Allow a derived class to do something with the list of objects that are
+    // outside the map if they want to.
+    objects_not_in_grid_handler(objects_outside_map);
 
     // Print the map from top to bottom, left to right
     for (int j = height - 1; j >= 0; --j) {
@@ -73,14 +82,15 @@ void Ocean_map::draw() const {
         }
         // Print the row in the map
         for (int i = 0; i < width; ++i) {
-            cout << map[j][i];
+            cout << grid[j][i];
         }
         cout << endl;
     }
 
     // Print the x axis labels
     for (int i = 0; i < width; i += rows_cols_per_label_c) {
-        cout << "  " << setw(label_width_c) << origin.x + (i * scale);
+        cout << "  " <<
+                setw(label_width_c) << origin.x + (i * scale);
     }
     cout << endl;
 
@@ -95,7 +105,8 @@ void Ocean_map::draw() const {
 // scale is a double value, and size is an integer for the number of rows/columns
 // currently being used for the grid.
 // Return true if the location is within the grid, false if not
-bool Ocean_map::get_subscripts(int &ix, int &iy, Point location) {
+bool Grid_location_view::get_subscripts(int &ix, int &iy, Point location,
+        int width, int height, double scale, Point origin) const {
     // adjust with origin and scale
     Cartesian_vector subscripts = (location - origin) / scale;
     // truncate coordinates to appropriate integer after taking the floor

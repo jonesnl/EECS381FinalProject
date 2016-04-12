@@ -20,7 +20,7 @@ set(HEADER_FILES
         Warship.h
         Cruiser.h
         Torpedo_boat.h
-        Ocean_map.h
+        Grid_location_view.h
         Bridge_view.h
         Map_view.h
         Sailing_view.h
@@ -45,7 +45,7 @@ set(SHARED_SOURCE_FILES
         Warship.cpp
         Cruiser.cpp
         Torpedo_boat.cpp
-        Ocean_map.cpp
+        Grid_location_view.cpp
         Bridge_view.cpp
         Map_view.cpp
         Sailing_view.cpp

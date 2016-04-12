@@ -1,7 +1,7 @@
 #ifndef BRIDGE_VIEW_H
 #define BRIDGE_VIEW_H
 
-#include "View.h"
+#include "Grid_location_view.h"
 
 #include <map>
 
@@ -17,27 +17,31 @@
  * where the original ship sunk at.
  */
 
-class Bridge_view : public View {
+class Bridge_view : public Grid_location_view {
 public:
     // Construct with ownship's name
     Bridge_view(const std::string& ship_name);
 
-    // Update the location of either ownship or another object
+    // Track the location of ownship
     void update_location(const std::string& name, Point point) override;
 
     // Update the course of ownship
     void update_course(const std::string& name, double course) override;
 
-    // Remove another object from the location table, or if it's the same name
-    // as ownship, note that the ship has sunk
+    // Track if ownship has sunk
     void update_remove(const std::string& name) override;
 
     // Draw the view from ownship's bridge. If the ship is sunk, draw a special view
     void draw() const override;
 
+protected:
+    void objects_not_in_grid_handler(
+            const std::vector<std::string>& objects_outside_map) const override;
+
+    Point translate_point_handler(Point point) const override;
+
 private:
     std::string ownship_name; // The name of the ship that we are looking from
-    std::map<std::string, Point> location_map; // Location of other objects on the ocean
     Point ownship_location;
     double ownship_heading; // Track the heading of ownship
     bool sunk; // Track if ownship has sunk

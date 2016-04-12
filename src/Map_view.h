@@ -1,7 +1,7 @@
 #ifndef MAP_VIEW_H
 #define MAP_VIEW_H
 
-#include "View.h"
+#include "Grid_location_view.h"
 
 #include <map>
 
@@ -19,20 +19,10 @@
  */
 
 
-class Map_view : public View {
+class Map_view : public Grid_location_view {
 public:
     // default constructor sets the default size, scale, and origin
     Map_view();
-
-    // Save the supplied object's location for future use in a draw() call
-    // If the name is already present,the new location replaces the previous one.
-    void update_location(const std::string& name, Point location) override;
-
-    // Remove the name and its location; no error if the name is not present.
-    void update_remove(const std::string& name) override;
-
-    // prints out the current map
-    void draw() const override;
 
     // modify the display parameters
     // if the size is out of bounds will throw Error("New map size is too big!")
@@ -48,8 +38,17 @@ public:
     // set the parameters to the default values
     void set_defaults();
 
+    // prints out the current map
+    void draw() const override;
+
+protected: // TODO comments
+    // Called with a list of objects that are not in the grid during the
+    // draw() function
+    void objects_not_in_grid_handler(
+            const std::vector<std::string>& objects_outside_map) const override;
+
+    Point translate_point_handler(Point point) const override;
 private:
-    std::map<std::string, Point> location_map;	// Map of the locations of ships and islands
     int size; // Size of the map in number of rows and columns
     double scale; // Scale of the map in nm/grid_item
     Point origin; // Location of the origin of the view.
