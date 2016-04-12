@@ -9,10 +9,12 @@ using namespace placeholders;
 Ship_composite::Ship_composite(const string& name_) :
         Ship_component(name_) { }
 
-Ship_composite::~Ship_composite() {
-}
-
 void Ship_composite::add_component(shared_ptr<Ship_component> ship_ptr) {
+    auto composite_ptr = dynamic_pointer_cast<Ship_composite>(ship_ptr);
+    if (composite_ptr) {
+        if (composite_ptr->is_child_composite_member(get_name()))
+            throw Error("Cycle detected!");
+    }
     ship_ptr->add_parent(shared_from_this());
     children.insert({ship_ptr->get_name(), ship_ptr});
 }
@@ -36,6 +38,19 @@ shared_ptr<Ship_component> Ship_composite::get_child(const string& name) {
         return nullptr;
     else
         return child_itt->second.lock();
+}
+
+bool Ship_composite::is_child_composite_member(const string& name) const {
+    for (const auto& map_pair : children) {
+        auto composite_ptr = dynamic_pointer_cast<Ship_composite>(map_pair.second.lock());
+        if (composite_ptr) {
+            if (composite_ptr->get_name() == name)
+                return true;
+            else if (composite_ptr->is_child_composite_member(name))
+                return true;
+        }
+    }
+    return false;
 }
 
 bool Ship_composite::can_move() const {

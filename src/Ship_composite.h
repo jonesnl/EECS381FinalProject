@@ -9,14 +9,14 @@ class Ship_composite : public Ship_component, public std::enable_shared_from_thi
 public:
     Ship_composite(const std::string& name_);
 
-    ~Ship_composite() override;
-
     /*** Component functions ***/
     void add_component(std::shared_ptr<Ship_component> ship_ptr) override;
 
     void remove_component(const std::string& name) override;
 
     std::shared_ptr<Ship_component> get_child(const std::string& name) override;
+
+    bool is_child_composite_member(const std::string& name) const;
 
     /*** Readers ***/
     bool can_move() const override;
