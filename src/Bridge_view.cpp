@@ -27,13 +27,14 @@ Bridge_view::Bridge_view(const string& ship_name_) :
 
 // Update the location of objects on the ocean
 void Bridge_view::update_location(const string& name, Point point) {
+    Grid_location_view::update_location(name, point);
     if (!sunk && name == ownship_name)
         ownship_location = point;
-    Grid_location_view::update_location(name, point);
 }
 
 // Update the course of ownship
 void Bridge_view::update_course(const string &name, double course) {
+    Grid_location_view::update_course(name, course);
     if (!sunk && name == ownship_name)
         ownship_heading = course;
 }
@@ -41,9 +42,9 @@ void Bridge_view::update_course(const string &name, double course) {
 // Remove objects from the ocean if they sink. If we are removed, that means
 // that ownship has sunk
 void Bridge_view::update_remove(const string& name) {
+    Grid_location_view::update_remove(name);
     if (name == ownship_name)
         sunk = true;
-    Grid_location_view::update_remove(name);
 }
 
 // Draw the view from the bridge of the ship
@@ -65,17 +66,16 @@ void Bridge_view::draw() const {
     }
 }
 
-// Don't do anything if there are objects not in the view
-void Bridge_view::objects_not_in_grid_handler(const vector<string> &) const
-    { }
-
-
-Point Bridge_view::translate_point_handler(Point point) const {
+// Translate a point on the ocean to a location on a 19x1 grid that is the view
+// off the front of ownship
+pair<bool, Point> Bridge_view::translate_point_handler(Point point) const {
     Compass_position position(ownship_location, point);
-    // If the object is out of range, do not show it to the user
+
+    // If the object is out of range, do not show it on the grid by setting the
+    // first element of the returned pair to false.
     if (position.range > bridge_view_draw_dist_c ||
             position.range < double_close_enough_c)
-        return {180., 0};
+        return {false, {0., 0.}};
 
     // Figure out the angle off the bow the target object is at
     double bow_angle = position.bearing - ownship_heading;
@@ -84,5 +84,5 @@ Point Bridge_view::translate_point_handler(Point point) const {
         bow_angle -= 360.;
     else if (bow_angle < -180.)
         bow_angle += 360.;
-    return {bow_angle, 0};
+    return {true, {bow_angle, 0}};
 }

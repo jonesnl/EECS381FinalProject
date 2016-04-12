@@ -47,7 +47,6 @@ protected: // TODO comments
     void objects_not_in_grid_handler(
             const std::vector<std::string>& objects_outside_map) const override;
 
-    Point translate_point_handler(Point point) const override;
 private:
     int size; // Size of the map in number of rows and columns
     double scale; // Scale of the map in nm/grid_item

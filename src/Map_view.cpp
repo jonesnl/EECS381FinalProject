@@ -55,6 +55,7 @@ void Map_view::draw() const {
     return;
 }
 
+// If some objects are not in the grid
 void Map_view::objects_not_in_grid_handler(
         const vector<string> &objects_outside_map) const {
     // Print all the objects outside of the map if we have any
@@ -66,9 +67,4 @@ void Map_view::objects_not_in_grid_handler(
                 cout << s << " outside the map" << endl;
         }
     }
-}
-
-// Don't need to do any translation for the Map_view
-Point Map_view::translate_point_handler(Point point) const {
-    return point;
 }

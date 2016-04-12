@@ -17,9 +17,9 @@
  * If only one object is in a cell, it will use an abbreviation of the string as
  * the cell contents "Aj".
  *
- * You can fill the map with a specific string if you wish using the fill() function.
- *
- * Draw the map using the draw function.
+ * Draw the map using the draw function. A Grid_location_view cannot be instantiated
+ * since the pure virtual draw() is not defined in this class, derived classes
+ * need to implement their own draw() functions that call this draw(...) funciton
  */
 class Grid_location_view : public View {
 public:
@@ -41,12 +41,14 @@ protected:
     // are being tracked but are not located on the grid. This is called before
     // the grid is printed to the screen during the draw(...) function.
     virtual void objects_not_in_grid_handler(
-            const std::vector<std::string>& objects_outside_map) const = 0;
+            const std::vector<std::string>& objects_outside_map) const;
 
     // Derived classes can translate a tracked location as provided by the Model
     // to a new location if they wish. If they wish to use the same location as
     // provided by the Model, return the point argument.
-    virtual Point translate_point_handler(Point point) const = 0;
+    // If the first element of the returned pair is false, the point is not
+    // included in the grid.
+    virtual std::pair<bool, Point> translate_point_handler(Point point) const;
 
     // Draw the grid, will call objects_not_in_grid_handler(...)
     // before drawing the grid to the screen.

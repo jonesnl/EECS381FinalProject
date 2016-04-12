@@ -35,14 +35,12 @@ public:
     void draw() const override;
 
 protected:
-    void objects_not_in_grid_handler(
-            const std::vector<std::string>& objects_outside_map) const override;
-
-    Point translate_point_handler(Point point) const override;
+    // Translate a point on the grid to a point mapped to the view from our bridge.
+    std::pair<bool, Point> translate_point_handler(Point point) const override;
 
 private:
     std::string ownship_name; // The name of the ship that we are looking from
-    Point ownship_location;
+    Point ownship_location; // The location of ownship
     double ownship_heading; // Track the heading of ownship
     bool sunk; // Track if ownship has sunk
 };

@@ -26,12 +26,22 @@ void Grid_location_view::disable_y_axis_labels() {
     y_axis_labels_enabled = false;
 }
 
+// Track the location of ships
 void Grid_location_view::update_location(const string &name, Point location) {
     location_map[name] = location;
 }
 
+// Remove the tracking information of a ship
 void Grid_location_view::update_remove(const string &name) {
     location_map.erase(name);
+}
+
+void Grid_location_view::objects_not_in_grid_handler(
+        const std::vector<std::string> &) const
+    { }
+
+pair<bool, Point> Grid_location_view::translate_point_handler(Point point) const {
+    return {true, point};
 }
 
 // Draw the grid
@@ -51,8 +61,13 @@ void Grid_location_view::draw(int width, int height, double scale, Point origin)
     // a point to a new location if they want to.
     for (auto& p : location_map) {
         const string& loc_name = p.first;
+
         // Translate the tracked point to a new point as specified by derived class
-        Point loc_point = translate_point_handler(p.second);
+        auto translate_pair = translate_point_handler(p.second);
+        if (!translate_pair.first)
+            continue; // Ignore point if translate function tells us to
+
+        Point loc_point = translate_pair.second;
 
         int ix, iy;
         // See if a point maps to a location on the map, if so, add it to the map.
