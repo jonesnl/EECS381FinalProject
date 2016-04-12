@@ -277,7 +277,7 @@ void Controller::add_to_group_cmd() {
     string component_name;
     cin >> component_name;
     auto component_ptr = Model::get_inst()->get_ship_component_ptr(component_name);
-    group_ptr->add_component(component_ptr);
+    group_ptr->add_child(component_ptr);
 }
 
 void Controller::remove_from_group_cmd() {
@@ -286,7 +286,7 @@ void Controller::remove_from_group_cmd() {
     auto group_ptr = Model::get_inst()->get_ship_composite_ptr(group_name);
     string component_name;
     cin >> component_name;
-    group_ptr->remove_component(component_name);
+    group_ptr->remove_child(component_name);
 }
 
 void Controller::remove_group_cmd() {

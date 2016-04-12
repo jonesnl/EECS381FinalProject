@@ -12,15 +12,15 @@ Ship_component::Ship_component(const string &name) :
 Ship_component::~Ship_component() {
     auto parent_ptr = parent.lock();
     if (parent_ptr) {
-        parent_ptr->remove_component(get_name());
+        parent_ptr->remove_child(get_name());
     }
 }
 
-void Ship_component::add_component(shared_ptr<Ship_component>) {
+void Ship_component::add_child(shared_ptr<Ship_component>) {
     throw Error("Can't add a component!");
 }
 
-void Ship_component::remove_component(const string&) {
+void Ship_component::remove_child(const string&) {
     throw Error("Can't remove a component!");
 }
 

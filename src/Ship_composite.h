@@ -10,13 +10,13 @@ public:
     Ship_composite(const std::string& name_);
 
     /*** Component functions ***/
-    void add_component(std::shared_ptr<Ship_component> ship_ptr) override;
+    void add_child(std::shared_ptr<Ship_component> ship_ptr) override;
 
-    void remove_component(const std::string& name) override;
+    void remove_child(const std::string& name) override;
 
     std::shared_ptr<Ship_component> get_child(const std::string& name) override;
 
-    bool is_child_composite_member(const std::string& name) const;
+    bool is_child_member(const std::string& name) const;
 
     /*** Readers ***/
     bool can_move() const override;

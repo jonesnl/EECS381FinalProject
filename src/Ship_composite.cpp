@@ -6,20 +6,22 @@
 using namespace std;
 using namespace placeholders;
 
+// Pass the group's name to the parent classes to store
 Ship_composite::Ship_composite(const string& name_) :
         Ship_component(name_) { }
 
-void Ship_composite::add_component(shared_ptr<Ship_component> ship_ptr) {
+// A
+void Ship_composite::add_child(shared_ptr<Ship_component> ship_ptr) {
     auto composite_ptr = dynamic_pointer_cast<Ship_composite>(ship_ptr);
     if (composite_ptr) {
-        if (composite_ptr->is_child_composite_member(get_name()))
+        if (composite_ptr->is_child_member(get_name()))
             throw Error("Cycle detected!");
     }
     ship_ptr->add_parent(shared_from_this());
     children.insert({ship_ptr->get_name(), ship_ptr});
 }
 
-void Ship_composite::remove_component(const string& name) {
+void Ship_composite::remove_child(const string& name) {
     auto itt = children.find(name);
     if (itt == children.end())
         throw Error("No component with that name!");
@@ -40,13 +42,13 @@ shared_ptr<Ship_component> Ship_composite::get_child(const string& name) {
         return child_itt->second.lock();
 }
 
-bool Ship_composite::is_child_composite_member(const string& name) const {
+bool Ship_composite::is_child_member(const string& name) const {
     for (const auto& map_pair : children) {
         auto composite_ptr = dynamic_pointer_cast<Ship_composite>(map_pair.second.lock());
         if (composite_ptr) {
             if (composite_ptr->get_name() == name)
                 return true;
-            else if (composite_ptr->is_child_composite_member(name))
+            else if (composite_ptr->is_child_member(name))
                 return true;
         }
     }
