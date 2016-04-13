@@ -71,11 +71,11 @@ void Controller::run() {
             {"status", &Controller::status_cmd},
             {"go", &Controller::go_cmd},
             {"create", &Controller::create_cmd},
-            {"remove", &Controller::remove_cmd},
 
             {"create_group", &Controller::create_group_cmd},
             {"add_to_group", &Controller::add_to_group_cmd},
-            {"remove_from_group", &Controller::remove_from_group_cmd}
+            {"remove_from_group", &Controller::remove_from_group_cmd},
+            {"remove_group", &Controller::remove_group_cmd}
     };
 
     // Continue to take in user's input
@@ -259,16 +259,10 @@ void Controller::create_cmd() {
     Model::get_inst()->add_ship(ship);
 }
 
-void Controller::remove_cmd() {
-    shared_ptr<Ship_component> group_ptr = get_ship_ptr_from_cin();
-    auto parent_ptr = group_ptr->get_parent();
-    if (parent_ptr)
-        parent_ptr->remove_child(group_ptr);
-    Model::get_inst()->remove_ship(group_ptr);
-}
-
-
-// TODO
+// Create a group and add it to the model. Group names are less restrictive than
+// ship names since they do not appear on a map. As long as the group name does
+// not conflict with other ship names or other groups, then the user is free to
+// use it.
 void Controller::create_group_cmd() {
     string group_name;
     cin >> group_name;
@@ -279,17 +273,39 @@ void Controller::create_group_cmd() {
     Model::get_inst()->add_ship(group_ptr);
 }
 
+// Add a child to a group.
 void Controller::add_to_group_cmd() {
     shared_ptr<Ship_component> group_ptr = get_ship_ptr_from_cin();
     shared_ptr<Ship_component> child_ptr = get_ship_ptr_from_cin();
     group_ptr->add_child(child_ptr);
 }
 
+// Remove a child from a group
 void Controller::remove_from_group_cmd() {
     shared_ptr<Ship_component> group_ptr = get_ship_ptr_from_cin();
-    shared_ptr<Ship_component> child_ptr = get_ship_ptr_from_cin();
+    string child_name;
+    cin >> child_name;
+    shared_ptr<Ship_component> child_ptr = group_ptr->get_child(child_name);
     group_ptr->remove_child(child_ptr);
 }
+
+// Remove a group from the simulation by clearing it, then removing the group
+// from the parent group if necessary.
+void Controller::remove_group_cmd() {
+    shared_ptr<Ship_component> group_ptr = get_ship_ptr_from_cin();
+
+    // Will throw an error if it is not a group
+    group_ptr->remove_all_children();
+
+    // Remove group from parent group if necessary
+    auto parent_ptr = group_ptr->get_parent();
+    if (parent_ptr)
+        parent_ptr->remove_child(group_ptr);
+
+    // Remove group
+    Model::get_inst()->remove_ship(group_ptr);
+}
+
 
 // Set the course and speed of a ship.
 void Controller::ship_course_cmd(shared_ptr<Ship_component> ship) {

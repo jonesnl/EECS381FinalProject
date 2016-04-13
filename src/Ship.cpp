@@ -9,7 +9,8 @@
 
 using namespace std;
 
-/* Implementation of the Ship class. Handles navigation and resistance calculations
+/*
+ * Implementation of the Ship class. Handles navigation and resistance calculations
  * for derived ships.
  */
 
@@ -234,6 +235,7 @@ Ship::Ship(const std::string &name_, Point position_, double fuel_capacity_,
         Ship_component(name_),
         fuel {fuel_capacity_}, fuel_capacity {fuel_capacity_},
         fuel_consumption {fuel_consumption_},
+        destination_point {0., 0.},
         maximum_speed {maximum_speed_},
         resistance {resistance_}, track_base(position_) { }
 

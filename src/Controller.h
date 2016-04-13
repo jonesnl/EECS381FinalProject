@@ -100,14 +100,18 @@ private:
     // is not valid, or if <ship_type> is not a valid ship type.
     void create_cmd();
 
-    // TODO
+    // "create_group <group_name>": Creates a new ship group with the name <group_name>.
+    // Throws an error if the group name is not valid.
     void create_group_cmd();
 
+    // "add_to_group <group_name> <child_name>": Add a child to a group.
     void add_to_group_cmd();
 
+    // "remove_from_group <group_name> <child_name>": Remove a child from a group
     void remove_from_group_cmd();
 
-    void remove_cmd();
+    // "remove_group <group_name>": Remove a group from the simulation
+    void remove_group_cmd();
 
     // "<ship_name> course <heading> <speed>": Set the ship's heading and speed.
     void ship_course_cmd(std::shared_ptr<Ship_component> ship);

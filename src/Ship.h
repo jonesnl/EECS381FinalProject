@@ -70,19 +70,19 @@ public:
     void broadcast_current_state() const override;
 
     /*** Command functions ***/
-    virtual // Start moving to a destination position at a speed
+    // Start moving to a destination position at a speed
     // may throw Error("Ship cannot move!")
     // may throw Error("Ship cannot go that fast!")
     void set_destination_position_and_speed(Point destination_position,
             double speed) override;
 
-    virtual // Start moving to a destination Island at a speed
+    // Start moving to a destination Island at a speed
     // may throw Error("Ship cannot move!")
     // may throw Error("Ship cannot go that fast!")
     void set_destination_island_and_speed(std::shared_ptr<Island> destination_island,
             double speed) override;
 
-    virtual // Start moving on a course and speed
+    // Start moving on a course and speed
     // may throw Error("Ship cannot move!")
     // may throw Error("Ship cannot go that fast!");
     void set_course_and_speed(double course, double speed) override;
@@ -129,7 +129,7 @@ private:
     double fuel;                        // Current amount of fuel
     double fuel_capacity;               // Amount of fuel ship can hold
     double fuel_consumption;            // tons/nm required per cycle
-    Point destination_point = {0., 0.};  // Current destination position
+    Point destination_point;            // Current destination position
     std::shared_ptr<Island> docked_Island;    // Island we're docked at
     std::shared_ptr<Island> destination_Island; // Current destination Island, if any
     enum class State_t {
