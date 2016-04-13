@@ -20,7 +20,7 @@ public:
     void describe() const override;
 
     // respond to an attack by counter attacking
-    void receive_hit(int hit_force, std::shared_ptr<Ship> attacker_ptr) override;
+    void receive_hit(int hit_force, std::shared_ptr<Ship_component> attacker_ptr) override;
 protected:
     // If the target is out of range, stop the attack
     void target_out_of_range_handler() override;

@@ -24,7 +24,7 @@ functions are implemented in this class to throw an Error exception.
 
 class Island;
 
-class Ship : public Ship_component, public std::enable_shared_from_this<Ship> {
+class Ship : public Ship_component {
 
 public:
     /*** Readers ***/
@@ -101,7 +101,7 @@ public:
 
     // interactions with other objects
     // receive a hit from an attacker
-    void receive_hit(int hit_force, std::shared_ptr<Ship> attacker_ptr) override;
+    void receive_hit(int hit_force, std::shared_ptr<Ship_component> attacker_ptr) override;
 
     /*** Fat interface command functions ***/
     // These functions throw an Error exception for this class
@@ -112,7 +112,7 @@ public:
     void set_unload_destination(std::shared_ptr<Island>) override;
 
     // will always throw Error("Cannot attack!");
-    void attack(std::shared_ptr<Ship> in_target_ptr) override;
+    void attack(std::shared_ptr<Ship_component> in_target_ptr) override;
 
     // will always throw Error("Cannot attack!");
     void stop_attack() override;

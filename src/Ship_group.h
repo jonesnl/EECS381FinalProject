@@ -2,17 +2,19 @@
 #define SHIP_COMPOSITE_H
 
 #include "Ship_component.h"
+#include "Utility.h"
 
 #include <map>
+#include <iostream>
 
-class Ship_composite : public Ship_component, public std::enable_shared_from_this<Ship_composite> {
+class Ship_group : public Ship_component {
 public:
-    Ship_composite(const std::string& name_);
+    Ship_group(const std::string& name_);
 
     /*** Component functions ***/
     void add_child(std::shared_ptr<Ship_component> ship_ptr) override;
 
-    void remove_child(const std::string& name) override;
+    void remove_child(std::shared_ptr<Ship_component> child_ptr) override;
 
     std::shared_ptr<Ship_component> get_child(const std::string& name) override;
 
@@ -58,14 +60,14 @@ public:
 
     void refuel() override;
 
-    void receive_hit(int hit_force, std::shared_ptr<Ship> attacker_ptr) override;
+    void receive_hit(int hit_force, std::shared_ptr<Ship_component> attacker_ptr) override;
 
     /*** Fat interface command functions ***/
     void set_load_destination(std::shared_ptr<Island> island_ptr) override;
 
     void set_unload_destination(std::shared_ptr<Island> island_ptr) override;
 
-    void attack(std::shared_ptr<Ship> target_ptr) override;
+    void attack(std::shared_ptr<Ship_component> target_ptr) override;
 
     void stop_attack() override;
 
@@ -74,8 +76,9 @@ public:
 private:
     using ChildrenMap_t = std::map<std::string, std::weak_ptr<Ship_component>>;
     ChildrenMap_t children;
-    bool children_if_helper(
-            const ChildrenMap_t::value_type&, bool (Ship_component::* func_ptr)()) const;
+
+    template <typename T>
+    void children_if_helper(T func) const;
 };
 
 #endif

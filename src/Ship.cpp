@@ -180,7 +180,7 @@ void Ship::refuel() {
 // Take a hit from a ship, which can sink us if our resistance goes below 0.
 // We don't care about who attacked us, but functions that override this
 // function might.
-void Ship::receive_hit(int hit_force, shared_ptr<Ship>) {
+void Ship::receive_hit(int hit_force, shared_ptr<Ship_component>) {
     // We should never be getting hit if we are sunk
     assert(ship_state != State_t::sunk);
     // Take the hit
@@ -209,7 +209,7 @@ void Ship::set_unload_destination(shared_ptr<Island>) {
 }
 
 // Throw error for fat interface functions
-void Ship::attack(shared_ptr<Ship>) {
+void Ship::attack(shared_ptr<Ship_component>) {
     throw Error("Cannot attack!");
 }
 

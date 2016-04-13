@@ -26,8 +26,6 @@ Model also provides facilities for looking up objects given their name.
 
 class Model;
 class Ship_component;
-class Ship;
-class Ship_composite;
 class View;
 class Island;
 class Sim_object;
@@ -50,31 +48,17 @@ public:
     // Get vector of island pointers, sorted by island name
     std::vector<std::shared_ptr<Island>> get_vector_of_islands() const;
 
-    // Get vector of ship pointers, sorted by ship name
-    std::vector<std::shared_ptr<Ship>> get_vector_of_ships() const;
-
     // is there such a ship?
     bool is_ship_present(const std::string &name) const;
 
     // add a new ship to the model, and updates the views
-    void add_ship(std::shared_ptr<Ship> ship);
+    void add_ship(std::shared_ptr<Ship_component> ship);
 
     // will throw Error("Ship not found!") if no ship of that name
-    std::shared_ptr<Ship> get_ship_ptr(const std::string& name) const;
+    std::shared_ptr<Ship_component> get_ship_ptr(const std::string& name) const;
 
     // remove a Ship from the model.
-    void remove_ship(std::shared_ptr<Ship> ship_ptr);
-
-    // TODO comment
-    bool is_ship_component_present(const std::string& name) const;
-
-    std::shared_ptr<Ship_component> get_ship_component_ptr(const std::string& name) const;
-
-    void add_group(std::shared_ptr<Ship_composite> group);
-
-    std::shared_ptr<Ship_composite> get_ship_composite_ptr(const std::string& name) const;
-
-    void remove_group(std::shared_ptr<Ship_composite> group);
+    void remove_ship(std::shared_ptr<Ship_component> ship_ptr);
 
     // tell all objects to describe themselves
     void describe() const;
@@ -129,16 +113,12 @@ private:
 
     // Alias the data containers to some more meaningful names.
     using ObjectMap_t = std::map<std::string, std::shared_ptr<Sim_object>>;
-    using ShipMap_t = std::map<std::string, std::shared_ptr<Ship>>;
-    using ComponentMap_t = std::map<std::string, std::shared_ptr<Ship_component>>;
-    using CompositeMap_t = std::map<std::string, std::shared_ptr<Ship_composite>>;
+    using ShipMap_t = std::map<std::string, std::shared_ptr<Ship_component>>;
     using IslandMap_t = std::map<std::string, std::shared_ptr<Island>>;
     using ViewSet_t = std::set<std::shared_ptr<View>>;
 
     ObjectMap_t object_map; // Map of all object pointers, key is the object's name
     ShipMap_t ship_map; // Map of ship pointers , key is the ship's name
-    ComponentMap_t component_map; // TODO
-    CompositeMap_t composite_map;
     IslandMap_t island_map; // Map of island pointers, key is the island's name
     ViewSet_t view_set; // Set of view pointers
 
@@ -146,7 +126,7 @@ private:
     void insert_island(std::shared_ptr<Island> island);
 
     // Insert a ship to relevant containers
-    void insert_ship(std::shared_ptr<Ship> ship);
+    void insert_ship(std::shared_ptr<Ship_component> ship);
 };
 
 // Class used to destroy the Model's singleton object.

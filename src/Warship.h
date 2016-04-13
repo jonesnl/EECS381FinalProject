@@ -20,7 +20,7 @@ public:
     void describe() const override;
 
     // Start attacking a target ship
-    void attack(std::shared_ptr<Ship> target_ptr_) override;
+    void attack(std::shared_ptr<Ship_component> target_ptr_) override;
 
     // Stop attacking
     void stop_attack() override;
@@ -33,7 +33,7 @@ protected:
     bool is_attacking() {return attacking;}
 
     // Return the target of our attack
-    std::shared_ptr<Ship> get_attack_target() const {return target.lock();};
+    std::shared_ptr<Ship_component> get_attack_target() const {return target.lock();};
 private:
     int firepower;          // Firepower of the curiser
     double attack_range;  // Attack range of the cruiser

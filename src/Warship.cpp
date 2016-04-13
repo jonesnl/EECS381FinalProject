@@ -63,17 +63,20 @@ void Warship::describe() const {
 }
 
 // Move into the attacking state so on the next update it will attack the target
-void Warship::attack(std::shared_ptr<Ship> target_ptr_) {
+void Warship::attack(std::shared_ptr<Ship_component> target_ptr_) {
     assert(target_ptr_);
     if (!is_afloat())
         throw Error("Cannot attack!");
-    if (target_ptr_ == shared_from_this())
+    auto target_ship_ptr = dynamic_pointer_cast<Ship>(target_ptr_);
+    if (!target_ship_ptr)
+        throw Error("Target is not a ship!");
+    if (target_ship_ptr == shared_from_this())
         throw Error("Cannot attack itself!");
-    if (target_ptr_ == target.lock())
+    if (target_ship_ptr == target.lock())
         throw Error("Already attacking this target!");
-    target = target_ptr_;
+    target = target_ship_ptr;
     attacking = true;
-    cout << get_name() << " will attack " << target_ptr_->get_name() << endl;
+    cout << get_name() << " will attack " << target_ship_ptr->get_name() << endl;
 }
 
 // Stop attacking the target

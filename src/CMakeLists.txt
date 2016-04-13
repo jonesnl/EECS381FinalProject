@@ -26,7 +26,7 @@ set(HEADER_FILES
         Sailing_view.h
         Skimmer.h
         Ship_component.h
-        Ship_composite.h)
+        Ship_group.h)
 
 set(SHARED_SOURCE_FILES
         Geometry.cpp
@@ -51,7 +51,7 @@ set(SHARED_SOURCE_FILES
         Sailing_view.cpp
         Skimmer.cpp
         Ship_component.cpp
-        Ship_composite.cpp)
+        Ship_group.cpp)
 
 macro(add_gtest _name)
     add_executable(${ARGV})

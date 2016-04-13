@@ -36,7 +36,7 @@ void Torpedo_boat::describe() const {
 // If we are hit, and we can move, take evasive action by retreating to the nearest
 // island to the attacker that is at least torpedo_boat_retreat_dist_c away from the
 // attacker. This boat does not counter attack.
-void Torpedo_boat::receive_hit(int hit_force, std::shared_ptr<Ship> attacker_ptr) {
+void Torpedo_boat::receive_hit(int hit_force, std::shared_ptr<Ship_component> attacker_ptr) {
     Warship::receive_hit(hit_force, attacker_ptr);
     if (can_move()) {
         cout << get_name() << " taking evasive action" << endl;

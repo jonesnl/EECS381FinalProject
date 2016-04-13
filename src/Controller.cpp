@@ -3,8 +3,7 @@
 #include "Model.h"
 #include "Utility.h"
 #include "Ship_factory.h"
-#include "Ship.h"
-#include "Ship_composite.h"
+#include "Ship_component.h"
 #include "Map_view.h"
 #include "Sailing_view.h"
 #include "Bridge_view.h"
@@ -29,6 +28,7 @@ static int get_int_from_cin();
 static Point get_point_from_cin();
 static double get_speed_from_cin();
 static shared_ptr<Island> get_island_ptr_from_cin();
+static shared_ptr<Ship_component> get_ship_ptr_from_cin();
 
 
 /* Public Function Definitions */
@@ -88,7 +88,7 @@ void Controller::run() {
             if (command == "quit") { // Handle the "quit" command separately.
                 cout << "Done" << endl;
                 return;
-            } else if (Model::get_inst()->is_ship_component_present(command)) {
+            } else if (Model::get_inst()->is_ship_present(command)) {
                 // If command is a ship's name, then this is a ship command
 
                 string &component_name = command; // Alias command to a more meaningful name
@@ -102,7 +102,7 @@ void Controller::run() {
 
                 // Get the ship's pointer from the model.
                 auto ship_component_ptr =
-                        Model::get_inst()->get_ship_component_ptr(component_name);
+                        Model::get_inst()->get_ship_ptr(component_name);
 
                 // Call the handling ship command function.
                 (this->*itt->second)(ship_component_ptr);
@@ -255,7 +255,7 @@ void Controller::create_cmd() {
 
     Point point = get_point_from_cin();
 
-    shared_ptr<Ship> ship = create_ship(ship_name, ship_type, point);
+    shared_ptr<Ship_component> ship = create_ship(ship_name, ship_type, point);
     Model::get_inst()->add_ship(ship);
 }
 
@@ -263,37 +263,31 @@ void Controller::create_cmd() {
 void Controller::create_group_cmd() {
     string group_name;
     cin >> group_name;
-    if(Model::get_inst()->is_ship_component_present(group_name))
+    if(Model::get_inst()->is_ship_present(group_name))
         throw Error("Name is invalid!");
 
-    auto group_ptr = make_shared<Ship_composite>(group_name);
-    Model::get_inst()->add_group(group_ptr);
+    auto group_ptr = create_group(group_name);
+    Model::get_inst()->add_ship(group_ptr);
 }
 
 void Controller::add_to_group_cmd() {
-    string group_name;
-    cin >> group_name;
-    auto group_ptr = Model::get_inst()->get_ship_composite_ptr(group_name);
-    string component_name;
-    cin >> component_name;
-    auto component_ptr = Model::get_inst()->get_ship_component_ptr(component_name);
-    group_ptr->add_child(component_ptr);
+    shared_ptr<Ship_component> group_ptr = get_ship_ptr_from_cin();
+    shared_ptr<Ship_component> child_ptr = get_ship_ptr_from_cin();
+    group_ptr->add_child(child_ptr);
 }
 
 void Controller::remove_from_group_cmd() {
-    string group_name;
-    cin >> group_name;
-    auto group_ptr = Model::get_inst()->get_ship_composite_ptr(group_name);
-    string component_name;
-    cin >> component_name;
-    group_ptr->remove_child(component_name);
+    shared_ptr<Ship_component> group_ptr = get_ship_ptr_from_cin();
+    shared_ptr<Ship_component> child_ptr = get_ship_ptr_from_cin();
+    group_ptr->remove_child(child_ptr);
 }
 
 void Controller::remove_group_cmd() {
-    string group_name;
-    cin >> group_name;
-    auto group_ptr = Model::get_inst()->get_ship_composite_ptr(group_name);
-    Model::get_inst()->remove_group(group_ptr);
+    shared_ptr<Ship_component> group_ptr = get_ship_ptr_from_cin();
+    auto parent_ptr = group_ptr->get_parent();
+    if (parent_ptr)
+        parent_ptr->remove_child(group_ptr);
+    Model::get_inst()->remove_ship(group_ptr);
 }
 
 // Set the course and speed of a ship.
@@ -343,11 +337,8 @@ void Controller::ship_dock_cmd(shared_ptr<Ship_component> ship) {
 
 // Tell the ship to attack another ship
 void Controller::ship_attack_cmd(shared_ptr<Ship_component> ship) {
-    string target_name;
-    cin >> target_name;
-    shared_ptr<Ship> target = Model::get_inst()->get_ship_ptr(
-            target_name);
-    ship->attack(target);
+    auto target_ptr = get_ship_ptr_from_cin();
+    ship->attack(target_ptr);
 }
 
 // Tell the ship to refuel at the docked island.
@@ -430,4 +421,10 @@ static shared_ptr<Island> get_island_ptr_from_cin() {
     string island_name;
     cin >> island_name;
     return Model::get_inst()->get_island_ptr(island_name);
+}
+
+static shared_ptr<Ship_component> get_ship_ptr_from_cin() {
+    string ship_name;
+    cin >> ship_name;
+    return Model::get_inst()->get_ship_ptr(ship_name);
 }

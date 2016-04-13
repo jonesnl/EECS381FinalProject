@@ -7,10 +7,10 @@
 #include <memory>
 
 class Island;
-class Ship;
-class Ship_composite;
+class Ship_group;
 
-class Ship_component : public Sim_object {
+class Ship_component :
+        public Sim_object, public std::enable_shared_from_this<Ship_component> {
 public:
     Ship_component(const std::string& name);
 
@@ -19,9 +19,15 @@ public:
     /*** Component functions ***/
     virtual void add_child(std::shared_ptr<Ship_component> ship_ptr);
 
-    virtual void remove_child(const std::string& name);
+    virtual void remove_child(std::shared_ptr<Ship_component> child_ptr);
 
     virtual std::shared_ptr<Ship_component> get_child(const std::string& name);
+
+    virtual void add_parent(std::shared_ptr<Ship_group> parent_);
+
+    virtual std::shared_ptr<Ship_component> get_parent();
+
+    virtual void remove_parent();
 
     /*** Readers ***/
     // Return true if ship can move (it is not dead in the water or in the process or sinking);
@@ -88,7 +94,7 @@ public:
     virtual void set_unload_destination(std::shared_ptr <Island> island_ptr) = 0;
 
     // will always throw Error("Cannot attack!");
-    virtual void attack(std::shared_ptr<Ship> target_ptr) = 0;
+    virtual void attack(std::shared_ptr<Ship_component> target_ptr) = 0;
 
     // will always throw Error("Cannot attack!");
     virtual void stop_attack() = 0;
@@ -98,12 +104,11 @@ public:
 
     // interactions with other objects
     // receive a hit from an attacker
-    virtual void receive_hit(int hit_force, std::shared_ptr <Ship> attacker_ptr) = 0;
+    virtual void receive_hit(int hit_force,
+            std::shared_ptr<Ship_component> attacker_ptr) = 0;
 
-    void add_parent(std::shared_ptr<Ship_composite> parent_);
-    void remove_parent();
 private:
-    std::weak_ptr<Ship_composite> parent; // TODO
+    std::weak_ptr<Ship_group> parent; // TODO
 };
 
 #endif

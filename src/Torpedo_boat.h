@@ -18,7 +18,7 @@ public:
     void describe() const override;
 
     // If we are hit, take evasive action
-    void receive_hit(int hit_force, std::shared_ptr<Ship> attacker_ptr) override;
+    void receive_hit(int hit_force, std::shared_ptr<Ship_component> attacker_ptr) override;
 protected:
     // If we are out of range of our target, move to the target's location so
     // we can attack it when we get in range

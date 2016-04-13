@@ -25,7 +25,7 @@ void Cruiser::describe() const {
 }
 
 // If we are hit, counter attack if we are not already attacking
-void Cruiser::receive_hit(int hit_force, shared_ptr<Ship> attacker_ptr) {
+void Cruiser::receive_hit(int hit_force, shared_ptr<Ship_component> attacker_ptr) {
     Warship::receive_hit(hit_force, attacker_ptr);
     if (is_afloat() && !is_attacking())
         attack(attacker_ptr);

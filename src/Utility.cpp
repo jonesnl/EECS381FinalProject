@@ -22,8 +22,20 @@ bool DistComp::operator() (const shared_ptr<Sim_object>& i1,
 }
 
 /* NameComp */
-// Compare the names of two islands
+// Compare the names of two objects
 bool NameComp::operator()(const std::shared_ptr<Sim_object>& p1,
         const std::shared_ptr<Sim_object>& p2){
     return p1->get_name() < p2->get_name();
+}
+
+// Compare a string with an object's name
+bool NameComp::operator() (const std::string& name1,
+        const std::shared_ptr<Sim_object>& p2) {
+    return name1 < p2->get_name();
+}
+
+// Compare an object's name with a string
+bool NameComp::operator() (const std::shared_ptr<Sim_object>& p1,
+        const std::string& name2) {
+    return p1->get_name() < name2;
 }
