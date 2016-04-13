@@ -71,11 +71,11 @@ void Controller::run() {
             {"status", &Controller::status_cmd},
             {"go", &Controller::go_cmd},
             {"create", &Controller::create_cmd},
+            {"remove", &Controller::remove_cmd},
 
             {"create_group", &Controller::create_group_cmd},
             {"add_to_group", &Controller::add_to_group_cmd},
-            {"remove_from_group", &Controller::remove_from_group_cmd},
-            {"remove_group", &Controller::remove_group_cmd}
+            {"remove_from_group", &Controller::remove_from_group_cmd}
     };
 
     // Continue to take in user's input
@@ -259,12 +259,21 @@ void Controller::create_cmd() {
     Model::get_inst()->add_ship(ship);
 }
 
+void Controller::remove_cmd() {
+    shared_ptr<Ship_component> group_ptr = get_ship_ptr_from_cin();
+    auto parent_ptr = group_ptr->get_parent();
+    if (parent_ptr)
+        parent_ptr->remove_child(group_ptr);
+    Model::get_inst()->remove_ship(group_ptr);
+}
+
+
 // TODO
 void Controller::create_group_cmd() {
     string group_name;
     cin >> group_name;
     if(Model::get_inst()->is_ship_present(group_name))
-        throw Error("Name is invalid!");
+        throw Error("Group name is invalid!");
 
     auto group_ptr = create_group(group_name);
     Model::get_inst()->add_ship(group_ptr);
@@ -280,14 +289,6 @@ void Controller::remove_from_group_cmd() {
     shared_ptr<Ship_component> group_ptr = get_ship_ptr_from_cin();
     shared_ptr<Ship_component> child_ptr = get_ship_ptr_from_cin();
     group_ptr->remove_child(child_ptr);
-}
-
-void Controller::remove_group_cmd() {
-    shared_ptr<Ship_component> group_ptr = get_ship_ptr_from_cin();
-    auto parent_ptr = group_ptr->get_parent();
-    if (parent_ptr)
-        parent_ptr->remove_child(group_ptr);
-    Model::get_inst()->remove_ship(group_ptr);
 }
 
 // Set the course and speed of a ship.

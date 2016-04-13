@@ -23,12 +23,15 @@ Ship_group::Ship_group(const string& name_) :
 
 // A
 void Ship_group::add_child(shared_ptr<Ship_component> ship_ptr) {
+    // If child-to-be is a group, make sure that we are not a member of that group,
+    // else we create a cycle.
     auto composite_ptr = dynamic_pointer_cast<Ship_group>(ship_ptr);
     if (composite_ptr) {
         if (composite_ptr->is_child_member(get_name()))
             throw Error("Cycle detected!");
     }
     auto this_group_ptr = static_pointer_cast<Ship_group>(shared_from_this());
+    // Will throw an error if the child already has a parent
     ship_ptr->add_parent(this_group_ptr);
     children.insert({ship_ptr->get_name(), ship_ptr});
 }
@@ -37,12 +40,8 @@ void Ship_group::remove_child(shared_ptr<Ship_component> child_ptr) {
     auto itt = children.find(child_ptr->get_name());
     if (itt == children.end())
         throw Error("No child with that name!");
+    itt->second.lock()->remove_parent();
     children.erase(itt);
-
-    // If the element pointed to by comp_ptr is being destructed, then the comp_ptr
-    // will be null, so need an if statement to ensure we don't get segfaults
-    if (child_ptr)
-        child_ptr->remove_parent();
 }
 
 shared_ptr<Ship_component> Ship_group::get_child(const string& name) {
@@ -51,19 +50,6 @@ shared_ptr<Ship_component> Ship_group::get_child(const string& name) {
         return nullptr;
     else
         return child_itt->second.lock();
-}
-
-bool Ship_group::is_child_member(const string& name) const {
-    for (const auto& map_pair : children) {
-        auto composite_ptr = dynamic_pointer_cast<Ship_group>(map_pair.second.lock());
-        if (composite_ptr) {
-            if (composite_ptr->get_name() == name)
-                return true;
-            else if (composite_ptr->is_child_member(name))
-                return true;
-        }
-    }
-    return false;
 }
 
 bool Ship_group::can_move() const {
@@ -105,7 +91,22 @@ double Ship_group::get_maximum_speed() const {
 void Ship_group::update() { }
 
 void Ship_group::describe() const {
-    cout << "Group " << get_name() << endl;
+    cout << "\nGroup " << get_name() << endl;
+    if (children.empty())
+        cout << "No members" << endl;
+    else {
+        cout << "Group members: ";
+        bool first_time = true;
+        for (auto& s : children) {
+            if (first_time) {
+                cout << s.first;
+                first_time = false;
+            } else {
+                cout << ", " << s.first;
+            }
+        }
+        cout << endl;
+    }
 }
 
 void Ship_group::broadcast_current_state() const { }
@@ -164,4 +165,17 @@ void Ship_group::stop_attack() {
 void Ship_group::start_skimming(Point spill_origin_, int spill_size_) {
     children_if_helper(bind(&Ship_component::start_skimming, _1,
             spill_origin_, spill_size_));
+}
+
+bool Ship_group::is_child_member(const string& name) const {
+    for (const auto& map_pair : children) {
+        auto composite_ptr = dynamic_pointer_cast<Ship_group>(map_pair.second.lock());
+        if (composite_ptr) {
+            if (composite_ptr->get_name() == name)
+                return true;
+            else if (composite_ptr->is_child_member(name))
+                return true;
+        }
+    }
+    return false;
 }

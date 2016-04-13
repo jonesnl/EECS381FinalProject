@@ -18,8 +18,6 @@ public:
 
     std::shared_ptr<Ship_component> get_child(const std::string& name) override;
 
-    bool is_child_member(const std::string& name) const;
-
     /*** Readers ***/
     bool can_move() const override;
 
@@ -79,6 +77,8 @@ private:
 
     template <typename T>
     void children_if_helper(T func) const;
+
+    bool is_child_member(const std::string& name) const;
 };
 
 #endif

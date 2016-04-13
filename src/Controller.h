@@ -107,7 +107,7 @@ private:
 
     void remove_from_group_cmd();
 
-    void remove_group_cmd();
+    void remove_cmd();
 
     // "<ship_name> course <heading> <speed>": Set the ship's heading and speed.
     void ship_course_cmd(std::shared_ptr<Ship_component> ship);

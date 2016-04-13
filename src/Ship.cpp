@@ -189,12 +189,15 @@ void Ship::receive_hit(int hit_force, shared_ptr<Ship_component>) {
     resistance << endl;
     // If we have negative resistance, sink the ship
     if (is_afloat() && resistance < 0.) {
-        Model *model_ptr = Model::get_inst();
         ship_state = State_t::sunk;
         set_speed(0.);
         cout << get_name() << " sunk" << endl;
-        model_ptr->remove_ship(shared_from_this());
-        model_ptr->notify_gone(get_name());
+        // If we sink, remove the ship from the parent group if necessary.
+        auto parent_ptr = get_parent();
+        if (parent_ptr)
+            parent_ptr->remove_child(shared_from_this());
+        Model::get_inst()->remove_ship(shared_from_this());
+        Model::get_inst()->notify_gone(get_name());
     }
 }
 

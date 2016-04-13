@@ -1,3 +1,4 @@
+#include <cassert>
 #include "Ship_component.h"
 
 #include "Ship_group.h"
@@ -8,13 +9,6 @@ using namespace std;
 
 Ship_component::Ship_component(const string &name) :
         Sim_object {name} { }
-
-Ship_component::~Ship_component() {
-    auto parent_ptr = parent.lock();
-    if (parent_ptr) {
-        parent_ptr->remove_child(shared_from_this());
-    }
-}
 
 void Ship_component::add_child(shared_ptr<Ship_component>) {
     throw Error("Can't add a child!");
@@ -28,10 +22,13 @@ shared_ptr<Ship_component> Ship_component::get_child(const string&) {
     throw Error("Can't get a child!");
 }
 
-void Ship_component::add_parent(shared_ptr<Ship_group> parent_) {
-    if (parent.lock())
+void Ship_component::add_parent(shared_ptr<Ship_component> parent_) {
+    if (get_parent())
         throw Error("Component already has a parent!");
-    parent = parent_;
+    auto parent_group_ptr = dynamic_pointer_cast<Ship_group>(parent_);
+    if (!parent_group_ptr)
+        throw Error("Parent pointer would not be a group!");
+    parent = parent_group_ptr;
 }
 
 shared_ptr<Ship_component> Ship_component::get_parent() {

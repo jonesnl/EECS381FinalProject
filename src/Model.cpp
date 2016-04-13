@@ -91,6 +91,7 @@ shared_ptr<Ship_component> Model::get_ship_ptr(const string& name) const {
 
 // Removes a ship from the model.
 void Model::remove_ship(shared_ptr<Ship_component> ship_ptr) {
+
     ship_map.erase(ship_ptr->get_name());
     object_map.erase(ship_ptr->get_name());
 }

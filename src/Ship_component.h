@@ -14,8 +14,6 @@ class Ship_component :
 public:
     Ship_component(const std::string& name);
 
-    ~Ship_component() override;
-
     /*** Component functions ***/
     virtual void add_child(std::shared_ptr<Ship_component> ship_ptr);
 
@@ -23,7 +21,7 @@ public:
 
     virtual std::shared_ptr<Ship_component> get_child(const std::string& name);
 
-    virtual void add_parent(std::shared_ptr<Ship_group> parent_);
+    virtual void add_parent(std::shared_ptr<Ship_component> parent_);
 
     virtual std::shared_ptr<Ship_component> get_parent();
 
