@@ -52,14 +52,14 @@ void Bridge_view::draw() const {
     if (sunk) {
         // If the ship is sunk, use a special bridge view that shows only water
         cout << "Bridge view from " << ownship_name <<
-        " sunk at " << ownship_location << endl;
+                " sunk at " << ownship_location << endl;
 
         cout << bridge_view_underwater_view_c;
     } else {
         // If we're afloat, print information about ownship
         cout << "Bridge view from " << ownship_name <<
-        " position " << ownship_location <<
-        " heading " << ownship_heading << endl;
+                " position " << ownship_location <<
+                " heading " << ownship_heading << endl;
 
         Grid_location_view::draw(bridge_view_map_width_c, bridge_view_map_height_c,
                 bridge_view_scale_c, bridge_view_origin_c);

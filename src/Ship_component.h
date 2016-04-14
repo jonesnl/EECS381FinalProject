@@ -50,10 +50,19 @@ public:
     virtual void remove_parent() noexcept;
 
     /* Interface for derived classes */
+    // Returns true if the object can move
     virtual bool can_move() const = 0;
+
+    // Returns true if the object is moving
     virtual bool is_moving() const = 0;
+
+    // Returns true if the object is docked
     virtual bool is_docked() const = 0;
+
+    // Returns true if the object is afloat
     virtual bool is_afloat() const = 0;
+
+    // Returns true if the object can dock at the provided island
     virtual bool can_dock(std::shared_ptr <Island> island_ptr) const = 0;
     virtual double get_maximum_speed() const = 0;
     virtual std::shared_ptr<Island> get_docked_Island() const = 0;

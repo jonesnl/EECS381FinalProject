@@ -137,7 +137,7 @@ void Skimmer::stop() {
 }
 
 // Skim the first side of the spill, which has 1 nm less distance of travel than
-// we would normally calculate
+// we would normally calculate based on the side number of sides left to skim.
 void Skimmer::skim_first_side() {
     Point new_dest = get_location() + Compass_vector (0., spill_size);
     skimming_state = SkimmingState_t::going_north;

@@ -13,14 +13,17 @@
  *
  * A Ship_group has the same interface as a normal ship, with most operations
  * implemented such that the operation is called on each child object. Notable
- * exceptions include reader functions since they are not needed at the moment,
- * and receive_hit(), as a group of unrelated ships should not receive a single hit.
+ * exceptions include reader functions since they are not needed for simulation
+ * purposes at the moment, and receive_hit(), as a group of unrelated ships
+ * should not receive a single hit based on current abstractions.
  *
  * To use, add children to the group using add_child(), remove them with remove_child(),
  * clear all children using remove_all_children(), and get children using get_child().
  *
  * It is the group's job to set a child's parent pointer when they are added to the
- * group and reset it when the child is removed from the group.
+ * group and reset it when the child is removed from the group. Children should
+ * ask their parents to remove them from their groups if necessary, and the parent
+ * will clear the child's parent pointer.
  */
 
 class Ship_group : public Ship_component {
@@ -93,7 +96,8 @@ private:
     // Run member function func on every child in the children map.
     //
     // func should be a bound member function pointer using mem_fn(func_ptr), or
-    // a bind equivilant. func must be able to be called using func(shared_ptr<> child)
+    // a bind() equivalent that also binds arguments to the function object.
+    // func must be able to be called using func(shared_ptr<> child)
     template <typename T>
     void for_each_child_catch(T func) const;
 

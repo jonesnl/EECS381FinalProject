@@ -4,6 +4,7 @@
 #include "Utility.h"
 #include "Ship_factory.h"
 #include "Ship_component.h"
+#include "Ship.h"
 #include "Map_view.h"
 #include "Sailing_view.h"
 #include "Bridge_view.h"
@@ -152,14 +153,16 @@ void Controller::open_sailing_view() {
 }
 
 // Create and open a bridge view for a given ship. Throw an error if the ship
-// doesn't exist or if the view is already open.
+// doesn't exist, the ship is a group, or if the view is already open.
 void Controller::open_bridge_view() {
-    string ship_name;
-    cin >> ship_name;
-    if (!Model::get_inst()->is_ship_present(ship_name))
+    auto ship_comp_ptr = get_ship_ptr_from_cin();
+    if (!ship_comp_ptr)
         throw Error("Ship not found!");
-    auto bridge_view_ptr = make_shared<Bridge_view>(ship_name);
-    bool success = bridge_view_map.emplace(ship_name, bridge_view_ptr).second;
+    if (!dynamic_pointer_cast<Ship>(ship_comp_ptr))
+        throw Error("Is not an individual ship!");
+    auto bridge_view_ptr = make_shared<Bridge_view>(ship_comp_ptr->get_name());
+    bool success = bridge_view_map.emplace(ship_comp_ptr->get_name(),
+            bridge_view_ptr).second;
     if (!success)
         throw Error("Bridge view is already open for that ship!");
     open_view_helper(bridge_view_ptr);

@@ -108,7 +108,7 @@ double Ship_group::get_maximum_speed() const {
 
 /* Simulation and Model functions */
 
-// Don't need to do anything during an update
+// Don't need to do anything during an update for a group
 void Ship_group::update() { }
 
 // Describe the ship using its name and a list of its immediate members
@@ -169,6 +169,8 @@ void Ship_group::refuel() {
     for_each_child_catch(mem_fn(&Ship_component::refuel));
 }
 
+// Is not implemented since a group of unrelated ships should not be able to
+// receive a hit from a single source.
 void Ship_group::receive_hit(int, shared_ptr<Ship_component>) {
     throw Error("A group can't take a hit!");
 }

@@ -4,13 +4,13 @@
 #include "Ship.h"
 
 /* Skimmer class
- * A skimmer is meant to simulate the job of an oil skimmer that cleans up oil
- * after an oil spill.
+ * A skimmer is meant to simulate the job of an oil skimmer that cleans up oil on the
+ * surface of the ocean after an oil spill.
  *
  * To control the skimmer, tell the skimmer to start skimming by using the start_skimming
- * function. The ship will then travel to the bottom left corner of the spill
- * (aka the spill origin), then circle around the spill, slowly spiraling inwards
- * towards the center of the spill. The skimmer has akimming equipment that reaches
+ * function. The ship will then travel to the southwest corner of the spill
+ * then circle around the spill in a clockwise motion, slowly spiraling inwards
+ * towards the center of the spill. The skimmer has skimming equipment that reaches
  * 1 nm off the starboard side of the vessel, so paths spiral inwards by 1 nm every
  * revolution. When the skimmer has finished skimming the entire area of the spill,
  * it stops.
