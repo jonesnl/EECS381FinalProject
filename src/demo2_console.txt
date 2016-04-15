@@ -1,4 +1,5 @@
 # Demo2
+# Nate Jones
 Time 0: Enter command: status
 
 Cruiser Ajax at (15.00, 15.00), fuel: 1000.00 tons, resistance: 6
