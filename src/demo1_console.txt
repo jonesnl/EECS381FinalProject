@@ -1,3 +1,5 @@
+# Demo1
+# Nate Jones
 Time 0: Enter command: open_map_view
 
 Time 0: Enter command: pan -2 -2
@@ -155,7 +157,7 @@ Time 2: Enter command: go show
 Ajax stopped at (15.00, 15.00)
 Island Exxon now has 1600.00 tons
 George now at (3.00, 3.00)
-George will sail on course 180.00 deg, speed 3.00 nm/hr to (3.00, 1.00)
+George will sail on course 180.00 deg, speed 3.00 nm/hr to (3.00, 0.00)
 Island Shell now has 1600.00 tons
 Island Treasure_Island now has 115.00 tons
 Valdez stopped at (30.00, 30.00)
@@ -176,8 +178,8 @@ Ajax, Bermuda, Exxon, Shell, Treasure_Island, Valdez, Xerxes outside the map
 Time 3: Enter command: go show
 Ajax stopped at (15.00, 15.00)
 Island Exxon now has 1800.00 tons
-George now at (3.00, 1.00)
-George will sail on course 270.00 deg, speed 3.00 nm/hr to (1.00, 1.00)
+George now at (3.00, 0.00)
+George will sail on course 270.00 deg, speed 3.00 nm/hr to (1.00, 0.00)
 Island Shell now has 1800.00 tons
 Island Treasure_Island now has 120.00 tons
 Valdez stopped at (30.00, 30.00)
@@ -189,8 +191,8 @@ Ajax, Bermuda, Exxon, Shell, Treasure_Island, Valdez, Xerxes outside the map
    4 . . . . . . . . 
      . . . . . . . . 
      . . . . . . . . 
-   1 . . . . . Ge. . 
-     . . . . . . . . 
+   1 . . . . . . . . 
+     . . . . . Ge. . 
      . . . . . . . . 
   -2 . . . . . . . . 
     -2     1     4
@@ -198,8 +200,8 @@ Ajax, Bermuda, Exxon, Shell, Treasure_Island, Valdez, Xerxes outside the map
 Time 4: Enter command: go show
 Ajax stopped at (15.00, 15.00)
 Island Exxon now has 2000.00 tons
-George now at (1.00, 1.00)
-George finished skimming spill
+George now at (1.00, 0.00)
+George will sail on course 0.00 deg, speed 3.00 nm/hr to (1.00, 2.00)
 Island Shell now has 2000.00 tons
 Island Treasure_Island now has 125.00 tons
 Valdez stopped at (30.00, 30.00)
@@ -211,8 +213,8 @@ Ajax, Bermuda, Exxon, Shell, Treasure_Island, Valdez, Xerxes outside the map
    4 . . . . . . . . 
      . . . . . . . . 
      . . . . . . . . 
-   1 . . . Ge. . . . 
-     . . . . . . . . 
+   1 . . . . . . . . 
+     . . . Ge. . . . 
      . . . . . . . . 
   -2 . . . . . . . . 
     -2     1     4
@@ -220,7 +222,8 @@ Ajax, Bermuda, Exxon, Shell, Treasure_Island, Valdez, Xerxes outside the map
 Time 5: Enter command: go show
 Ajax stopped at (15.00, 15.00)
 Island Exxon now has 2200.00 tons
-George stopped at (1.00, 1.00)
+George now at (1.00, 2.00)
+George finished skimming spill
 Island Shell now has 2200.00 tons
 Island Treasure_Island now has 130.00 tons
 Valdez stopped at (30.00, 30.00)
@@ -231,8 +234,8 @@ Ajax, Bermuda, Exxon, Shell, Treasure_Island, Valdez, Xerxes outside the map
      . . . . . . . . 
    4 . . . . . . . . 
      . . . . . . . . 
-     . . . . . . . . 
-   1 . . . Ge. . . . 
+     . . . Ge. . . . 
+   1 . . . . . . . . 
      . . . . . . . . 
      . . . . . . . . 
   -2 . . . . . . . . 
@@ -247,16 +250,16 @@ Island Bermuda at position (20.00, 20.00)
 Fuel available: 0.00 tons
 
 Island Exxon at position (10.00, 10.00)
-Fuel available: 2200.00 tons
+Fuel available: 2400.00 tons
 
-Skimmer George at (1.00, 1.00), fuel: 94.29 tons, resistance: 0
+Skimmer George at (1.00, 2.00), fuel: 92.79 tons, resistance: 0
 Stopped
 
 Island Shell at position (0.00, 30.00)
-Fuel available: 2200.00 tons
+Fuel available: 2400.00 tons
 
 Island Treasure_Island at position (50.00, 5.00)
-Fuel available: 130.00 tons
+Fuel available: 135.00 tons
 
 Tanker Valdez at (30.00, 30.00), fuel: 100.00 tons, resistance: 0
 Stopped
