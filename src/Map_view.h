@@ -41,9 +41,10 @@ public:
     // prints out the current map
     void draw() const override;
 
-protected: // TODO comments
+protected:
     // Called with a list of objects that are not in the grid during the
-    // draw() function
+    // draw() function. Prints out a list of objects that are not in the
+    // current view of the map.
     void objects_not_in_grid_handler(
             const std::vector<std::string>& objects_outside_map) const override;
 

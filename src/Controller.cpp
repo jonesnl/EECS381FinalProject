@@ -269,8 +269,8 @@ void Controller::create_cmd() {
 void Controller::create_group_cmd() {
     string group_name;
     cin >> group_name;
-    if(Model::get_inst()->is_ship_present(group_name))
-        throw Error("Group name is invalid!");
+    if(Model::get_inst()->is_name_in_use(group_name))
+        throw Error("Name is invalid!");
 
     auto group_ptr = create_group(group_name);
     Model::get_inst()->add_ship(group_ptr);

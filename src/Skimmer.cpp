@@ -11,6 +11,14 @@ const double skimmer_maximum_speed_c = 2.;
 const double skimmer_fuel_consumption_c = 0.5;
 const int skimmer_resistance_c = 0;
 
+/* Tracking the Skimming State
+ * We track where we are in the state of skimming the requested area by
+ * keeping track of how many sides of the spiral we still need to skim.
+ * From the number of sides to skim, we can calculate how far we need to
+ * travel for this edge of the spiral pattern. The direction of travel is
+ * tracked using a state machine.
+ */
+
 // Construct a skimmer object
 Skimmer::Skimmer(const string &name_, Point position_) :
         Ship(name_, position_, skimmer_fuel_capacity_c,
@@ -123,7 +131,7 @@ void Skimmer::start_skimming(Point spill_sw_corner_, int spill_size_) {
     skimming_state = SkimmingState_t::going_to_spill;
     // Calculate the number of sides that we will have to travel in the spiral.
     // We will use this as a counter to keep track of where we are in the spiral
-    // patern and where we need to go to next
+    // pattern and where we need to go to next
     additional_sides_to_skim = spill_size * 2 - 1;
 
     // Travel to the south west corner of the spill

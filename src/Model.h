@@ -90,7 +90,7 @@ public:
     // notify the views that an object is now gone
     void notify_gone(const std::string &name);
 
-    // get model pointer singleton instance TODO remove local pointers
+    // get model pointer singleton instance
     static Model *get_inst();
 
     // disallow copy/move construction or assignment
