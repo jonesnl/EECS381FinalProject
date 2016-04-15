@@ -68,7 +68,6 @@ void Skimmer::update() {
 
     // Find the distance we need to travel for the next side
     int dist_to_travel = (additional_sides_to_skim + 3) / 2;
-    --additional_sides_to_skim;
 
     Point new_dest = get_location();
     switch (skimming_state) {
@@ -94,6 +93,8 @@ void Skimmer::update() {
     default:
         assert(0);
     }
+
+    --additional_sides_to_skim;
 
     // Start moving to that new position at our max speed.
     Ship::set_destination_position_and_speed(new_dest, get_maximum_speed());
