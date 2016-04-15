@@ -1,0 +1,14 @@
+status
+create_group A1
+create_group A2
+status
+add_to_group A1 A2
+add_to_group A1 Xerxes
+add_to_group A2 Ajax
+add_to_group A2 Valdez
+status
+A1 attack Valdez
+status
+remove_from_group A2 Valdez
+remove_group A1
+quit

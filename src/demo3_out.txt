@@ -1,0 +1,136 @@
+
+Time 0: Enter command: 
+Cruiser Ajax at (15.00, 15.00), fuel: 1000.00 tons, resistance: 6
+Stopped
+
+Island Bermuda at position (20.00, 20.00)
+Fuel available: 0.00 tons
+
+Island Exxon at position (10.00, 10.00)
+Fuel available: 1000.00 tons
+
+Island Shell at position (0.00, 30.00)
+Fuel available: 1000.00 tons
+
+Island Treasure_Island at position (50.00, 5.00)
+Fuel available: 100.00 tons
+
+Tanker Valdez at (30.00, 30.00), fuel: 100.00 tons, resistance: 0
+Stopped
+Cargo: 0.00 tons, no cargo destinations
+
+Cruiser Xerxes at (25.00, 25.00), fuel: 1000.00 tons, resistance: 6
+Stopped
+
+Time 0: Enter command: 
+Time 0: Enter command: 
+Time 0: Enter command: 
+Time 0: Enter command: 
+Group A1
+No members
+
+Group A2
+No members
+
+Group A3
+No members
+
+Cruiser Ajax at (15.00, 15.00), fuel: 1000.00 tons, resistance: 6
+Stopped
+
+Island Bermuda at position (20.00, 20.00)
+Fuel available: 0.00 tons
+
+Island Exxon at position (10.00, 10.00)
+Fuel available: 1000.00 tons
+
+Island Shell at position (0.00, 30.00)
+Fuel available: 1000.00 tons
+
+Island Treasure_Island at position (50.00, 5.00)
+Fuel available: 100.00 tons
+
+Tanker Valdez at (30.00, 30.00), fuel: 100.00 tons, resistance: 0
+Stopped
+Cargo: 0.00 tons, no cargo destinations
+
+Cruiser Xerxes at (25.00, 25.00), fuel: 1000.00 tons, resistance: 6
+Stopped
+
+Time 0: Enter command: 
+Time 0: Enter command: Already has a parent!
+
+Time 0: Enter command: Cycle detected!
+
+Time 0: Enter command: 
+Group A1
+Group members: A2
+
+Group A2
+No members
+
+Group A3
+No members
+
+Cruiser Ajax at (15.00, 15.00), fuel: 1000.00 tons, resistance: 6
+Stopped
+
+Island Bermuda at position (20.00, 20.00)
+Fuel available: 0.00 tons
+
+Island Exxon at position (10.00, 10.00)
+Fuel available: 1000.00 tons
+
+Island Shell at position (0.00, 30.00)
+Fuel available: 1000.00 tons
+
+Island Treasure_Island at position (50.00, 5.00)
+Fuel available: 100.00 tons
+
+Tanker Valdez at (30.00, 30.00), fuel: 100.00 tons, resistance: 0
+Stopped
+Cargo: 0.00 tons, no cargo destinations
+
+Cruiser Xerxes at (25.00, 25.00), fuel: 1000.00 tons, resistance: 6
+Stopped
+
+Time 0: Enter command: 
+Time 0: Enter command: Already has a parent!
+
+Time 0: Enter command: 
+Group A1
+Group members: A2, Xerxes
+
+Group A2
+No members
+
+Group A3
+No members
+
+Cruiser Ajax at (15.00, 15.00), fuel: 1000.00 tons, resistance: 6
+Stopped
+
+Island Bermuda at position (20.00, 20.00)
+Fuel available: 0.00 tons
+
+Island Exxon at position (10.00, 10.00)
+Fuel available: 1000.00 tons
+
+Island Shell at position (0.00, 30.00)
+Fuel available: 1000.00 tons
+
+Island Treasure_Island at position (50.00, 5.00)
+Fuel available: 100.00 tons
+
+Tanker Valdez at (30.00, 30.00), fuel: 100.00 tons, resistance: 0
+Stopped
+Cargo: 0.00 tons, no cargo destinations
+
+Cruiser Xerxes at (25.00, 25.00), fuel: 1000.00 tons, resistance: 6
+Stopped
+
+Time 0: Enter command: No child with that name!
+
+Time 0: Enter command: Is not a group!
+
+Time 0: Enter command: Done
