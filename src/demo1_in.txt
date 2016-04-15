@@ -1,0 +1,18 @@
+open_map_view
+pan -4 0
+zoom 1
+size 8
+create George Skimmer 0 0
+status
+show
+George start_skimming -2 2 3
+status
+go show
+go show
+status
+go show
+go show
+go show
+go show
+status
+quit

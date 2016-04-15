@@ -46,16 +46,8 @@ public:
     // Get a child from the group of children by name.
     std::shared_ptr<Ship_component> get_child(const std::string& name) override;
 
-    /*** Ship Readers (Throws exceptions when called) ***/
-    bool can_move() const override;
-    bool is_moving() const override;
-    bool is_docked() const override;
-    bool is_afloat() const override;
-    bool can_dock(std::shared_ptr<Island> island_ptr) const override;
+    // Group doesn't have a location, throw an error
     Point get_location() const override;
-    std::shared_ptr<Island> get_docked_Island() const override;
-    std::shared_ptr<Island> get_destination_Island() const override;
-    double get_maximum_speed() const override;
 
     /*** Simulation and Model functions ***/
     // Update the state of the group (currently does nothing)

@@ -69,40 +69,8 @@ shared_ptr<Ship_component> Ship_group::get_child(const string& name) {
         return child_itt->second.lock();
 }
 
-/* Ship Readers (all throw exceptions when called) */
-bool Ship_group::can_move() const {
-    throw Error("Is not an individual!");
-}
-
-bool Ship_group::is_moving() const {
-    throw Error("Is not an individual!");
-}
-
-bool Ship_group::is_docked() const {
-    throw Error("Is not an individual!");
-}
-
-bool Ship_group::is_afloat() const {
-    throw Error("Is not an individual!");
-}
-
-bool Ship_group::can_dock(shared_ptr<Island>) const {
-    throw Error("Is not an individual!");
-}
-
+// Group doesn't have a location
 Point Ship_group::get_location() const {
-    throw Error("Is not an individual!");
-}
-
-shared_ptr<Island> Ship_group::get_docked_Island() const {
-    throw Error("Is not an individual!");
-}
-
-shared_ptr<Island> Ship_group::get_destination_Island() const {
-    throw Error("Is not an individual!");
-}
-
-double Ship_group::get_maximum_speed() const {
     throw Error("Is not an individual!");
 }
 

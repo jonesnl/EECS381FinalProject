@@ -7,7 +7,7 @@
 using namespace std;
 
 const double skimmer_fuel_capacity_c = 100.;
-const double skimmer_maximum_speed_c = 2.;
+const double skimmer_maximum_speed_c = 3.;
 const double skimmer_fuel_consumption_c = 0.5;
 const int skimmer_resistance_c = 0;
 
@@ -30,9 +30,12 @@ Skimmer::Skimmer(const string &name_, Point position_) :
 void Skimmer::describe() const {
     cout << "\nSkimmer ";
     Ship::describe();
-    if (is_skimming())
+    if (skimming_state == SkimmingState_t::going_to_spill) {
+        cout << "Going to spill" << endl;
+    } else if (is_skimming()) {
         cout << "Is skimming a spill of size " << spill_size <<
                 " starting at " << spill_sw_corner << endl;
+    }
 }
 
 // First update the ship state, then if we are skimming move in the inward-spiraling
@@ -93,7 +96,7 @@ void Skimmer::update() {
     Point new_dest = get_location() + Compass_vector (next_direction, dist_to_travel);
 
     // Start moving to that new position at our max speed.
-    set_destination_position_and_speed(new_dest, get_maximum_speed());
+    Ship::set_destination_position_and_speed(new_dest, get_maximum_speed());
 }
 
 // Stop skimming
@@ -141,7 +144,7 @@ void Skimmer::start_skimming(Point spill_sw_corner_, int spill_size_) {
     additional_sides_to_skim = spill_size * 2 - 1;
 
     // Travel to the south west corner of the spill
-    set_destination_position_and_speed(spill_sw_corner_, get_maximum_speed());
+    Ship::set_destination_position_and_speed(spill_sw_corner_, get_maximum_speed());
 }
 
 // Skim the first side of the spill, which has 1 nm less distance of travel than
@@ -150,7 +153,7 @@ void Skimmer::skim_first_side() {
     Point new_dest = get_location() + Compass_vector (0., spill_size);
     skimming_state = SkimmingState_t::going_north;
     --additional_sides_to_skim;
-    set_destination_position_and_speed(new_dest, get_maximum_speed());
+    Ship::set_destination_position_and_speed(new_dest, get_maximum_speed());
 }
 
 // Reset the state of the object

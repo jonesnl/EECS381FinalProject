@@ -32,31 +32,31 @@ public:
     Point get_location() const override { return track_base.get_position(); }
 
     // Return true if ship can move (it is not dead in the water or in the process or sinking);
-    bool can_move() const override;
+    bool can_move() const;
 
     // Return true if ship is moving
-    bool is_moving() const override;
+    bool is_moving() const;
 
     // Return true if ship is docked
-    bool is_docked() const override;
+    bool is_docked() const;
 
     // Return true if ship is afloat (not in process of sinking), false if not
-    bool is_afloat() const override;
+    bool is_afloat() const;
 
     // Return true if the ship is Stopped and the distance to the supplied island
     // is less than or equal to 0.1 nm
-    bool can_dock(std::shared_ptr<Island> island_ptr) const override;
+    bool can_dock(std::shared_ptr<Island> island_ptr) const;
 
     // Get the maximum speed for the ship
-    double get_maximum_speed() const override
+    double get_maximum_speed() const
     { return maximum_speed; }
 
     // return pointer to the Island currently docked at, or nullptr if not docked
-    std::shared_ptr<Island> get_docked_Island() const override
+    std::shared_ptr<Island> get_docked_Island() const
     { return docked_Island; }
 
     // return pointer to current destination Island, nullptr if not set
-    std::shared_ptr<Island> get_destination_Island() const override
+    std::shared_ptr<Island> get_destination_Island() const
     { return destination_Island; }
 
     /*** Interface to derived classes ***/
