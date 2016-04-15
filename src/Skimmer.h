@@ -31,6 +31,9 @@ public:
     // currently skimming
     void update() override;
 
+    // Stop skimming if we are skimming
+    void stop() override;
+
     // Stop skimming if we are skimming and set a new destination and speed
     void set_destination_position_and_speed(Point destination_position,
             double speed) override;
@@ -44,10 +47,6 @@ public:
 
     // Start skimming at the south-west corner of a spill of size spill_size_.
     void start_skimming(Point spill_sw_corner_, int spill_size_) override;
-
-    // Stop skimming if we are skimming
-    void stop() override;
-
 private:
     enum class SkimmingState_t {not_skimming, going_to_spill, going_north,
         going_east, going_south, going_west} skimming_state;

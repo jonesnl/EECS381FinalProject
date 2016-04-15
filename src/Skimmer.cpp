@@ -96,6 +96,12 @@ void Skimmer::update() {
     set_destination_position_and_speed(new_dest, get_maximum_speed());
 }
 
+// Stop skimming
+void Skimmer::stop() {
+    reset_skimming_state();
+    Ship::stop();
+}
+
 // Stop skimming if we are skimming.
 void Skimmer::set_destination_position_and_speed(Point destination_position, double speed) {
     if (is_skimming())
@@ -136,12 +142,6 @@ void Skimmer::start_skimming(Point spill_sw_corner_, int spill_size_) {
 
     // Travel to the south west corner of the spill
     set_destination_position_and_speed(spill_sw_corner_, get_maximum_speed());
-}
-
-// Stop skimming
-void Skimmer::stop() {
-    Ship::stop();
-    reset_skimming_state();
 }
 
 // Skim the first side of the spill, which has 1 nm less distance of travel than
